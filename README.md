@@ -1,4 +1,4 @@
-fellesprosjekt
+Fellesprosjekt
 ==============
 
 Fellesprosjekt gruppe 10
