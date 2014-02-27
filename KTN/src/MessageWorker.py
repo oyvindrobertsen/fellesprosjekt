@@ -20,6 +20,8 @@ class ReceiveMessageWorker(Thread):
 
     def __init__(self, listener, connection):
         self.daemeon = True
+        self.listener = listener
+        self.connection = connection
 
     def run(self):
         pass
