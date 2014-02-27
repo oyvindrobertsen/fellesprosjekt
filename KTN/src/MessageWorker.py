@@ -14,14 +14,25 @@ it is the start() method that is responsible for actually
 executing the run() method in a new thread.
 '''
 from threading import Thread
+import json
 
 
 class ReceiveMessageWorker(Thread):
 
     def __init__(self, listener, connection):
+        super(ReceiveMessageWorker, self).__init__()
+        self.running = True
         self.daemeon = True
         self.listener = listener
         self.connection = connection
 
     def run(self):
-        pass
+        while self.running:
+            data = self.connection.recv(1024)
+            if not data:
+                continue
+            self.handle_data(data)
+
+    def handle_data(self, data):
+        self.listener.data_received(data)
+        return
