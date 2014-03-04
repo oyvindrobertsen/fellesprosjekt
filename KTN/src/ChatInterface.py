@@ -39,6 +39,8 @@ class ChatInterface(object):
                 self.display_messages_and_prompt()
             else:
                 self.stdscr.clear()
+                for i in xrange(len(self.client.messages)):
+                    self.stdscr.addstr(i, 0, self.client.messages[i])
                 self.stdscr.addstr(self.NR_OF_MESSAGES_TO_DISPLAY, 0, '--> Please enter user name to log in:')
                 self.stdscr.move(self.NR_OF_MESSAGES_TO_DISPLAY + 1, 0)
                 username = self.stdscr.getstr()
@@ -52,8 +54,14 @@ class ChatInterface(object):
         self.stdscr.addstr(self.NR_OF_MESSAGES_TO_DISPLAY, 0, '--> Enter a message:')
         self.stdscr.move(self.NR_OF_MESSAGES_TO_DISPLAY + 1, 0)
         self.stdscr.refresh()
-        self.stdscr.getstr()
+        message = self.stdscr.getstr()
+        self.parse(message)
 
+    def parse(self, message):
+        if message == 'logout':
+            self.client.logout()
+        else:
+            self.client.send_message(message)
 
 def get_args():
     parser = argparse.ArgumentParser(description='JSON based chat.',

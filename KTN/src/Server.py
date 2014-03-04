@@ -38,9 +38,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
             parsed = json.loads(data)
             if parsed['request'] == 'login':
-                if parsed['username'] in curr_users.keys():
+                if parsed['username'] in curr_users.keys() and parsed['username'] != None:
                     self.respond_login_taken(parsed)
-                elif 20 < len(parsed['username']) or not re.match(r'[a-zA-Z\_\d]{1,}', parsed['username']):
+                elif not re.match(r'[a-zA-Z\_\d]{1,20}', parsed['username']):
                     self.respond_login_invalid(parsed)
                 else:
                     curr_users[parsed['username']] = self.request
@@ -77,6 +77,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                                             'username': data_dict['username']}))
 
     def respond_logout(self, data_dict):
+        print self.ip + " logged out."
+        self.connection.sendall(json.dumps({'response': 'logout', 'username': self.username}))
         self.connection.close()
 
     def add_to_backlog(self, message):
