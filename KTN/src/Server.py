@@ -40,7 +40,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             if parsed['request'] == 'login':
                 if parsed['username'] in curr_users.keys():
                     self.respond_login_taken(parsed)
-                elif 20 < len(parsed['username']) or len(parsed['username']) < 1 or not re.match(r'[a-zA-Z\_\d]*', parsed['username']):
+                elif 20 < len(parsed['username']) or not re.match(r'[a-zA-Z\_\d]{1,}', parsed['username']):
                     self.respond_login_invalid(parsed)
                 else:
                     curr_users[parsed['username']] = self.request
