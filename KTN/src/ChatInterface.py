@@ -36,31 +36,30 @@ class ChatInterface(object):
         while self.running:
             if self.client.logged_in:
                 self.stdscr.clear()
-                self.stdscr.addstr(0, 0, 'Logged in!')
-                self.stdscr.refresh()
-                self.stdscr.getstr()
+                self.display_messages_and_prompt()
             else:
                 self.stdscr.clear()
-                self.stdscr.addstr(0, 0, '--> Please enter user name to log in:')
-                self.stdscr.move(1,0)
+                self.stdscr.addstr(self.NR_OF_MESSAGES_TO_DISPLAY, 0, '--> Please enter user name to log in:')
+                self.stdscr.move(self.NR_OF_MESSAGES_TO_DISPLAY + 1, 0)
                 username = self.stdscr.getstr()
                 self.client.login(username)
                 time.sleep(2)
-                
 
-
-
-    def print_messages(self, messages):
-        for i in xrange(len(messages)):
-            self.stdscr.addstr(i, 0, messages[i])
+    def display_messages_and_prompt(self):
+        if self.client.messages:
+            for i in xrange(len(self.client.messages)):
+                self.stdscr.addstr(i, 0, self.client.messages[i])
+        self.stdscr.addstr(self.NR_OF_MESSAGES_TO_DISPLAY, 0, '--> Enter a message:')
+        self.stdscr.move(self.NR_OF_MESSAGES_TO_DISPLAY + 1, 0)
         self.stdscr.refresh()
-        self.stdscr.getch()
+        self.stdscr.getstr()
+
 
 def get_args():
     parser = argparse.ArgumentParser(description='JSON based chat.',
                                      prog='ChatInterface')
     parser.add_argument('-u', '--user',
-                        default='Anonymous' + str(int(random.random() * 1000)),
+                        default='',
                         help='Your desired username')
     parser.add_argument('--host', default='localhost',
                         help='Chat host server IP address')

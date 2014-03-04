@@ -7,8 +7,8 @@ from MessageWorker import ReceiveMessageWorker
 
 class Client(object):
 
-    def __init__(self, interface):
-        self.interface = interface
+    def __init__(self, listener):
+        self.listener = listener
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.logged_in = False
         self.messages = []
@@ -22,13 +22,15 @@ class Client(object):
         parsed = json.loads(message)
         self.messages.append = parsed
         self.interface.print_messages(self.messages)
-        return
 
     def login_received(self, response):
         if 'messages' in response.keys():
             self.logged_in = True
-            
+            for m in response['messages']:
+                self.messages.append(m['message'])
+
     def connection_closed(self):
+        self.connection.close()
         self.rec_worker.running = False
         self.interface.running = False
 
@@ -36,7 +38,8 @@ class Client(object):
         self.connection.sendall(data)
 
     def force_disconnect(self):
-        pass
+        self.connection_closed()
+        
 
     def login(self, username):
         self.send(json.dumps({'request': 'login', 'username': username}))

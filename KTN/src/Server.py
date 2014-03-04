@@ -5,6 +5,7 @@ for implementing the chat server
 '''
 import SocketServer
 import json
+import re
 
 '''
 The RequestHandler class for our server.
@@ -15,9 +16,10 @@ client.
 '''
 curr_users = {}
 message_log= []
+log_size = 5
 
 
-class CLientHandler(SocketServer.BaseRequestHandler):
+class ClientHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
         # Get a reference to the socket object
@@ -36,22 +38,54 @@ class CLientHandler(SocketServer.BaseRequestHandler):
 
             parsed = json.loads(data)
             if parsed['request'] == 'login':
-                curr_users[parsed['username']] = self.request
-                self.respond_login(parsed)
+                if parsed['username'] in curr_users.keys():
+                    self.respond_login_taken(parsed)
+                elif 20 < len(parsed['username']) or len(parsed['username']) < 1 or not re.match(r'[a-zA-Z\_\d]*', parsed['username']):
+                    self.respond_login_invalid(parsed)
+                else:
+                    curr_users[parsed['username']] = self.request
+                    self.username = parsed['username']
+                    self.respond_login(parsed)
             elif parsed['request'] == 'logout':
+                curr_users[self.username] = None
                 self.respond_logout(parsed)
+                break
             elif parsed['request'] == 'message':
+                self.add_to_backlog(parsed)
                 self.respond_message(parsed)
+        self.connection.close()
 
     def respond_login(self, data_dict):
-        print "Responded to login request, username: " + data_dict['username']  
+        print "Responded to successfull login request, username: " + data_dict['username']
+        message_log.append({'response': 'message', 'message': data_dict['username'] + ' logged in.'})
         self.connection.sendall(json.dumps({'response': 'login',
-                                            'username': data_dict['username'],
+                                            'username': self.username,
                                             'messages': message_log}))
 
-    def resond_logout(self, data_dict):
-        pass
-        
+    def respond_login_taken(self, data_dict):
+        print self.ip + " tried to log in with an already taken username: "\
+                + data_dict['username']
+        self.connection.sendall(json.dumps({'response': 'login',
+                                            'error': 'Name already taken!',
+                                            'username': data_dict['username']}))
+
+    def respond_login_invalid(self, data_dict):
+        print self.ip + " tried to log in with an invalid username :"\
+                + data_dict['username']
+        self.connection.sendall(json.dumps({'response': 'login',
+                                            'error': 'Invalid username!',
+                                            'username': data_dict['username']}))
+
+    def respond_logout(self, data_dict):
+        self.connection.close()
+
+    def add_to_backlog(self, message):
+        if len(message_log) < log_size:
+            message_log.append(message)
+            return
+        message_log.pop(0)
+        message_log.append(message)
+
 
 '''
 This will make all Request handlers being called in its own thread.
@@ -65,7 +99,7 @@ if __name__ == "__main__":
     PORT = 9999
 
     # Create the server, binding to localhost on port 9999
-    server = ThreadedTCPServer((HOST, PORT), CLientHandler)
+    server = ThreadedTCPServer((HOST, PORT), ClientHandler)
 
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C

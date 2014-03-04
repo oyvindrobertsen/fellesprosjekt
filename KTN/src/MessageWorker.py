@@ -35,4 +35,3 @@ class ReceiveMessageWorker(Thread):
 
     def handle_data(self, data):
         self.listener.data_received(data)
-        return
