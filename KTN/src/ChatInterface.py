@@ -31,7 +31,7 @@ class ChatInterface(object):
         self.stdscr = stdscr
         curses.echo()
         self.client.login(self.username)
-        time.sleep(2) #delay, in case of poor connection
+        time.sleep(1) #delay, in case of poor connection
 
         while self.running:
             if self.client.logged_in:

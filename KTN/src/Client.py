@@ -51,6 +51,9 @@ class Client(object):
     
     def logout(self):
         self.send(json.dumps({'request': 'logout'}))
+		
+	def send_message(self, message):
+		self.send(json.dumps({'request': 'message', 'message': message}))
 
     def send_message(self, message):
         self.send(json.dumps({'request': 'message', 'message': message}))
