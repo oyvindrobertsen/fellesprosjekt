@@ -81,6 +81,10 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.connection.sendall(json.dumps({'response': 'logout', 'username': self.username}))
         self.connection.close()
 
+    def respond_message(self, data_dict):
+        print self.username + '> ' + data_dict['message']
+        self.connection.sendall(json.dumps({'response': 'message', 'message': data_dict['message']}))
+
     def add_to_backlog(self, message):
         if len(message_log) < log_size:
             message_log.append(message)

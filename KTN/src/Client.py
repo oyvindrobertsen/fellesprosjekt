@@ -43,6 +43,9 @@ class Client(object):
     def send(self, data):
         self.connection.sendall(data)
 
+    def send_message(self, message):
+        self.send(json.dumps({'request': 'message', 'message': message}))
+
     def force_disconnect(self):
         self.connection_closed() 
 
@@ -51,12 +54,6 @@ class Client(object):
     
     def logout(self):
         self.send(json.dumps({'request': 'logout'}))
-		
-	def send_message(self, message):
-		self.send(json.dumps({'request': 'message', 'message': message}))
-
-    def send_message(self, message):
-        self.send(json.dumps({'request': 'message', 'message': message}))
 
     def data_received(self, data):
         parsed = json.loads(data)

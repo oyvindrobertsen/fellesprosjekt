@@ -22,7 +22,7 @@ class ChatInterface(object):
         self.client = Client(self)
         self.client.start(self.host, int(self.port))
 
-        self.NR_OF_MESSAGES_TO_DISPLAY = 5
+        self.NR_OF_MESSAGES_TO_DISPLAY = 15
 
         self.stdscr = None
         curses.wrapper(self.main)
@@ -61,7 +61,7 @@ class ChatInterface(object):
         if message == 'logout':
             self.client.logout()
         else:
-            self.client.send_message(message)
+            self.client.send_message('test')
 
 def get_args():
     parser = argparse.ArgumentParser(description='JSON based chat.',
