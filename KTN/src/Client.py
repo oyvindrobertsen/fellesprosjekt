@@ -31,23 +31,29 @@ class Client(object):
         elif 'error' in response.keys():
             self.messages.append(response['error'])
 
+    def logout_received(self, response):
+        self.logged_in = False
+        self.connection_closed()
+
     def connection_closed(self):
         self.connection.close()
         self.rec_worker.running = False
-        self.interface.running = False
+        self.listener.running = False
 
     def send(self, data):
         self.connection.sendall(data)
 
     def force_disconnect(self):
-        self.connection_closed()
-        
+        self.connection_closed() 
 
     def login(self, username):
         self.send(json.dumps({'request': 'login', 'username': username}))
     
     def logout(self):
         self.send(json.dumps({'request': 'logout'}))
+
+    def send_message(self, message):
+        self.send(json.dumps({'request': 'message', 'message': message}))
 
     def data_received(self, data):
         parsed = json.loads(data)

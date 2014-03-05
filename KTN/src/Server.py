@@ -16,7 +16,7 @@ client.
 '''
 curr_users = {}
 message_log= []
-log_size = 5
+log_size = 15
 
 
 class ClientHandler(SocketServer.BaseRequestHandler):
@@ -40,7 +40,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             if parsed['request'] == 'login':
                 if parsed['username'] in curr_users.keys() and parsed['username'] != None:
                     self.respond_login_taken(parsed)
-                elif not re.match(r'[a-zA-Z\_\d]{1,20}', parsed['username']):
+                elif not re.match(r'^[a-zA-Z\_\d]{1,20}$', parsed['username']):
                     self.respond_login_invalid(parsed)
                 else:
                     curr_users[parsed['username']] = self.request
