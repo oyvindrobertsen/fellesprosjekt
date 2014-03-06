@@ -77,9 +77,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                                             'username': data_dict['username']}))
 
     def respond_logout(self, data_dict):
-        print self.ip + " logged out."
+        print self.username + " logged out."
         self.connection.sendall(json.dumps({'response': 'logout', 'username': self.username}))
-        self.connection.close()
 
     def respond_message(self, data_dict):
         print self.username + '> ' + data_dict['message']

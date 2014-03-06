@@ -49,8 +49,12 @@ class ChatInterface(object):
 
     def display_messages_and_prompt(self):
         if self.client.messages:
-            for i in xrange(len(self.client.messages)):
-                self.stdscr.addstr(i, 0, self.client.messages[i])
+            if len(self.client.messages) < self.NR_OF_MESSAGES_TO_DISPLAY:
+                for i in xrange(len(self.client.messages)):
+                    self.stdscr.addstr(i, 0, self.client.messages[i])
+            else:
+                for i in xrange(len(self.NR_OF_MESSAGES_TO_DISPLAY)):
+                    self.stdscr.addstr(i, 0, self.client.messages[len(self.client.messages) - i])
         self.stdscr.addstr(self.NR_OF_MESSAGES_TO_DISPLAY, 0, '--> Enter a message:')
         self.stdscr.move(self.NR_OF_MESSAGES_TO_DISPLAY + 1, 0)
         self.stdscr.refresh()
