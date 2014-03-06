@@ -19,9 +19,8 @@ class Client(object):
         self.rec_worker.start()
 
     def message_received(self, message):
-        parsed = json.loads(message)
-        self.messages.append = parsed
-        self.interface.print_messages(self.messages)
+        self.messages.append(message)
+        self.listener.display_messages_and_prompt()
 
     def login_received(self, response):
         if 'messages' in response.keys():
@@ -61,4 +60,5 @@ class Client(object):
             self.login_received(parsed)
         elif parsed['response'] == 'logout':
             self.logout_received(parsed)
-        
+        elif parsed['response'] == 'message':
+            self.message_received(parsed)
