@@ -7,6 +7,7 @@ import argparse
 import random
 import time
 from Client import Client
+from threading import Lock
 
 
 class ChatInterface(object):
@@ -21,7 +22,7 @@ class ChatInterface(object):
         self.running = True
         self.client = Client(self)
         self.client.start(self.host, int(self.port))
-
+        self.lock = Lock()
         self.NR_OF_MESSAGES_TO_DISPLAY = 15
 
         self.stdscr = None
@@ -33,10 +34,17 @@ class ChatInterface(object):
         self.client.login(self.username)
         time.sleep(1) #delay, in case of poor connection
 
+        self.main_loop(stdscr)
+    
+    def main_loop(self, stdscr):
         while self.running:
             if self.client.logged_in:
                 self.stdscr.clear()
-                self.display_messages_and_prompt()
+                with self.lock:
+                    self.display_messages()
+                message = self.stdscr.getstr()
+                self.parse(message)
+                self.stdscr.refresh()
             else:
                 self.stdscr.clear()
                 for i in xrange(len(self.client.messages)):
@@ -45,9 +53,10 @@ class ChatInterface(object):
                 self.stdscr.move(self.NR_OF_MESSAGES_TO_DISPLAY + 1, 0)
                 username = self.stdscr.getstr()
                 self.client.login(username)
-                time.sleep(2)
-
-    def display_messages_and_prompt(self):
+                self.stdscr.refresh()
+                time.sleep(1)
+    
+    def display_messages(self):
         if self.client.messages:
             if len(self.client.messages) < self.NR_OF_MESSAGES_TO_DISPLAY:
                 for i in xrange(len(self.client.messages)):
@@ -58,8 +67,7 @@ class ChatInterface(object):
         self.stdscr.addstr(self.NR_OF_MESSAGES_TO_DISPLAY, 0, '--> Enter a message:')
         self.stdscr.move(self.NR_OF_MESSAGES_TO_DISPLAY + 1, 0)
         self.stdscr.refresh()
-        message = self.stdscr.getstr()
-        self.parse(message)
+        
 
     def parse(self, message):
         if message == 'logout':

@@ -19,20 +19,25 @@ class Client(object):
         self.rec_worker.start()
 
     def message_received(self, message):
-        self.messages.append(message)
-        self.listener.display_messages_and_prompt()
+        with self.listener.lock:
+            self.messages.append(message['message'])
+        self.listener.display_messages()
 
     def login_received(self, response):
-        if 'messages' in response.keys():
-            self.logged_in = True
-            for m in response['messages']:
-                self.messages.append(m['message'])
-        elif 'error' in response.keys():
-            self.messages.append(response['error'])
+        with self.listener.lock:
+            if 'messages' in response.keys():
+                self.logged_in = True
+                for m in response['messages']:
+                    self.messages.append(m['message'])
+            elif 'error' in response.keys():
+                self.messages.append(response['error'])
+        self.listener.display_messages()
 
     def logout_received(self, response):
-        self.logged_in = False
-        self.connection_closed()
+        with self.listener.lock:
+            self.logged_in = False
+            self.connection_closed()
+        self.listener.display_messages()
 
     def connection_closed(self):
         self.connection.close()
