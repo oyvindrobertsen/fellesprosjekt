@@ -13,13 +13,14 @@ sudo add-apt-repository ppa:cwchien/gradle
 #wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/equip_ruby_2_0.sh && bash equip_ruby_2_0.sh # ruby
 wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/equip_java.sh && bash equip_java.sh # java 1.7
 wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/equip_node.sh && bash equip_node.sh # node
+rm equip_base.sh equip_java.sh equip_node.sh
 sudo apt-get -y install mysql-server-5.5 gradle
 
 # Run the database scripts
 if [ ! -f /var/log/databasesetup ];
 then
     touch /var/log/databasesetup
-    echo "CREATE DATABASE apotychia" | mysql -uroot -prootpass
+    echo "CREATE DATABASE apotychia;" | mysql -uroot -prootpass
     if [ -f /vagrant/db/base.sql ];
     then
         mysql -uroot -prootpass < /vagrant/db/base.sql
