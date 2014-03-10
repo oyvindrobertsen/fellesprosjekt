@@ -27,8 +27,8 @@ class Client(object):
         with self.listener.lock:
             if 'messages' in response.keys():
                 self.logged_in = True
-                for m in response['messages']:
-                    self.messages.append(m['message'])
+                for message in response['messages']:
+                    self.messages.append(message)
             elif 'error' in response.keys():
                 self.messages.append(response['error'])
         self.listener.display_messages()

@@ -54,10 +54,11 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 self.add_to_backlog(parsed)
                 self.respond_message(parsed)
         self.connection.close()
-
+    
     def respond_login(self, data_dict):
         print "Responded to successfull login request, username: " + data_dict['username']
-        message_log.append({'response': 'message', 'message': data_dict['username'] + ' logged in.'})
+        #message_log.append(data_dict['username'] + ' logged in.')
+        self.send_to_all_users(json.dumps({'response': 'login', 'username': self.username + '> logged in'}))
         self.connection.sendall(json.dumps({'response': 'login',
                                             'username': self.username,
                                             'messages': message_log}))
@@ -78,20 +79,25 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
     def respond_logout(self, data_dict):
         print self.username + " logged out."
-        self.connection.sendall(json.dumps({'response': 'logout', 'username': self.username}))
+        #self.connection.sendall(json.dumps({'response': 'logout', 'username': self.username}))
+        self.send_to_all_users(json.dumps({'response': 'logout', 'username': self.username + '> logged out'}))
 
     def respond_message(self, data_dict):
         print self.username + '> ' + data_dict['message']
-        message_log.append({'response': 'message', 'message': self.username + '>' + data_dict['message']})
-        self.connection.sendall(json.dumps({'response': 'message', 'message': data_dict['message']}))
+        #message_log.append({'response': 'message', 'message': self.username + '> ' + data_dict['message']})
+        #self.connection.sendall(json.dumps({'response': 'message', 'message': self.username + '>' + data_dict['message']}))
+        self.send_to_all_users(json.dumps({'response': 'message', 'message': self.username + '>' + data_dict['message']}))
 
     def add_to_backlog(self, message):
         if len(message_log) < log_size:
-            message_log.append(message)
+            message_log.append(self.username + '>' + message['message'])
             return
         message_log.pop(0)
         message_log.append(message)
 
+    def send_to_all_users(self, message):
+        for conn in curr_users.values():
+            conn.sendall(message)
 
 '''
 This will make all Request handlers being called in its own thread.
