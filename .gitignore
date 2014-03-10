@@ -1,7 +1,14 @@
 .DS_Store
 *.un~
 *.swp
+*.iml
 
 *.pyc
 
 .vagrant/
+.idea/
+gradle/
+.gradle/
+build/
+gradlew
+gradlew.bat
