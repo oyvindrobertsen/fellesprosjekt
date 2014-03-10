@@ -1,1 +1,0 @@
-../DB/DB2sqlScript.sql
