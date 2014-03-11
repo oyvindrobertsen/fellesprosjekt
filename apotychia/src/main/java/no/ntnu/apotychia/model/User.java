@@ -2,28 +2,23 @@ package no.ntnu.apotychia.model;
 
 //import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
-public class User {
-    private final long userID;
-    private String username;
+public class User implements Participant{
+    private final String username;
     private String encodedPassword;
     private String firstName;
     private String lastName;
-    private String email;
+    private String email;;
 
-    public User(long id) {
-        this.userID = id;
+    public User(String  username) {
+        this.username = username;
     }
 
-    public long getUserID() {
-        return userID;
+    public String getID(){
+        return this.username;
     }
 
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEncodedPassword() {
