@@ -10,7 +10,7 @@ public class Event {
     private Date endTime;
     private boolean isActive;
     private User eventAdmin;
-    private Set<User> participants;
+    private Set<Participant> participants;
 
     public Event(long id) {
         this.eventID = id;
@@ -60,11 +60,11 @@ public class Event {
         this.eventAdmin = eventAdmin;
     }
 
-    public Set<User> getParticipants() {
+    public Set<Participant> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(Set<User> participants) {
+    public void setParticipants(Set<Participant> participants) {
         this.participants = participants;
     }
 }
