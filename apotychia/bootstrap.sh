@@ -37,3 +37,5 @@ then
         echo "$now: Added initial data" >> /var/log/databasesetup
     fi
 fi
+
+echo "Ready to build, run bower install from the /vagrant directory then ./gradlew build && java -jar build/libs/apotychia-0.0.1.jar to build and start."

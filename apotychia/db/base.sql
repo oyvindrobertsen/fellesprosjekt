@@ -23,7 +23,7 @@ CREATE TABLE memberOf (
 
     PRIMARY KEY (groupId),
     FOREIGN KEY (groupId)  REFERENCES eventGroup(groupId)
-        ON UPDATE cascade ON DELETE cascade
+        ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (username)  REFERENCES person(username)
         ON UPDATE cascade ON DELETE cascade
         
@@ -74,4 +74,3 @@ CREATE TABLE booked (
     FOREIGN KEY (roomNr)  REFERENCES room(roomNr)
         ON UPDATE cascade ON DELETE cascade
 );
-
