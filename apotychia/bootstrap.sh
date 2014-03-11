@@ -26,16 +26,16 @@ then
     echo "CREATE DATABASE apotychia;" | mysql -uroot -prootpass
     if [ -f /vagrant/db/base.sql ];
     then
-        mysql -uroot -prootpass < /vagrant/db/base.sql
+        mysql -uroot -prootpass apotychia < /vagrant/db/base.sql
         now=$(date +"%d.%m.%Y %T")
         echo "$now: Base sql script ran" >> /var/log/databasesetup
     fi
     if [ -f /vagrant/db/initial.sql ];
     then
-        mysql -uroot -prootpass < /vagrant/db/initial.sql
+        mysql -uroot -prootpass apotychia < /vagrant/db/initial.sql
         now=$(date +"%d.%m.%Y %T")
         echo "$now: Added initial data" >> /var/log/databasesetup
     fi
 fi
 
-echo "Ready to build, run bower install from the /vagrant directory then ./gradlew build && java -jar build/libs/apotychia-0.0.1.jar to build and start."
+echo "Ready to build, run bower install from the /vagrant directory then gradle build && java -jar build/libs/apotychia-0.0.1.jar to build and start."
