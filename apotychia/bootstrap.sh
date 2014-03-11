@@ -16,6 +16,9 @@ wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/e
 rm equip_base.sh equip_java.sh equip_node.sh
 sudo apt-get -y install mysql-server-5.5 gradle
 
+# Other tools
+sudo npm install -g bower
+
 # Run the database scripts
 if [ ! -f /var/log/databasesetup ];
 then
