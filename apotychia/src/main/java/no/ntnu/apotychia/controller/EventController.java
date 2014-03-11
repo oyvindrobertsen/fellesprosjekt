@@ -1,6 +1,7 @@
 package no.ntnu.apotychia.controller;
 
 import no.ntnu.apotychia.model.Event;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +17,7 @@ public class EventController {
 
     private final AtomicLong counter = new AtomicLong();
 
+    @Secured("ROLE_USER")
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody List<Event> getAllEvents() {
         List<Event> eventList = new ArrayList<Event>();

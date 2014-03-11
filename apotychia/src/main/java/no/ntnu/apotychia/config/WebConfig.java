@@ -14,7 +14,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     static class Routes {
 
         @RequestMapping({
-                "/test",
+                "/",
         })
         public String index() {
             return "/index.html";
