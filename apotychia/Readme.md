@@ -20,7 +20,7 @@ All koden som Apotychia består av ligger i mappen `fellesprosjekt/apotychia/`, 
 2. Naviger inn i `apotychia`-mappen.
 3. Kjør kommandoen `vagrant up`, den kommer til å bruke ganske lang tid.
 4. Kjør kommandoen `vagrant ssh`, denne kobler deg til den virtuelle maskinen som kjører.
-5. Kjør `cd /vagrant/`, deretter `gradle wrapper && ./gradlew bootRun`. Applikasjonen skal nå kjøre, og du kan åpne `http://localhost:8080/greeting` i nettleseren din.
-6. `vagrant suspend` for å midlertidig avslutte maskinen, `vagrant resume` for å komme tilbake.
+5. Kjør `cd /vagrant/`, deretter `./gradlew build`. Applikasjonen skal nå kjøre, og du kan åpne `http://localhost:8080/` i nettleseren din.
+6. `logout` for å logge ut av den virtuelle maskinen, `vagrant suspend` for å midlertidig avslutte maskinen, `vagrant resume` for å komme tilbake.
 
 For å fjerne alle spor etter den virtuelle maskinen, kjør `vagrant destroy`.
