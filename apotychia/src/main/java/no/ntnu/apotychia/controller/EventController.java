@@ -17,7 +17,6 @@ public class EventController {
 
     private final AtomicLong counter = new AtomicLong();
 
-    @Secured("ROLE_USER")
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody List<Event> getAllEvents() {
         List<Event> eventList = new ArrayList<Event>();

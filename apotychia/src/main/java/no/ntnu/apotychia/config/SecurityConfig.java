@@ -6,30 +6,48 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.springframework.security.web.header.writers.XContentTypeOptionsHeaderWriter;
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+
+import javax.inject.Inject;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Inject private UserDetailsService userDetailsService;
+
     @Override
-    protected void configure(final HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
+    protected void configure(HttpSecurity http) throws Exception {
+        String[] filesToLetThroughUnAuthorized = {"/favicon.ico", "/libs/*"};
+        http.authorizeRequests()
+                .antMatchers(filesToLetThroughUnAuthorized).permitAll()
                 .anyRequest().authenticated();
-        http
-            .formLogin()
+        http.formLogin()
                 .loginPage("/login")
-                .permitAll()
-                .and()
-            .logout()
-                .permitAll();
+                .loginProcessingUrl("/api/auth")
+                .defaultSuccessUrl("/")
+                .failureUrl("/login?error=true")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .permitAll(true);
+        http.headers()
+                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+                .addHeaderWriter(new XContentTypeOptionsHeaderWriter())
+                .addHeaderWriter(new XXssProtectionHeaderWriter());
+        http.logout()
+                .logoutUrl("/api/logout")
+                .deleteCookies("JSESSIONID");
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .inMemoryAuthentication()
-                    .withUser("user").password("password").roles("ADMIN");
+            .userDetailsService(this.userDetailsService)
+            .passwordEncoder(new StandardPasswordEncoder());
     }
 }
