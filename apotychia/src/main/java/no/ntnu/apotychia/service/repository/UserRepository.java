@@ -20,6 +20,7 @@ public class UserRepository {
     private JdbcTemplate jt;
 
     public User findOne(String username) {
+        logger.info("Looking up user:" + username);
         User result = jt.queryForObject("SELECT * FROM PERSON WHERE username = ?",
                 new Object[] {username},
                 new RowMapper<User>() {
@@ -38,7 +39,7 @@ public class UserRepository {
     }
 
     public void insert(User user) {
-        logger.info("Inserting user with hashed password:" + user.getEncodedPassword() + ", with size:" + user.getEncodedPassword().length());
+        logger.info("Inserting user:" + user.getUsername());
         jt.update(
                 "INSERT INTO person VALUES (?, ?, ?, ?, ?)",
                 new Object[] {user.getUsername(), user.getEncodedPassword(), user.getFirstName(),
