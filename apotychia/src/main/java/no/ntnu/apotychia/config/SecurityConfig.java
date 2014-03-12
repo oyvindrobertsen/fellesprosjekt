@@ -23,15 +23,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] filesToLetThroughUnAuthorized = {"/favicon.ico", "/libs/*"};
+        String[] filesToLetThroughUnAuthorized = {"/favicon.ico", "/libs/*", "/register.html", "/register"};
         http.authorizeRequests()
                 .antMatchers(filesToLetThroughUnAuthorized).permitAll()
                 .anyRequest().authenticated();
         http.formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/api/auth")
+                .loginPage("/login.html")
+                .loginProcessingUrl("/postlogin")
                 .defaultSuccessUrl("/")
-                .failureUrl("/login?error=true")
+                .failureUrl("/login-error.html")
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .permitAll(true);
@@ -40,8 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addHeaderWriter(new XContentTypeOptionsHeaderWriter())
                 .addHeaderWriter(new XXssProtectionHeaderWriter());
         http.logout()
-                .logoutUrl("/api/logout")
                 .deleteCookies("JSESSIONID");
+        http.csrf().disable();
     }
 
     @Override

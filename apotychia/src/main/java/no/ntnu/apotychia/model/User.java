@@ -2,12 +2,17 @@ package no.ntnu.apotychia.model;
 
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
-public class User implements Participant{
-    private final String username;
+import java.io.Serializable;
+
+public class User implements Participant, Serializable {
+    private String username;
     private String encodedPassword;
     private String firstName;
     private String lastName;
     private String email;
+
+    public User() {
+    }
 
     public User(String username) {
         this.username = username;
@@ -25,6 +30,10 @@ public class User implements Participant{
         return encodedPassword;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     /**
      * Sets and encodes password.
      * @param password
@@ -33,8 +42,8 @@ public class User implements Participant{
         this.encodedPassword = new StandardPasswordEncoder().encode(password);
     }
 
-    public void setPassword(String encodedPassword) {
-        this.encodedPassword = encodedPassword;
+    public void setPassword(String password) {
+        this.encodedPassword = password;
     }
 
     public String getFirstName() {

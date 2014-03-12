@@ -1,6 +1,8 @@
 package no.ntnu.apotychia.service.repository;
 
 import no.ntnu.apotychia.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,6 +13,8 @@ import java.sql.SQLException;
 
 @Repository
 public class UserRepository {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private JdbcTemplate jt;
@@ -31,5 +35,14 @@ public class UserRepository {
                 }
         );
         return result;
+    }
+
+    public void insert(User user) {
+        logger.info("Inserting user with hashed password:" + user.getEncodedPassword() + ", with size:" + user.getEncodedPassword().length());
+        jt.update(
+                "INSERT INTO person VALUES (?, ?, ?, ?, ?)",
+                new Object[] {user.getUsername(), user.getEncodedPassword(), user.getFirstName(),
+                user.getLastName(), user.getEmail()}
+        );
     }
 }
