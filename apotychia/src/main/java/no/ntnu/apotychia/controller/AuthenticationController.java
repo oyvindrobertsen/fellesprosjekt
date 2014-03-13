@@ -17,16 +17,6 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
-//    @RequestMapping("/login.html")
-//    public String login() {
-//        return "login.html";
-//    }
-//
-//    @RequestMapping("/login-error.html")
-//    public String loginError() {
-//        return "login.html";
-//    }
-
     @RequestMapping(method = RequestMethod.GET, value="/register.html")
     public String register() {
         return "register";
