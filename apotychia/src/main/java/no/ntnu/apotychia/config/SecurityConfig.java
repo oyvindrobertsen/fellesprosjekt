@@ -23,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] filesToLetThroughUnAuthorized = {"/favicon.ico", "/libs/*", "/register"};
+        String[] filesToLetThroughUnAuthorized = {"/favicon.ico", "/libs/*", "/api/register", "/register"};
         http.authorizeRequests()
                 .antMatchers(filesToLetThroughUnAuthorized).permitAll()
                 .anyRequest().authenticated();

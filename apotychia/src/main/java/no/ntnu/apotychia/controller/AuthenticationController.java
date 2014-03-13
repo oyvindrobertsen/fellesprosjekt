@@ -17,15 +17,11 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(method = RequestMethod.GET, value="/register.html")
-    public String register() {
-        return "register";
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value="/register")
-    public String registerUser(@ModelAttribute("user") User user, ModelMap model) {
+    @RequestMapping(method = RequestMethod.POST, value="/api/register")
+    public String registerUser(@ModelAttribute User user, ModelMap model) {
+        logger.info(user.toString());
         user.setPasswordAndEncode(user.getEncodedPassword());
         this.userService.addNewUser(user);
-        return "redirect:login";
+        return "redirect:/login";
     }
 }
