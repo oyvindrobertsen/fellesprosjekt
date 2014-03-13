@@ -1,15 +1,20 @@
 package no.ntnu.apotychia.model;
 
-//import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
-public class User implements Participant{
-    private final String username;
+import java.io.Serializable;
+
+public class User implements Participant, Serializable {
+    private String username;
     private String encodedPassword;
     private String firstName;
     private String lastName;
-    private String email;;
+    private String email;
 
-    public User(String  username) {
+    public User() {
+    }
+
+    public User(String username) {
         this.username = username;
     }
 
@@ -25,13 +30,21 @@ public class User implements Participant{
         return encodedPassword;
     }
 
-//    /**
-//     * Sets and encodes password. Use StandardPasswordEncoder.matches() to compare.
-//     * @param password
-//     */
-//    public void setPassword(String password) {
-//        this.encodedPassword = new StandardPasswordEncoder().encode(password);
-//    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * Sets and encodes password.
+     * @param password
+     */
+    public void setPasswordAndEncode(String password) {
+        this.encodedPassword = new StandardPasswordEncoder().encode(password);
+    }
+
+    public void setPassword(String password) {
+        this.encodedPassword = password;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -55,5 +68,14 @@ public class User implements Participant{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    /**
+     * Returns true by default for now, could be amended to allow for a user to disable
+     * their account.
+     * @return boolean
+     */
+    public boolean isEnabled() {
+        return true;
     }
 }

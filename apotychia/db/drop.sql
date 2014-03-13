@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS person;
-DROP TABLE IF EXISTS room;
-DROP TABLE IF EXISTS eventGroup;
-DROP TABLE IF EXISTS memberOf;
-DROP TABLE IF EXISTS calendarEvent;
-DROP TABLE IF EXISTS participants;
-DROP TABLE IF EXISTS booked;
+DROP TABLE booked;
+DROP TABLE room;
+DROP TABLE calendarEvent;
+DROP TABLE memberOf;
+DROP TABLE participants;
+DROP TABLE eventGroup;
+DROP TABLE person;
