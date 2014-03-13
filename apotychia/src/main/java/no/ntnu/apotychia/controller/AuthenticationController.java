@@ -17,15 +17,15 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/login.html")
-    public String login() {
-        return "login";
-    }
-
-    @RequestMapping("/login-error")
-    public String loginError() {
-        return "login";
-    }
+//    @RequestMapping("/login.html")
+//    public String login() {
+//        return "login.html";
+//    }
+//
+//    @RequestMapping("/login-error.html")
+//    public String loginError() {
+//        return "login.html";
+//    }
 
     @RequestMapping(method = RequestMethod.GET, value="/register.html")
     public String register() {
@@ -36,6 +36,6 @@ public class AuthenticationController {
     public String registerUser(@ModelAttribute("user") User user, ModelMap model) {
         user.setPasswordAndEncode(user.getEncodedPassword());
         this.userService.addNewUser(user);
-        return "redirect:login.html";
+        return "redirect:login";
     }
 }

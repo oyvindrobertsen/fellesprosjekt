@@ -23,15 +23,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] filesToLetThroughUnAuthorized = {"/favicon.ico", "/libs/*", "/register.html", "/register"};
+        String[] filesToLetThroughUnAuthorized = {"/favicon.ico", "/libs/*", "/register"};
         http.authorizeRequests()
                 .antMatchers(filesToLetThroughUnAuthorized).permitAll()
                 .anyRequest().authenticated();
         http.formLogin()
-                .loginPage("/login.html")
+                .loginPage("/login")
                 .loginProcessingUrl("/postlogin")
-                .defaultSuccessUrl("/")
-                .failureUrl("/login-error.html")
+                .defaultSuccessUrl("/app/index.html")
+                .failureUrl("/login-error")
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .permitAll(true);

@@ -20,8 +20,8 @@ public class UserRepository {
     private JdbcTemplate jt;
 
     public User findOne(String username) {
-        logger.info("Looking up user:" + username);
-        User result = jt.queryForObject("SELECT * FROM PERSON WHERE username = ?",
+        logger.info("Looking up user: " + username);
+        User result = jt.queryForObject("SELECT * FROM person WHERE username = ?",
                 new Object[] {username},
                 new RowMapper<User>() {
                     @Override
@@ -35,6 +35,9 @@ public class UserRepository {
                     }
                 }
         );
+        if (result != null) {
+            logger.info("Found user: " + result.getUsername());
+        }
         return result;
     }
 
