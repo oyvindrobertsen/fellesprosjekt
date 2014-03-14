@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link type="text/css" rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css">
+	<link type="text/css" rel="stylesheet" href="css/loginstyle.css"/>
+    <title>Login page</title>
+</head>
+<body>
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<img src="img/logo.gif">
+			<form action="/postlogin" method="post" class="form-horizontal">
+				<label for="username">Username</label>:
+			    <input type="text" id="username" name="username" /> <br />
+				<label for="password">Password</label>:
+				<input type="password" id="password" name="password" /> <br />
+				<input type="submit" value="Log in" />
+			</form>
+
+			<a href="/register.html">Register</a>
+		</div>
+	</div>
+</div>
+<script src="libs/bootstrap/dist/js/bootstrap.js"></script>
+</body>
+</html>

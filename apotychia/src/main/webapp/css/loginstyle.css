@@ -1,0 +1,18 @@
+body {
+	margin: auto;
+	text-align: center;
+	font-family: Verdana, Geneva, sans-serif;
+	background-color: #ffffff;
+	color: #525252;
+}
+
+input {
+	border-radius: 6px;
+	border: 1px #525252 solid;
+}
+
+a{
+	text-decoration: none;
+	color: #525252;
+	font-family: Verdana, Geneva, sans-serif;
+}
