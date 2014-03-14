@@ -2,9 +2,10 @@ package no.ntnu.apotychia.model;
 
 import java.sql.Date;
 import java.util.Set;
+import javax.persistence.*;
 
 public class Event {
-    private final long eventID;
+    private long eventID;
     private String eventName;
     private Date startTime;
     private Date endTime;
@@ -13,12 +14,12 @@ public class Event {
     private String eventAdmin;
     private Set<Participant> participants;
 
-    public Event(long id) {
-        this.eventID = id;
-    }
-
     public long getEventID() {
         return eventID;
+    }
+
+    public void setEventID(long id) {
+        this.eventID = id;
     }
 
     public String getEventName() {

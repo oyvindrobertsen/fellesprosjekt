@@ -49,7 +49,7 @@ CREATE TABLE calendarEvent (
 
 
 CREATE TABLE participants (
-    eventId     INT             NOT NULL    AUTO_INCREMENT,
+    eventId     INT             NOT NULL,
     username    VARCHAR(45)     NULL,
     groupId     INT             NULL,
 
