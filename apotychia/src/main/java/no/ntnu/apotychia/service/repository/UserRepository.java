@@ -20,8 +20,7 @@ public class UserRepository {
     private JdbcTemplate jt;
 
     public User findOne(String username) {
-        logger.info("Looking up user: " + username);
-        User result = jt.queryForObject("SELECT * FROM person WHERE username = ?",
+        return jt.queryForObject("SELECT * FROM person WHERE username = ?",
                 new Object[] {username},
                 new RowMapper<User>() {
                     @Override
@@ -35,18 +34,12 @@ public class UserRepository {
                     }
                 }
         );
-        if (result != null) {
-            logger.info("Found user: " + result.getUsername());
-        }
-        return result;
     }
 
     public void insert(User user) {
-        logger.info("Inserting user:" + user.getUsername());
         jt.update(
                 "INSERT INTO person VALUES (?, ?, ?, ?, ?)",
-                new Object[] {user.getUsername(), user.getEncodedPassword(), user.getFirstName(),
-                user.getLastName(), user.getEmail()}
-        );
+                user.getUsername(), user.getEncodedPassword(), user.getFirstName(),
+                user.getLastName(), user.getEmail());
     }
 }

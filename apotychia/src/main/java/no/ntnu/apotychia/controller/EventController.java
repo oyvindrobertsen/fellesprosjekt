@@ -1,28 +1,24 @@
 package no.ntnu.apotychia.controller;
 
 import no.ntnu.apotychia.model.Event;
-import org.springframework.security.access.annotation.Secured;
+import no.ntnu.apotychia.service.EventService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Controller
-@RequestMapping("/api/event")
+@RequestMapping("/api/events")
 public class EventController {
 
-    private final AtomicLong counter = new AtomicLong();
+    @Autowired
+    EventService eventService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody List<Event> getAllEvents() {
-        List<Event> eventList = new ArrayList<Event>();
-        Event test = new Event(counter.incrementAndGet());
-        test.setEventName("TestEvent");
-        eventList.add(test);
-        return eventList;
+    @RequestMapping(method = RequestMethod.GET, value="/{username}")
+    public ResponseEntity<List<Event>> getAllEventsForUser(@PathVariable String username) {
+        return new ResponseEntity<List<Event>>(eventService.findAllEventsForUserByUsername(username), HttpStatus.OK);
     }
 }

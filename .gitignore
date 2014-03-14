@@ -9,4 +9,5 @@
 .idea/
 .gradle/
 build/
+out/
 apotychia/src/main/webapp/libs/

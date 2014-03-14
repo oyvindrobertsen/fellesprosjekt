@@ -9,7 +9,8 @@ public class Event {
     private Date startTime;
     private Date endTime;
     private boolean isActive;
-    private User eventAdmin;
+    private String description;
+    private String eventAdmin;
     private Set<Participant> participants;
 
     public Event(long id) {
@@ -52,12 +53,20 @@ public class Event {
         this.isActive = isActive;
     }
 
-    public User getEventAdmin() {
+    public String getEventAdmin() {
         return eventAdmin;
     }
 
-    public void setEventAdmin(User eventAdmin) {
+    public void setEventAdmin(String eventAdmin) {
         this.eventAdmin = eventAdmin;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Set<Participant> getParticipants() {

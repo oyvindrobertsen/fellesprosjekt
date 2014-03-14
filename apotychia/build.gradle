@@ -27,6 +27,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
+    compile 'org.springframework.boot:spring-boot-starter-test'
     compile 'com.fasterxml.jackson.core:jackson-databind'
     compile 'javax.inject:javax.inject:1'
     compile 'mysql:mysql-connector-java:5.1.18'
