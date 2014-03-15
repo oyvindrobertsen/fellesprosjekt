@@ -1,13 +1,11 @@
 package no.ntnu.apotychia.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-/**
- * Created by peteraa on 3/11/14.
- */
-public class Group {
-    private final String ID;
+public class Group implements Participant {
+    private long groupId;
     private List<User> members;
     private String name;
 
@@ -15,8 +13,24 @@ public class Group {
         members.add(user);
     }
 
+    public void addAllMembers(Collection<User> members) {
+        this.members.addAll(members);
+    }
+
     public void removeMember(User user){
         members.remove(user);
+    }
+
+    public void setId(long id) {
+        this.groupId = id;
+    }
+
+    /**
+     * Returns a Long-wrapper around the primitive long groupId
+     * @return Long Id
+     */
+    public Long getId() {
+        return this.groupId;
     }
 
     public void setName(String name){
@@ -33,10 +47,5 @@ public class Group {
 
     public boolean contains(User user){
         return members.contains(user);
-    }
-
-    public Group(String ID){
-        this.ID = ID;
-        members = new ArrayList<User>();
     }
 }

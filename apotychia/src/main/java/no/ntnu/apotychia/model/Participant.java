@@ -4,5 +4,6 @@ package no.ntnu.apotychia.model;
  * Created by peteraa on 3/11/14.
  */
 public interface Participant {
-    public String getID();
+    /* Returntype Object, since user has string for ID, while group has long */
+    public Object getId();
 }

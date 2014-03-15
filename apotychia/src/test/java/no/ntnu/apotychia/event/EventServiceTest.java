@@ -28,6 +28,7 @@ public class EventServiceTest {
     @Autowired
     UserService userService;
     private User testUser;
+    Event testEvent;
 
     @Before
     public void before() {
@@ -37,11 +38,7 @@ public class EventServiceTest {
         testUser.setLastName("TestLastName");
         testUser.setEmail("TestEmail@test.com");
         userService.addNewUser(testUser);
-    }
-
-    @Test
-    public void thatEventsAreAdded() {
-        Event testEvent = new Event();
+        testEvent = new Event();
         testEvent.setEventName("TestEvent");
         testEvent.setStartTime(new Date(1394873100000L));
         testEvent.setEndTime(new Date(1394876700000L));
@@ -51,7 +48,17 @@ public class EventServiceTest {
         HashSet<Participant> participants = new HashSet<Participant>();
         participants.add(testUser);
         testEvent.setParticipants(participants);
+    }
+
+    @Test
+    public void thatEventsAreAdded() {
         eventService.addEvent(testEvent);
         assertEquals(1, eventService.findAllEventsForUserByUsername(testUser.getUsername()).size());
+    }
+
+    @Test
+    public void thatParticipantsAreAddedAndCanBeRetrieved() {
+        long eventId = eventService.addEvent(testEvent);
+        assertEquals(1, eventService.findParticipantsForEventByEventId(eventId).size());
     }
 }

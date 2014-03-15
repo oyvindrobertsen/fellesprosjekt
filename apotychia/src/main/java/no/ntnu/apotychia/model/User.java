@@ -18,7 +18,7 @@ public class User implements Participant, Serializable {
         this.username = username;
     }
 
-    public String getID(){
+    public String getId(){
         return this.username;
     }
 

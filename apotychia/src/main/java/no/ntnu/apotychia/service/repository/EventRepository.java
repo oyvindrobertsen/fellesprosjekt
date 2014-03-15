@@ -2,6 +2,7 @@ package no.ntnu.apotychia.service.repository;
 
 import com.mysql.jdbc.Statement;
 import no.ntnu.apotychia.model.Event;
+import no.ntnu.apotychia.model.Group;
 import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class EventRepository {
@@ -26,7 +29,7 @@ public class EventRepository {
 
     public List<Event> findAll(final String username) {
         List<Event> result = jt.query(
-                "SELECT e.* FROM calendarEvent AS e, participants AS p " +
+                "SELECT e.* FROM calendarEvent e, participants p " +
                         "WHERE p.username = ? " +
                         "AND p.eventId = e.eventId",
                 new Object[]{username},
@@ -34,7 +37,7 @@ public class EventRepository {
                     @Override
                     public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
                         Event event = new Event();
-                        event.setEventID(rs.getLong("eventId"));
+                        event.setEventId(rs.getLong("eventId"));
                         event.setEventName(rs.getString("eventName"));
                         event.setStartTime(rs.getDate("startTime"));
                         event.setEndTime(rs.getDate("endTime"));
@@ -48,7 +51,7 @@ public class EventRepository {
         return result;
     }
 
-    public void insert(final Event event) {
+    public Long insert(final Event event) throws SQLException {
         final String sql = "INSERT INTO calendarEvent (eventName, startTime, endTime, isActive, description, eventAdmin) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
         KeyHolder holder = new GeneratedKeyHolder();
@@ -74,5 +77,66 @@ public class EventRepository {
                 );
             } /* Add code for insterting all members of a group here */
         }
+        if (holder.getKey() != null) {
+            return holder.getKey().longValue();
+        } else {
+            throw new SQLException("Error adding event");
+        }
+    }
+
+    public Event findById(long eventId) {
+        Event result = jt.queryForObject("SELECT * FROM calendarEvent WHERE eventId = ?",
+                new Object[]{eventId},
+                new RowMapper<Event>() {
+                    @Override
+                    public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Event event = new Event();
+                        event.setEventId(rs.getLong("eventId"));
+                        event.setEventName(rs.getString("eventName"));
+                        event.setStartTime(rs.getDate("startTime"));
+                        event.setEndTime(rs.getDate("endTime"));
+                        event.setActive(rs.getBoolean("isActive"));
+                        event.setDescription(rs.getString("description"));
+                        event.setEventAdmin(rs.getString("eventAdmin"));
+                        return event;
+                    }
+                });
+        return result;
+    }
+
+    public Set<Participant> findParticipantsByEventId(long eventId) {
+        List<Participant> result = jt.query(
+                "SELECT p.* FROM person p, participants pc " +
+                        "WHERE pc.eventId = ? " +
+                        "AND p.username = pc.username",
+                new Object[]{eventId},
+                new RowMapper<Participant>() {
+                    @Override
+                    public Participant mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        User user = new User();
+                        user.setUsername(rs.getString("username"));
+                        user.setFirstName(rs.getString("firstName"));
+                        user.setLastName(rs.getString("lastName"));
+                        user.setEmail(rs.getString("mail"));
+                        return user;
+                    }
+                }
+        );
+        result.addAll(jt.query(
+                "SELECT eg.* FROM participants pc, eventGroup eg " +
+                        "WHERE pc.eventId = ? " +
+                        "AND pc.groupId = eg.groupId",
+                new Object[]{eventId},
+                new RowMapper<Participant>() {
+                    @Override
+                    public Participant mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Group group = new Group();
+                        group.setId(rs.getLong("groupId"));
+                        group.setName(rs.getString("groupName"));
+                        return group;
+                    }
+                }
+        ));
+        return new HashSet<Participant>(result);
     }
 }

@@ -5,7 +5,7 @@ import java.util.Set;
 import javax.persistence.*;
 
 public class Event {
-    private long eventID;
+    private long eventId;
     private String eventName;
     private Date startTime;
     private Date endTime;
@@ -15,11 +15,11 @@ public class Event {
     private Set<Participant> participants;
 
     public long getEventID() {
-        return eventID;
+        return eventId;
     }
 
-    public void setEventID(long id) {
-        this.eventID = id;
+    public void setEventId(long id) {
+        this.eventId = id;
     }
 
     public String getEventName() {

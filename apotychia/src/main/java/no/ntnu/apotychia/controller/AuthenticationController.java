@@ -31,7 +31,7 @@ public class AuthenticationController {
 
     @RequestMapping(method = RequestMethod.GET, value="/me")
     public ResponseEntity<User> getCurrentUser() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         user.setPassword(null);
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
