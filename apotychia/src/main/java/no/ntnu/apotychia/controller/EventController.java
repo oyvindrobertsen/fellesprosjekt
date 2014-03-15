@@ -1,6 +1,7 @@
 package no.ntnu.apotychia.controller;
 
 import no.ntnu.apotychia.model.Event;
+import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
 import no.ntnu.apotychia.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/api/events")
@@ -28,6 +30,12 @@ public class EventController {
     @RequestMapping(method = RequestMethod.GET, value="/{id}")
     public ResponseEntity<Event> getEvent(@PathVariable long eventId) {
         return new ResponseEntity<Event>(eventService.findEventById(eventId), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/{id}/participants")
+    public ResponseEntity<Set<Participant>> getParticipantsForEvent(@PathVariable long eventId) {
+        return new ResponseEntity<Set<Participant>>(eventService.findParticipantsForEventByEventId(eventId),
+                HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)

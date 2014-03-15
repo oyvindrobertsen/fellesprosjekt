@@ -68,19 +68,26 @@ public class EventRepository {
                           return ps;
                       }
                   }, holder);
-        for (Participant p: event.getParticipants()) {
-            if (p instanceof User) {
-                User u = (User)p;
-                jt.update(
-                        "INSERT INTO participants (eventId, username) VALUES (?, ?)",
-                        holder.getKey().longValue(), u.getUsername()
-                );
-            } /* Add code for insterting all members of a group here */
-        }
         if (holder.getKey() != null) {
             return holder.getKey().longValue();
         } else {
             throw new SQLException("Error adding event");
+        }
+    }
+
+    public void addParticipant(Long eventId, Participant participant) {
+        if (participant instanceof User) {
+            User u = (User)participant;
+            jt.update(
+                    "INSERT INTO participants (eventId, username) VALUES (?, ?)",
+                    eventId, u.getUsername()
+            );
+        } else {
+            Group g = (Group)participant;
+            jt.update(
+                    "INSERT INTO participants (eventId, groupId) VALUES (?, ?)",
+                    eventId, g.getId()
+            );
         }
     }
 

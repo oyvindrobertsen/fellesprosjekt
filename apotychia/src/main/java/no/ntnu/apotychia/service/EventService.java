@@ -47,7 +47,11 @@ public class EventService {
 
     public Long addEvent(Event event) {
         try {
-            return eventRepository.insert(event);
+            Long eventId = eventRepository.insert(event);
+            for (Participant participant : event.getParticipants()) {
+                eventRepository.addParticipant(eventId, participant);
+            }
+            return eventId;
         } catch (SQLException e) {
             e.printStackTrace();
         }

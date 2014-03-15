@@ -3,10 +3,11 @@ package no.ntnu.apotychia.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class Group implements Participant {
     private long groupId;
-    private List<User> members;
+    private Set<User> members;
     private String name;
 
     public void addMember(User user){
@@ -41,7 +42,7 @@ public class Group implements Participant {
         return this.name;
     }
 
-    public List getAllMembers(){
+    public Set<User> getAllMembers(){
         return this.members;
     }
 
