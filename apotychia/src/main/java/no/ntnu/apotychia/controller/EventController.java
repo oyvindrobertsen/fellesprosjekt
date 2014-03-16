@@ -48,4 +48,8 @@ public class EventController {
             throw new IllegalArgumentException("EventAdmin not same as logged in user");
         }
     }
+
+    /*
+    TODO: Add code for endpoints returning events for current/any week, for adding participants to events and notifications.
+     */
 }

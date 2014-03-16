@@ -87,4 +87,20 @@ public class GroupRepository {
                 new Object[]{groupId, user.getUsername()}
         );
     }
+
+    public List<Group> findAllGroups() {
+        List<Group> result = jt.query(
+                "SELECT * FROM eventGroup",
+                new RowMapper<Group>() {
+                    @Override
+                    public Group mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Group group = new Group();
+                        group.setId(rs.getLong("groupId"));
+                        group.setName(rs.getString("groupName"));
+                        return group;
+                    }
+                }
+        );
+        return result;
+    }
 }
