@@ -7,6 +7,8 @@ App.Store = DS.Store.extend({
  adapter: 'DS.FixtureAdapter'
 });
 
+App.ApplicationAdapter = DS.FixtureAdapter;
+
 // models
 
 App.Member = DS.Model.extend({
@@ -29,33 +31,45 @@ App.CalenderEvent = DS.Model.extend({
 // routes
 
 App.Router.map(function() {
-    this.route('calender', { path: '/:action_id' }, function() {  // calender/watch or calender/edit
-      this.route('event', { path: '/:event_id' });  // calender/watch/2 or calender/edit/5
+    this.resource('calender', { path: "/calender"}, function() {  // calender
+      this.resource("newevent"); //calender/new
+      this.resource('watch', { path: 'watch/:event_id' });  // calender/watch/2
+      this.resource('edit', { path: 'edit/:event_id'}); // calender/edit/1
     });
-    this.route("newevent", { path: "/newevent" }); //calender/new
+    this.resource('me');
 });
 
-App.ApplicationRoute = Ember.Route.extend({
+App.CalenderRoute = Ember.Route.extend({
     model: function() {
         return  this.store.find('calenderEvent')
     }
 });
 
-
 App.NeweventRoute = Ember.Route.extend({
     model: function(params) {
         return Ember.RSVP.hash({
             persons: this.store.find('person'),
-            members: this.store.find('member')
+            members: this.store.find('member'),
         })
     }
 });
 
+App.MeRoute = Ember.Route.extend({
+  model: function() {
+    return Ember.$.getJSON('/api/auth/me');
+  }
+});
+
 // controller
 
-App.NeweventController = Ember.ArrayController.extend({
-  actions: {
-  }
+App.NeweventController = Ember.ObjectController.extend({
+
+    actions: {
+      save: function(params) {
+          var newCevent = App.CalenderEvent.create();
+          newCevent.set('eventName', params.eventName);
+      }.property('model.calenderEvent')
+    }
 });
 
 
@@ -80,7 +94,7 @@ App.NeweventView = Ember.View.extend({
 
 App.IndexRoute = Ember.Route.extend({
   redirect: function() {
-    this.transitionTo('newevent');
+    this.transitionTo('calender');
   }
 });
 
