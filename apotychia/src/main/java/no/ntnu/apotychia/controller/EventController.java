@@ -4,6 +4,8 @@ import no.ntnu.apotychia.model.Event;
 import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
 import no.ntnu.apotychia.service.EventService;
+import no.ntnu.apotychia.service.UserService;
+import no.ntnu.apotychia.service.security.ApotychiaUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +23,19 @@ public class EventController {
 
     @Autowired
     EventService eventService;
+    @Autowired
+    UserService userService;
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<Event>> getAllEventsForLoggedInUser() {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        return new ResponseEntity<List<Event>>(eventService.findAllEventsForUserByUsername(currentUser.getUsername()), HttpStatus.OK);
+    }
 
     @RequestMapping(method = RequestMethod.GET, value="/{username}")
-    public ResponseEntity<List<Event>> getAllEventsForUser(@PathVariable String username) {
+    public ResponseEntity<List<Event>> getAllEventsForUserByUserName(@PathVariable String username) {
         return new ResponseEntity<List<Event>>(eventService.findAllEventsForUserByUsername(username), HttpStatus.OK);
     }
 

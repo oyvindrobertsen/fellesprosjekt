@@ -2,6 +2,7 @@ package no.ntnu.apotychia.controller;
 
 import no.ntnu.apotychia.model.User;
 import no.ntnu.apotychia.service.UserService;
+import no.ntnu.apotychia.service.security.ApotychiaUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,10 @@ public class AuthenticationController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/me")
-    public ResponseEntity<User> getCurrentUser(@ModelAttribute User currentUser) {
+    public ResponseEntity<User> getCurrentUser() {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         currentUser.setPassword(null);
         return new ResponseEntity<User>(currentUser, HttpStatus.OK);
     }
