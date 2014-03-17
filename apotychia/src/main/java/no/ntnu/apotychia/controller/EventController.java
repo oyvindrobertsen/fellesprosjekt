@@ -31,7 +31,8 @@ public class EventController {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
-        return new ResponseEntity<List<Event>>(eventService.findAllEventsForUserByUsername(currentUser.getUsername()), HttpStatus.OK);
+        return new ResponseEntity<List<Event>>(eventService.findAllEventsForUserByUsername(currentUser.getUsername()),
+                HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{username}")

@@ -1,11 +1,20 @@
 App.Router.map(function() {
-    this.resource('app');
+    this.resource('events', function() {
+        this.resource('event', {path: ':event_id'});
+        this.resource('add');
+    });
     this.resource('me');
 });
 
-App.AppRoute = Ember.Route.extend({
+App.IndexRoute = Ember.Route.extend({
+    redirect: function() {
+        this.transitionTo('events');
+    }
+});
+
+App.EventsIndexRoute = Ember.Route.extend({
     model: function() {
-        return
+        return Ember.$.getJSON('/api/events');
     }
 });
 

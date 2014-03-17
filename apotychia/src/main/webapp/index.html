@@ -23,7 +23,7 @@
         </div>
         <div class="collapse navbar-collapse" id="ap-nav-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="#">Action</a></li>
+                <li>{{#link-to 'add'}}Add event{{/link-to}}</li>
                 <li><a href="#">Another action</a></li>
                 <li><a href="#">Something else here</a></li>
                 <li><a href="#">Separated link</a></li>
@@ -40,18 +40,30 @@
 <!-- Main container -->
 <div class="container-fluid" id="main-container">
     <div class="row">
-        <div class="col-md-8 calender-panel">
-            {{outlet}}
-        </div>
-        <div class="col-md-4">
-
-        </div>
+        {{outlet}}
     </div>
 </div>
+<!-- End main container -->
 </script>
 
-<script type="text/x-handlebars" id="app">
-    Test
+<script type="text/x-handlebars" id="events/index">
+    <div class="col-md-8 calender-panel">
+        Weeee!
+            {{#each}}
+                {{eventName}}
+            {{/each}}
+        </div>
+        <div class="col-md-4">
+            {{outlet}}
+        </div>
+</script>
+
+<script type="text/x-handlebars" id="event">
+    <h1>{{eventName}}</h1>
+</script>
+
+<script type="text/x-handlebars" id="add">
+    Test!
 </script>
 
 <!-- Me section -->
@@ -60,7 +72,7 @@
 </script>
 
 
-<!-- End main container -->
+
 
 <!-- Include JS here -->
 <!-- Libraries -->
