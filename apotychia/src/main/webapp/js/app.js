@@ -7,92 +7,42 @@ App.Store = DS.Store.extend({
  adapter: 'DS.FixtureAdapter'
 });
 
-App.Person = DS.Model.extend({
-    name: DS.attr('string')
-});
+// models
 
 App.Member = DS.Model.extend({
     name: DS.attr('string')
 });
 
+App.Person = DS.Model.extend({
+    name: DS.attr('string')
+});
 
-App.Person.FIXTURES = [
-  {
-    id: 1,
-    name: "Andreas"
-  }, {
-    id: 2,
-    name: "Ole"
-  }, {
-    id: 3,
-    name: "Kent"
-  }, {
-    id: 4,
-    name: "Annie"
-  }, {
-    id: 5,
-    name: "Sid"
-  }, {
-    id: 6,
-    name: "Emily"
-  }, {
-    id: 7,
-    name: "Bonnie"
-  }, {
-    id: 8,
-    name: "Tommy"
-  }, {
-    id: 9,
-    name: "Knut"
-  }
-];
+App.CalenderEvent = DS.Model.extend({
+    eventName: DS.attr('string')
+    //startTime: DS.attr('date')
+    //endTime: DS.attr('date')
+    //isActive: DS.attr('boolean')
+    //description: DS.attr('string')
+    //eventAdmin: DS.attr('person')
+});
 
-
-App.Member.FIXTURES = [
-  {
-    id: 1,
-    name: "worker1"
-  }, {
-    id: 2,
-    name: "woerk2"
-  }, {
-    id: 3,
-    name: "worker3"
-  }, {
-    id: 4,
-    name: "worker3"
-  }, {
-    id: 5,
-    name: "worker3"
-  }, {
-    id: 6,
-    name: "worker3"
-  }, {
-    id: 7,
-    name: "worker3"
-  }, {
-    id: 8,
-    name: "worker3"
-  }, {
-    id: 9,
-    name: "worker9"
-  }, {
-    id: 10,
-    name: "worker10"
-  }, {
-    id: 11,
-    name: "worker11"
-  }
-];
+// routes
 
 App.Router.map(function() {
-    this.route("calender", { path: "/calender" });
-    this.route("new-event");
-    this.route("watch-event");
+    this.route('calender', { path: '/:action_id' }, function() {  // calender/watch or calender/edit
+      this.route('event', { path: '/:event_id' });  // calender/watch/2 or calender/edit/5
+    });
+    this.route("newevent", { path: "/newevent" }); //calender/new
+});
+
+App.ApplicationRoute = Ember.Route.extend({
+    model: function() {
+        return  this.store.find('calenderEvent')
+    }
 });
 
 
-App.CalenderRoute = Ember.Route.extend({
+App.NeweventRoute = Ember.Route.extend({
     model: function(params) {
         return Ember.RSVP.hash({
             persons: this.store.find('person'),
@@ -101,11 +51,17 @@ App.CalenderRoute = Ember.Route.extend({
     }
 });
 
-App.CalenderController = Ember.Controller.extend({
+// controller
 
+App.NeweventController = Ember.ArrayController.extend({
+  actions: {
+  }
 });
 
-App.CalenderView = Ember.View.extend({
+
+// views
+
+App.NeweventView = Ember.View.extend({
     didInsertElement: function() {
       // Enable popovers
       $("a[rel=popover]").popover({
@@ -120,9 +76,11 @@ App.CalenderView = Ember.View.extend({
     }
 });
 
+// index route
+
 App.IndexRoute = Ember.Route.extend({
   redirect: function() {
-    this.transitionTo('calender');
+    this.transitionTo('newevent');
   }
 });
 
