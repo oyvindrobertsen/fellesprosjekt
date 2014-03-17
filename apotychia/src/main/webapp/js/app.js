@@ -29,9 +29,8 @@ App.CalenderEvent = DS.Model.extend({
 // routes
 
 App.Router.map(function() {
-    this.resource('calender', { path: "/calender"}, function() {  // calender
-      this.resource("newevent"); //calender/new
-      this.resource('watch', { path: 'watch/:event_id' });  // calender/watch/2
+    this.resource('event', { path: "/event"}, function() {  // calender
+      this.resource("new"); //calender/new
       this.resource('edit', { path: 'edit/:event_id'}); // calender/edit/1
     });
     this.resource('me');
@@ -48,6 +47,7 @@ App.NeweventRoute = Ember.Route.extend({
         return {
             newEvent: App.CalenderEvent.createRecord({isActive: true}),
             members: this.store.find('member'),
+            persons: this.store.find('person')
         }
     }
 });
@@ -66,11 +66,6 @@ App.NeweventController = Ember.ObjectController.extend({
       save: function() {
         Ember.$.post('/api/events', this.get('model.newEvent'));
       }
-    },
-    persons: function() {
-      return this.store.find('persons').filter(function(name) {
-        return name.match('Andreas');
-      });
     }
 });
 
