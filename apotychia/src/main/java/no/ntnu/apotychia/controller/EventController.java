@@ -53,6 +53,10 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody Event addEvent(@ModelAttribute Event event, ModelMap model) {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        event.setEventAdmin(currentUser.getUsername());
         long eventId = eventService.addEvent(event);
         return eventService.findEventById(eventId);
 

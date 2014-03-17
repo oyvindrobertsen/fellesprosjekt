@@ -19,11 +19,11 @@ App.Person = DS.Model.extend({
 
 App.CalenderEvent = DS.Model.extend({
     eventName: DS.attr('string')
-    //startTime: DS.attr('date')
-    //endTime: DS.attr('date')
-    //isActive: DS.attr('boolean')
-    //description: DS.attr('string')
-    //eventAdmin: DS.attr('person')
+    startTime: DS.attr('date')
+    endTime: DS.attr('date')
+    isActive: DS.attr('boolean')
+    description: DS.attr('string')
+    eventAdmin: DS.attr('person')
 });
 
 // routes
@@ -44,11 +44,12 @@ App.CalenderRoute = Ember.Route.extend({
 });
 
 App.NeweventRoute = Ember.Route.extend({
-    model: function(params) {
-        return Ember.RSVP.hash({
+    model: function() {
+        return {
+            newEvent: App.CalenderEvent.createRecord({isActive: true}),
             persons: this.store.find('person'),
             members: this.store.find('member'),
-        })
+        }
     }
 });
 
@@ -62,12 +63,10 @@ App.MeRoute = Ember.Route.extend({
 // controller
 
 App.NeweventController = Ember.ObjectController.extend({
-
     actions: {
-      save: function(params) {
-          var newCevent = App.CalenderEvent.create();
-          newCevent.set('eventName', params.eventName);
-      }.property('model.calenderEvent')
+      save: function() {
+        Ember.$.post('/api/events', this.get('model.newEvent'));
+      }
     }
 });
 
@@ -81,7 +80,7 @@ App.NeweventView = Ember.View.extend({
         placement: 'left',
         html: true,
         content: function() {
-            return $('#popover_content_wrapper').html();
+            return $('#popover-content-wrapper').html();
     }
       }).click(function(e) {
         e.preventDefault();
