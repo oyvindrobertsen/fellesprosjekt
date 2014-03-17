@@ -7,7 +7,3 @@ App.Person = DS.Model.extend({
 	}.property('firstName', 'lastName'),
 	email: DS.attr('string'),
 });
-
-App.RESTAdapter.map('App.Person', {
-    primaryKey: 'username'
-});

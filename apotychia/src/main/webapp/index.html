@@ -1,5 +1,4 @@
 <html>
-<<<<<<< HEAD
 <head>
     <title>Apotychia</title>
 
@@ -10,22 +9,8 @@
     <script src="libs/less/dist/less-1.7.0.js" type="text/javascript"></script>
 </head>
 <body>
-<script type="text/x-handlebars">
-=======
-    <head>
-        <title>Apotychia</title>
-
-        <!-- Bootstrap -->
-        <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" media="screen">
-        <!-- Main css -->
-        <link rel="stylesheet/less" href="css/app.less">
-        <script src="libs/less/dist/less-1.7.0.js" type="text/javascript"></script>
-    </head>
-
-<body>
 <!-- Main container -->
-<script type="text/x-handlebars" id="calender">
->>>>>>> web
+<script type="text/x-handlebars">
 <nav class="navbar nav navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -55,25 +40,28 @@
 
     <div class="container-fluid">
         <row>
-            <!-- Calender view -->
-            <div class="col-md-8 calender-panel">
-                <table>
-                    {{#each model}}
-                    <tbody>
-                        <td> {{eventName}} </td>
-                    </tbody>
-                    {{/each}}
-                </table>
-            </div>
-            <div class="col-md-4 calender-panel">
-                {{outlet}}
-            </div>
+            {{outlet}}
         </row>
     </div>
 </script>
 
+<script type="text/x-handlebars" id="calender">
+    <!-- Calender view -->
+    <div class="col-md-8 calender-panel">
+        <table>
+            {{#each model}}
+                <tr>
+                    <td> {{eventName}} </td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+    <div class="col-md-4 calender-panel">
+        {{outlet}}
+    </div>
+</script>
+
 <script type="text/x-handlebars" id="newevent">
-    <div class="container-fluid">
             <form>
                 <!-- Title -->
                 <div class="form-group">
@@ -90,29 +78,29 @@
                     <input type="text" name="dato" class="form-control" placeholder="Dato">
                 </div>
 
-                <div class="row">
-                    <!-- Time -->
-                    <div class="form-group">
-                        <div class="col-md-6">
-                            <input type="text" name="start" class="form-control" placeholder="Start"> 
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" name="slutt" class="form-control" placeholder="Slutt">
-                        </div>
+                
+                <!-- Time -->
+                <div class="form-group">
+                    <div class="col-md-6 split-form-left">
+                        <input type="text" name="start" class="form-control" placeholder="Start"> 
                     </div>
-                    
-                    <!-- Radio button place -->
-                    <div class="form-group">
-                        <div class="col-md-4 col-md-push-2">
-                            <input type="radio" name="optionRadios" id="radio-place" value="option1" checked>
-                            Skriv sted
-                        </div>
-                        <div class="col-md-4 col-md-push-2">
-                            <input type="radio" name="optionRadios" id="radio-room" value="option2">
-                            Velg m&oslash;terom
-                        </div>
+                    <div class="col-md-6 split-form-right">
+                        <input type="text" name="slutt" class="form-control" placeholder="Slutt">
                     </div>
                 </div>
+                
+                <!-- Radio button place -->
+                <div class="form-group">
+                    <div class="col-md-6 split-form-radio">
+                        <input type="radio" name="optionRadios" id="radio-place" value="option1" checked>
+                        Skriv sted
+                    </div> 
+                    <div class="col-md-6 split-form-radio">
+                        <input type="radio" name="optionRadios" id="radio-room" value="option2">
+                        Velg m&oslash;terom
+                    </div>
+                </div>
+                
 
                 <!-- Place -->
                 <div class="form-group">
@@ -170,7 +158,7 @@
                                 </tr>
                             </thead>
                         </table>
-                        <div style="overflow: auto; max-height: 200px;">
+                        <div style="overflow: auto; max-height: 30%;">
                             <table class="table" style="font-size: 12px">
                                 <!-- Circle colors: yellow: #fe0, green: #182, red: #f21 -->
                                 <tbody>
@@ -197,7 +185,6 @@
                     </div>
             </form>
         </div>
-    </div>
 </script>
 <!-- End main container -->
 
@@ -215,10 +202,6 @@
 
 <!-- Application code -->
 <script src="js/app.js"></script>
-<script src="js/controllers.js"></script>
-<script src="js/models/person.js"></script>
-<script src="js/models/group.js"></script>
-<script src="js/router.js"></script>
 <script src="js/models/fixtures.js"></script>
 
 </body>

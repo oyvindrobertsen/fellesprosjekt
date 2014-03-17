@@ -2,17 +2,9 @@ window.App = Ember.Application.create({
     LOG_TRANSITIONS: true
 });
 
-App.RESTAdapter = DS.RESTAdapter.extend({
-    namespace: 'api'
-});
-
 App.Store = DS.Store.extend({
  revision: 12,
- adapter: 'DS.FixtureAdapter'
-});
-
-App.Store = DS.Store.extend({
-    adapter: App.RESTAdapter
+ adapter: DS.FixtureAdapter
 });
 
 // models
@@ -47,7 +39,7 @@ App.Router.map(function() {
 
 App.CalenderRoute = Ember.Route.extend({
     model: function() {
-        return  this.store.find('calenderEvent')
+        return this.store.find('calenderEvent');
     }
 });
 
