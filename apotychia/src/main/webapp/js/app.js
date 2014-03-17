@@ -18,11 +18,11 @@ App.Person = DS.Model.extend({
 });
 
 App.CalenderEvent = DS.Model.extend({
-    eventName: DS.attr('string')
-    startTime: DS.attr('date')
-    endTime: DS.attr('date')
-    isActive: DS.attr('boolean')
-    description: DS.attr('string')
+    eventName: DS.attr('string'),
+    startTime: DS.attr('date'),
+    endTime: DS.attr('date'),
+    isActive: DS.attr('boolean'),
+    description: DS.attr('string'),
     eventAdmin: DS.attr('person')
 });
 
@@ -47,7 +47,6 @@ App.NeweventRoute = Ember.Route.extend({
     model: function() {
         return {
             newEvent: App.CalenderEvent.createRecord({isActive: true}),
-            persons: this.store.find('person'),
             members: this.store.find('member'),
         }
     }
@@ -67,9 +66,13 @@ App.NeweventController = Ember.ObjectController.extend({
       save: function() {
         Ember.$.post('/api/events', this.get('model.newEvent'));
       }
+    },
+    persons: function() {
+      return this.store.find('persons').filter(function(name) {
+        return name.match('Andreas');
+      });
     }
 });
-
 
 // views
 
