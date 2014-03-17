@@ -24,7 +24,7 @@
         </div>
         <div class="collapse navbar-collapse" id="ap-nav-collapse">
             <ul class="nav navbar-nav">
-                <li>{{#link-to 'newevent'}}Add new Event{{/link-to}}</li>
+                <li>{{#link-to 'new'}}Add new Event{{/link-to}}</li>
                 <li><a href="#">Another action</a></li>
                 <li><a href="#">Something else here</a></li>
                 <li><a href="#">Separated link</a></li>
@@ -45,7 +45,7 @@
     </div>
 </script>
 
-<script type="text/x-handlebars" id="calender">
+<script type="text/x-handlebars" id="event">
     <!-- Calender view -->
     <div class="col-md-8 calender-panel">
         <table>
@@ -64,7 +64,7 @@
     </div>
 </script>
 
-<script type="text/x-handlebars" id="newevent">
+<script type="text/x-handlebars" id="new">
     <form>
         <!-- Title -->
         <div class="form-group">
@@ -119,8 +119,9 @@
                                     {{input type="text" placeholder="S&oslash;k etter person" class="form-control" value=searchTerm}}
                                 </div>
                             </div>
-                            <ul>
-                                {{#each person in persons}}
+
+                            <ul style="overflow: auto; max-height: 300px">
+                                {{#each model.persons}}
                                 <li class="list-unstyled">
                                     <label style="margin-left:-15px;">
                                         <input type="checkbox" name="add"> {{name}}
