@@ -22,5 +22,4 @@ public class GroupController {
     public ResponseEntity<List<Group>> getAllGroups() {
         return new ResponseEntity<List<Group>>(groupService.getAllGroups(), HttpStatus.OK);
     }
-
 }

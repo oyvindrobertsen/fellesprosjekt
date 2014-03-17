@@ -40,13 +40,16 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody Event addEvent(@ModelAttribute Event event, ModelMap model) {
-        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (user.getUsername().equals(event.getEventAdmin())) {
-            long eventId = eventService.addEvent(event);
-            return eventService.findEventById(eventId);
-        } else {
-            throw new IllegalArgumentException("EventAdmin not same as logged in user");
-        }
+        long eventId = eventService.addEvent(event);
+        return eventService.findEventById(eventId);
+
+//        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        if (user.getUsername().equals(event.getEventAdmin())) {
+//            long eventId = eventService.addEvent(event);
+//            return eventService.findEventById(eventId);
+//        } else {
+//            throw new IllegalArgumentException("EventAdmin not same as logged in user");
+//        }
     }
 
     /*

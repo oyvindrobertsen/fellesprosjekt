@@ -18,6 +18,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
         @RequestMapping({
                 "/",
+                "/me"
         })
         public String index() {
             return "/index.html";
