@@ -64,7 +64,7 @@ CREATE TABLE attending (
 
     PRIMARY KEY (eventId),
     FOREIGN KEY(username) REFERENCES person (username)
-        ON UPDATE cascade ON DELETE SET NULL
+        ON UPDATE cascade ON DELETE SET cascade
 );
 
 
