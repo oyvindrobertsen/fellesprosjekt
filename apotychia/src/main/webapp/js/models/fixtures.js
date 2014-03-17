@@ -67,7 +67,7 @@ App.Member.FIXTURES = [
   }
 ];
 
-App.CalenderEvent.FIXTURES = [
+App.Event.FIXTURES = [
   {
     id: 1,
     eventName: "Mat katten"
