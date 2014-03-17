@@ -1,4 +1,5 @@
 <html>
+<<<<<<< HEAD
 <head>
     <title>Apotychia</title>
 
@@ -10,6 +11,21 @@
 </head>
 <body>
 <script type="text/x-handlebars">
+=======
+    <head>
+        <title>Apotychia</title>
+
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" media="screen">
+        <!-- Main css -->
+        <link rel="stylesheet/less" href="css/app.less">
+        <script src="libs/less/dist/less-1.7.0.js" type="text/javascript"></script>
+    </head>
+
+<body>
+<!-- Main container -->
+<script type="text/x-handlebars" id="calender">
+>>>>>>> web
 <nav class="navbar nav navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -23,7 +39,7 @@
         </div>
         <div class="collapse navbar-collapse" id="ap-nav-collapse">
             <ul class="nav navbar-nav">
-                <li>{{#link-to 'add'}}Add event{{/link-to}}</li>
+                <li>{{#link-to 'newevent'}}Add new Event{{/link-to}}</li>
                 <li><a href="#">Another action</a></li>
                 <li><a href="#">Something else here</a></li>
                 <li><a href="#">Separated link</a></li>
@@ -37,42 +53,157 @@
     </div>
 </nav>
 
-<!-- Main container -->
-<div class="container-fluid" id="main-container">
-    <div class="row">
-        {{outlet}}
+    <div class="container-fluid">
+        <row>
+            <!-- Calender view -->
+            <div class="col-md-8 calender-panel">
+                <table>
+                    {{#each model}}
+                    <tbody>
+                        <td> {{eventName}} </td>
+                    </tbody>
+                    {{/each}}
+                </table>
+            </div>
+            <div class="col-md-4 calender-panel">
+                {{outlet}}
+            </div>
+        </row>
     </div>
-</div>
+</script>
+
+<script type="text/x-handlebars" id="newevent">
+    <div class="container-fluid">
+            <form>
+                <!-- Title -->
+                <div class="form-group">
+                    <input type="text" name="tittel" class="form-control" placeholder="Tittel">
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <textarea name="description" class="form-control" placeholder="Skriv en beskrivelse" rows="2"></textarea>
+                </div>
+
+                <!-- Date -->
+                <div class="form-group">
+                    <input type="text" name="dato" class="form-control" placeholder="Dato">
+                </div>
+
+                <div class="row">
+                    <!-- Time -->
+                    <div class="form-group">
+                        <div class="col-md-6">
+                            <input type="text" name="start" class="form-control" placeholder="Start"> 
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" name="slutt" class="form-control" placeholder="Slutt">
+                        </div>
+                    </div>
+                    
+                    <!-- Radio button place -->
+                    <div class="form-group">
+                        <div class="col-md-4 col-md-push-2">
+                            <input type="radio" name="optionRadios" id="radio-place" value="option1" checked>
+                            Skriv sted
+                        </div>
+                        <div class="col-md-4 col-md-push-2">
+                            <input type="radio" name="optionRadios" id="radio-room" value="option2">
+                            Velg m&oslash;terom
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Place -->
+                <div class="form-group">
+                    <input type="text" name="tittel" class="form-control" placeholder="Sted">
+                </div>
+
+                <!-- Invited persons table -->
+                <div class="form-group">
+                    <div>
+                        <table class="table">
+                            <thead>
+
+                                <tr>
+                                    <th> Deltakere </th>
+                                    <th>  </th>
+                                    <th>  </th>
+                                    <th>  </th>
+                                    <th> Deltar </th>
+                                    <th>
+
+                                        <div> 
+                                            <a href="#" rel="popover" data-content=""><button id="add-member" type="button" class="btn btn-primary btn-sm"> Legg til deltaker </button></a>
+
+                                            <div id="popover_content_wrapper" class="hide">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <input type="text" class="form-control" placeholder="Sok etter person">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group"> 
+                                                    <div>
+                                                        <table class"table">
+                                                            {{#each model.persons}}
+                                                            <tbody>
+                                                                <td> {{name}} </td>
+                                                                <td> <input type="checkbox" name="add"> </td>
+                                                            </tbody>
+                                                            {{/each}}
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <div class="col-md-6">
+                                                        <button class="form-control btn btn-success btn-primary"> Legg til </button>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <button class="form-control btn btn-danger btn-primary"> Avbryt </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <div style="overflow: auto; max-height: 200px;">
+                            <table class="table" style="font-size: 12px">
+                                <!-- Circle colors: yellow: #fe0, green: #182, red: #f21 -->
+                                <tbody>
+                                {{#each model.members}}
+                                <tr>
+                                    <td> {{name}} </td> 
+                                    <td> <div class="circle" style="background:#182" > </div> </td> 
+                                    <td> <button class="btn btn-primary btn-xs"> Fjern </button></td>
+                                </tr>
+                                {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save/delete buttons -->
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <button class="form-control btn btn-success btn-primary"> Lagre avtale </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="form-control btn btn-danger btn-primary"> Slett avtale </button>
+                    </div>
+            </form>
+        </div>
+    </div>
+</script>
 <!-- End main container -->
-</script>
 
-<script type="text/x-handlebars" id="events/index">
-    <div class="col-md-8 calender-panel">
-        Weeee!
-            {{#each}}
-                {{eventName}}
-            {{/each}}
-        </div>
-        <div class="col-md-4">
-            {{outlet}}
-        </div>
-</script>
-
-<script type="text/x-handlebars" id="event">
-    <h1>{{eventName}}</h1>
-</script>
-
-<script type="text/x-handlebars" id="add">
-    Test!
-</script>
-
-<!-- Me section -->
 <script type="text/x-handlebars" id="me">
     {{firstName}}
 </script>
-
-
-
 
 <!-- Include JS here -->
 <!-- Libraries -->
@@ -88,6 +219,7 @@
 <script src="js/models/person.js"></script>
 <script src="js/models/group.js"></script>
 <script src="js/router.js"></script>
+<script src="js/models/fixtures.js"></script>
 
 </body>
 </html>
