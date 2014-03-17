@@ -48,17 +48,26 @@ CREATE TABLE calendarEvent (
 );
 
 
-CREATE TABLE participants (
+CREATE TABLE invited (
     eventId     INT             NOT NULL,
-    username    VARCHAR(45)     NULL,
-    groupId     INT             NULL,
+    username    VARCHAR(45)     NOT NULL,
 
     PRIMARY KEY (eventId),
     FOREIGN KEY(username) REFERENCES person (username)
-        ON UPDATE cascade ON DELETE SET NULL,
-    FOREIGN KEY(groupId)  REFERENCES eventGroup (groupId)
+        ON UPDATE cascade ON DELETE SET cascade
+);
+
+
+CREATE TABLE attending (
+    eventId     INT             NOT NULL,
+    username    VARCHAR(45)     NOT NULL,
+
+    PRIMARY KEY (eventId),
+    FOREIGN KEY(username) REFERENCES person (username)
         ON UPDATE cascade ON DELETE SET NULL
 );
+
+
 
 CREATE TABLE booked (
     bookedId    INT             NOT NULL    AUTO_INCREMENT,
