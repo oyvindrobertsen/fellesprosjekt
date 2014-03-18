@@ -51,7 +51,7 @@ public class EventController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}")
-    public ResponseEntity<Event> getEvent(@PathVariable long id) {
+    public ResponseEntity<Event> getEvent(@PathVariable Long id) {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
@@ -62,6 +62,12 @@ public class EventController {
         return new ResponseEntity<Event>(event, HttpStatus.OK);
     }
 
+    @RequestMapping(method = RequestMethod.DELETE, value="/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteEvent(@PathVariable Long id) {
+        eventService.deleteEventById(id);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value="/{id}/participants")
     public ResponseEntity<Set<Participant>> getParticipantsForEvent(@PathVariable long eventId) {
         return new ResponseEntity<Set<Participant>>(eventService.findAttendingForEventByEventId(eventId),
@@ -70,7 +76,6 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody Event addEvent(@RequestBody Event event, ModelMap model) {
-        logger.info(event.toString());
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());

@@ -105,7 +105,35 @@ App.EditController = Ember.ObjectController.extend({
     }.property('model.endTime'),
     actions: {
         saveEdit: function() {
-        // todo
+            var self = this;
+            Ember.$.ajax({
+                url: '/api/events/' + this.get('model.eventID'),
+                type: 'PUT',
+                dataType: 'xml/html/script/json',
+                contentType: 'application/JSON',
+                data: JSON.stringify({
+                    eventID: this.get('model.eventID'),
+                    eventName: this.get('model.eventName'),
+                    startTime: this.get('date') + " " + this.get('startTime'),
+                    endTime: this.get('date') + " " + this.get('endTime'),
+                    eventAdmin: this.get('model.eventAdmin'),
+                    description: this.get('model.description'),
+                    active: this.get('model.active')
+                }),
+                complete: function() {
+                    self.transitionToRoute('/');
+                }
+            });
+        },
+        delete: function() {
+            var self = this;
+            Ember.$.ajax({
+                url: '/api/events/' + this.get('model.eventID'),
+                type: 'DELETE',
+                complete: function() {
+                    self.transitionToRoute('/');
+                }
+            });
         }
     }
 });

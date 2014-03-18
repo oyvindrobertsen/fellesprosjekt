@@ -58,4 +58,8 @@ public class EventService {
     public void addAttending(Long eventId, Participant participant) {
         eventRepository.addAttending(eventId, participant);
     }
+
+    public void deleteEventById(Long id) {
+        eventRepository.delete(id);
+    }
 }

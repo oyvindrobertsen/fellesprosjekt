@@ -173,4 +173,8 @@ public class EventRepository {
         );
         return new HashSet<Participant>(result);
     }
+
+    public void delete(Long id) {
+        jt.update("DELETE FROM calendarEvent WHERE eventId = ?", id);
+    }
 }
