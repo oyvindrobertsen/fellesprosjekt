@@ -27,8 +27,8 @@
                 <li>{{#link-to 'new'}}Legg til avtale{{/link-to}}</li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li>{{#link-to 'me'}}Me{{/link-to}}</li>
-                <li><a href="/logout">Logout</a></li>
+                <li>{{#link-to 'me'}}Meg{{/link-to}}</li>
+                <li><a href="/logout">Logg ut</a></li>
             </ul>
         </div>
     </div>
@@ -309,7 +309,10 @@
 
 <!-- Testing-->
 <script type="text/x-handlebars" id="me">
-    {{firstName}}
+    <div class="col-md-9">
+        <h1>{{firstName}} {{lastName}}</h1>
+        <p class="lead">{{email}}</p>
+    </div>
 </script>
 
 <!-- End main container -->
