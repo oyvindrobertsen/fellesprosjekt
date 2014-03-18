@@ -49,7 +49,7 @@ public class EventService {
         try {
             Long eventId = eventRepository.insert(event);
             for (Participant participant : event.getParticipants()) {
-                eventRepository.addParticipant(eventId, participant);
+                eventRepository.addInvited(eventId, participant);
             }
             return eventId;
         } catch (SQLException e) {

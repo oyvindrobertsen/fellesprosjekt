@@ -29,9 +29,9 @@ public class EventRepository {
 
     public List<Event> findAll(final String username) {
         List<Event> result = jt.query(
-                "SELECT e.* FROM calendarEvent e, invited in, attending at " +
-                        "WHERE (in.username = ?  OR at.username = ?) " +
-                        "AND in.eventId = e.eventId AND at.eventId = e.eventId",
+                "SELECT e.* FROM calendarEvent e, invited i " +
+                        "WHERE i.username = ? " +
+                        "AND i.eventId = e.eventId",
                 new Object[]{username},
                 new RowMapper<Event>() {
                     @Override
@@ -131,9 +131,9 @@ public class EventRepository {
 
     public Set<Participant> findParticipantsByEventId(long eventId) {
         List<Participant> result = jt.query(
-                "SELECT p.* FROM person p, invited in, attending at " +
-                        "WHERE pc.eventId = ? " +
-                        "AND p.username = in.username AND p.username = at.username",
+                "SELECT DISTINCT p.* FROM person p, (SELECT * FROM invited UNION SELECT * FROM attending) a " +
+                        "WHERE a.eventId = ? " +
+                        "AND p.username = a.username",
                 new Object[]{eventId},
                 new RowMapper<Participant>() {
                     @Override
@@ -148,9 +148,9 @@ public class EventRepository {
                 }
         );
         result.addAll(jt.query(
-                "SELECT eg.* FROM invited in, attending at, eventGroup eg " +
-                        "WHERE pc.eventId = ? " +
-                        "AND in.groupId = eg.groupId AND at.groupId = eg.groupId",
+                "SELECT DISTINCT e.*  eventGroup e, (SELECT * FROM invited UNION SELECT * FROM attending) a  " +
+                        "WHERE a.eventId = ? " +
+                        "AND a.groupId = e.groupId",
                 new Object[]{eventId},
                 new RowMapper<Participant>() {
                     @Override
