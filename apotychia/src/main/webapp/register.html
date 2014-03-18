@@ -3,24 +3,34 @@
 <head>
     <!--<link type="text/css" rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css">
     <link type="text/css" rel="stylesheet" href="css/registerstyle.css"/> -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" media="screen">
     <link rel="stylesheet/less" href="css/app.less">
     <script src="libs/less/dist/less-1.7.0.js" type="text/javascript"></script>
     <title>Register page</title>
 </head>
 <body>
-<h1>Register page</h1>
-<form th:action="@{/register}" method="post" modelAttribute="user">
-    <label for="username">Desired Username</label>:
-    <input type="text" id="username" name="username" /> <br />
-    <label for="password">Password</label>:
-    <input type="password" id="password" name="password" /> <br />
-    <label for="firstName">First name</label>
-    <input type="text" id="firstName" name="firstName" /><br />
-    <label for="lastName">Last name</label>
-    <input type="text" id="lastName" name="lastName" /><br />
-    <label for="email">Email</label>
-    <input type="text" id="email" name="email" /><br />
-    <input type="submit" value="Register" />
-</form>
+<div class="container">
+   <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <img src="img/logo.gif">
+            <form th:action="@{/register}" method="post" modelAttribute="user">
+                <input placeholder='Desired username' class='form-control' type="text" id="username" name="username" /> <br />
+                <input placeholder='Password' class='form-control' type="password" id="password" name="password" /> <br />
+                <input placeholder='First name' class='form-control' type="text" id="firstName" name="firstName" /><br />
+                <input placeholder='Last name' class='form-control' type="text" id="lastName" name="lastName" /><br />
+                <input placeholder='Email' class='form-control' type="text" id="email" name="email" /><br />
+                <div class='form-group'>
+                    <div class='col-md-6'>
+                        <input class='form-control btn-success' type="submit" value="Register" />
+                    </div>
+                    <div class='col-md-6'>
+                        <input class='form-control btn-danger' type='submit' value='Cancel' />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>

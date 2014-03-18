@@ -4,6 +4,8 @@
 	<!--<link type="text/css" rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css">
 	<link type="text/css" rel="stylesheet" href="css/loginstyle.css"/>
 	<link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" media="screen"> -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" media="screen">
     <!-- Main css -->
     <link rel="stylesheet/less" href="css/app.less">
     <script src="libs/less/dist/less-1.7.0.js" type="text/javascript"></script>
@@ -15,14 +17,17 @@
 		<div class="col-md-6 col-md-offset-3">
 			<img src="img/logo.gif">
 			<form action="/postlogin" method="post" class="form-horizontal">
-				<label for="username">Username</label>:
-			    <input type="text" id="username" name="username" /> <br />
-				<label for="password">Password</label>:
-				<input type="password" id="password" name="password" /> <br />
-				<input type="submit" value="Log in" />
+			    <input placeholder='Username' class="form-control" type="text" id="username" name="username" /> <br />
+				<input placeholder='Password' class="form-control" type="password" id="password" name="password" /> <br />
+				<div class='form-group'>
+					<div class='col-md-6'>
+						<input class="form-control btn-success" type="submit" value="Log in" />
+					</div>
+					<div class='col-md-6'>
+						<input class="form-control btn-success" style='background:#525252; border-color:#525252' type="submit" value="Register" />
+					</div>
+				</div>
 			</form>
-
-			<a href="/register.html">Register</a>
 		</div>
 	</div>
 </div>
