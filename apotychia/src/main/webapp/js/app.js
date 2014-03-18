@@ -74,7 +74,7 @@ App.NewController = Ember.ObjectController.extend({
                     active: true
                 }),
                 complete: function(data) {
-                    window.location.replace('/#/event');
+                    self.transitionToRoute('/');
                 }
             })
         },
