@@ -37,6 +37,11 @@ public class EventController {
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         List<Event> ret = eventService.findAttendingEventsForUserByUsername(currentUser.getUsername());
+        for (Event event : ret) {
+            if (event.getEventAdmin().equals(currentUser.getUsername())) {
+                event.setAdmin(true);
+            }
+        }
         return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
     }
 
@@ -47,7 +52,14 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}")
     public ResponseEntity<Event> getEvent(@PathVariable long id) {
-        return new ResponseEntity<Event>(eventService.findEventById(id), HttpStatus.OK);
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        Event event = eventService.findEventById(id);
+        if (event.getEventAdmin().equals(currentUser.getUsername())) {
+            event.setAdmin(true);
+        }
+        return new ResponseEntity<Event>(event, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}/participants")

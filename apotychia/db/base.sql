@@ -9,10 +9,20 @@ CREATE TABLE person (
 );
 
 CREATE TABLE room (
-    roomNr      VARCHAR(10)     NOT NULL,
+    roomNr      INT             NOT NULL,
     capacity    INT             NOT NULL,
 
     PRIMARY KEY (roomNr)
+);
+
+CREATE TABLE location (
+    locationId      INT             NOT NULl        AUTO_INCREMENT,
+    locationName    VARCHAR(45)     NOT NULL,
+    roomNr          INT             NULL,
+
+    PRIMARY KEY (locationId),
+    FOREIGN KEY (roomNr) REFERENCES room(roomNr)
+        ON UPDATE cascade ON DELETE cascade
 );
 
 CREATE TABLE eventGroup (
@@ -33,16 +43,19 @@ CREATE TABLE memberOf (
 );
 
 CREATE TABLE calendarEvent (
-    eventId         INT          NOT NULL AUTO_INCREMENT,
-    eventName       VARCHAR(45)  NOT NULL,
-    startTime       DATETIME     NOT NULL,
-    endTime         DATETIME     NOT NULL,
-    isActive        VARCHAR(45)  NOT NULL,
-    description     TINYTEXT     NULL,
-    eventAdmin      VARCHAR(45)  NOT NULL,
+    eventId         INT             NOT NULL AUTO_INCREMENT,
+    eventName       VARCHAR(45)     NOT NULL,
+    startTime       DATETIME        NOT NULL,
+    endTime         DATETIME        NOT NULL,
+    isActive        VARCHAR(45)     NOT NULL,
+    description     TINYTEXT        NULL,
+    locationId      INT             NULL,
+    eventAdmin      VARCHAR(45)     NOT NULL,
 
     PRIMARY KEY (eventId),
     FOREIGN KEY (eventAdmin) REFERENCES person (username)
+        ON UPDATE cascade ON DELETE cascade,
+    FOREIGN KEY (locationId) REFERENCES location (locationId)
         ON UPDATE cascade ON DELETE cascade
 );
 
@@ -72,9 +85,9 @@ CREATE TABLE attending (
 
 
 CREATE TABLE booked (
-      bookedId    INT             NOT NULL    AUTO_INCREMENT,
-      eventId     INT             NOT NULL,
-      roomNr      VARCHAR(10)     NOT NULL,
+      bookedId    INT   NOT NULL    AUTO_INCREMENT,
+      eventId     INT   NOT NULL,
+      roomNr      INT   NOT NULL,
 
       PRIMARY KEY (bookedId),
       FOREIGN KEY (eventId) REFERENCES  calendarEvent(eventId)

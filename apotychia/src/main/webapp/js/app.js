@@ -27,9 +27,7 @@ App.NewRoute = Ember.Route.extend({
 
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
-        return {
-
-        }
+        return Ember.$.getJSON('/api/events/' + params.id)
     }
 });
 
@@ -96,29 +94,38 @@ App.ViewController = Ember.ObjectController.extend({
 });
 
 App.EditController = Ember.ObjectController.extend({
-  actions: {
-    saveEdit: function() {
-      // todo
+    date: function() {
+        return Ember.String.w(this.get('model.startTime'))[0];
+    }.property('model.duration'),
+    startTime: function() {
+        return Ember.String.w(this.get('model.startTime'))[1];
+    }.property('model.startTime'),
+    endTime: function() {
+        return Ember.String.w(this.get('model.endTime'))[1];
+    }.property('model.endTime'),
+    actions: {
+        saveEdit: function() {
+        // todo
+        }
     }
-  }
 });
 
 // views
 
 App.NewView = Ember.View.extend({
-  didInsertElement: function() {
-    // Enable popovers
-    $("label[rel=popover]").popover({
-      placement: 'left',
-      html: true,
-      container: 'body',
-      content: function() {
-        return $('#popover-content-wrapper').html();
-      }
-    }).click(function(e) {
-      e.preventDefault();
-    });
-  }
+    didInsertElement: function() {
+        // Enable popovers
+        $("label[rel=popover]").popover({
+            placement: 'left',
+            html: true,
+            container: 'body',
+            content: function() {
+                return $('#popover-content-wrapper').html();
+            }
+        }).click(function(e) {
+            e.preventDefault();
+        });
+    }
 });
 
 App.EditView = Ember.View.extend({

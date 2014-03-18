@@ -46,9 +46,15 @@
     <div class="col-md-9 calender-panel">
         <table>
             {{#each model}}
-                <tr>
-                    <td> {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}</td>
-                </tr>
+                {{#if admin}}
+                    <tr>
+                        <td> {{#link-to 'edit' eventID}}<b>{{eventName}} </b> {{/link-to}}</td>
+                    </tr>
+                {{else}}
+                    <tr>
+                        <td> {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}</td>
+                    </tr>
+                {{/if}}
             {{/each}}
         </table>
     </div>
@@ -172,27 +178,27 @@
     <form>
         <!-- Title -->
         <div class="form-group">
-            {{input type="text" value=model.editEvent.eventName class="form-control" placeholder="Tittel"}}
+            {{input type="text" value=model.eventName class="form-control" placeholder="Tittel"}}
         </div>
 
         <!-- Description -->
         <div class="form-group">
-            {{textarea value=model.editEvent.description class="form-control" placeholder="Skriv en beskrivelse" rows="2"}}
+            {{textarea value=model.description class="form-control" placeholder="Skriv en beskrivelse" rows="2"}}
         </div>
 
         <!-- Date -->
         <div class="form-group">
-            {{input type="text" class="form-control" placeholder="Dato"}}
+            {{input type="text" value=date class="form-control" placeholder="Dato"}}
         </div>
 
 
         <!-- Time -->
         <div class="form-group">
             <div class="col-md-6 split-form-left">
-                {{input type="text" value=newEvent.startTime class="form-control" placeholder="Start tid"}}
+                {{input type="text" value=startTime class="form-control" placeholder="Start tid"}}
             </div>
             <div class="col-md-6 split-form-right">
-                {{input type="text" value=newEvent.endTime class="form-control" placeholder="Slutt tid"}}
+                {{input type="text" value=endTime class="form-control" placeholder="Slutt tid"}}
             </div>
         </div>
 
