@@ -18,7 +18,7 @@ public class User implements Participant, Serializable {
         this.username = username;
     }
 
-    public String getID(){
+    public String getId(){
         return this.username;
     }
 
@@ -77,5 +77,10 @@ public class User implements Participant, Serializable {
      */
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return this.username + ", " + this.firstName + ", " + this.lastName + ", " + this.email;
     }
 }

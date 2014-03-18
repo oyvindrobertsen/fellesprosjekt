@@ -2,19 +2,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <!--<link type="text/css" rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css">
-    <link type="text/css" rel="stylesheet" href="css/registerstyle.css"/> -->
+<link type="text/css" rel="stylesheet" href="css/registerstyle.css"/> -->
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" media="screen">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" media="screen">
     <link rel="stylesheet/less" href="css/app.less">
-    <script src="libs/less/dist/less-1.7.0.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.6.3/less.min.js" type="text/javascript"></script>
     <title>Register page</title>
 </head>
 <body>
 <div class="container">
-   <div class="row">
+    <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <img src="img/logo.gif">
-            <form th:action="@{/register}" method="post" modelAttribute="user">
+            <form action="/api/auth/register" method="post">
                 <input placeholder='Desired username' class='form-control' type="text" id="username" name="username" /> <br />
                 <input placeholder='Password' class='form-control' type="password" id="password" name="password" /> <br />
                 <input placeholder='First name' class='form-control' type="text" id="firstName" name="firstName" /><br />
@@ -25,12 +25,14 @@
                         <input class='form-control btn-success' type="submit" value="Register" />
                     </div>
                     <div class='col-md-6'>
-                        <input class='form-control btn-danger' type='submit' value='Cancel' />
+                        <a href="/login" class='form-control btn btn-danger'>Cancel</a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 </body>
 </html>

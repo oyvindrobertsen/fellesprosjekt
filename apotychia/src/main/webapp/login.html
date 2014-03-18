@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<!--<link type="text/css" rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css">
-	<link type="text/css" rel="stylesheet" href="css/loginstyle.css"/>
-	<link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" media="screen"> -->
+    <!--<link type="text/css" rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css">
+    <link type="text/css" rel="stylesheet" href="css/loginstyle.css"/>
+    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" media="screen"> -->
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" media="screen">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" media="screen">
     <!-- Main css -->
     <link rel="stylesheet/less" href="css/app.less">
-    <script src="libs/less/dist/less-1.7.0.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.6.3/less.min.js" type="text/javascript"></script>
     <title>Login page</title>
 </head>
 <body>
 <div class="container">
-	<div class="row">
-		<div class="col-md-6 col-md-offset-3">
-			<img src="img/logo.gif">
-			<form action="/postlogin" method="post" class="form-horizontal">
-			    <input placeholder='Username' class="form-control" type="text" id="username" name="username" /> <br />
-				<input placeholder='Password' class="form-control" type="password" id="password" name="password" /> <br />
-				<div class='form-group'>
-					<div class='col-md-6'>
-						<input class="form-control btn-success" type="submit" value="Log in" />
-					</div>
-					<div class='col-md-6'>
-						<input class="form-control btn-success" style='background:#525252; border-color:#525252' type="submit" value="Register" />
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <img src="img/logo.gif">
+            <form action="/postlogin" method="post" class="form-horizontal">
+                <input placeholder='Username' class="form-control" type="text" id="username" name="username" /> <br />
+                <input placeholder='Password' class="form-control" type="password" id="password" name="password" /> <br />
+                <div class='form-group'>
+                    <div class='col-md-6'>
+                        <input class="form-control btn-success" type="submit" value="Log in" />
+                    </div>
+                    <div class='col-md-6'>
+                        <a href="/register" class="form-control btn btn-success" style="background:#525252; border-color:#525252">Register</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-<script src="libs/bootstrap/dist/js/bootstrap.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 </body>
 </html>

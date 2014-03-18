@@ -1,23 +1,28 @@
 package no.ntnu.apotychia.model;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 import java.sql.Date;
 import java.util.Set;
+import javax.persistence.*;
 
 public class Event {
-    private final long eventID;
+    private long eventId;
     private String eventName;
     private Date startTime;
     private Date endTime;
     private boolean isActive;
-    private User eventAdmin;
-    private Set<Participant> participants;
-
-    public Event(long id) {
-        this.eventID = id;
-    }
+    private String description;
+    private String eventAdmin;
+    private Set<Participant> invited;
+    private Set<Participant> attending;
 
     public long getEventID() {
-        return eventID;
+        return eventId;
+    }
+
+    public void setEventId(long id) {
+        this.eventId = id;
     }
 
     public String getEventName() {
@@ -52,19 +57,32 @@ public class Event {
         this.isActive = isActive;
     }
 
-    public User getEventAdmin() {
+    public String getEventAdmin() {
         return eventAdmin;
     }
 
-    public void setEventAdmin(User eventAdmin) {
+    public void setEventAdmin(String eventAdmin) {
         this.eventAdmin = eventAdmin;
     }
 
-    public Set<Participant> getParticipants() {
-        return participants;
+    public String getDescription() {
+        return description;
     }
 
-    public void setParticipants(Set<Participant> participants) {
-        this.participants = participants;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<Participant> getAttending() {
+        return attending;
+    }
+
+    public void setAttending(Set<Participant> attending) {
+        this.attending = attending;
+    }
+
+    @Override
+    public String toString() {
+        return getEventName();
     }
 }

@@ -16,8 +16,8 @@ CREATE TABLE room (
 );
 
 CREATE TABLE eventGroup (
-    groupId     INT             NOT NULL    AUTO_INCREMENT,
-    groupName   VARCHAR(45)     NULL,
+    groupId         INT             NOT NULL    AUTO_INCREMENT,
+    groupName       VARCHAR(45)     NULL,
     PRIMARY KEY (groupId)
 );
 
@@ -30,7 +30,6 @@ CREATE TABLE memberOf (
         ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (username)  REFERENCES person(username)
         ON UPDATE cascade ON DELETE cascade
-
 );
 
 CREATE TABLE calendarEvent (
@@ -48,26 +47,38 @@ CREATE TABLE calendarEvent (
 );
 
 
-CREATE TABLE participants (
-    eventId     INT             NOT NULL    AUTO_INCREMENT,
+CREATE TABLE invited (
+    eventId     INT             NOT NULL,
     username    VARCHAR(45)     NULL,
     groupId     INT             NULL,
 
     PRIMARY KEY (eventId),
     FOREIGN KEY(username) REFERENCES person (username)
-        ON UPDATE cascade ON DELETE SET NULL,
-    FOREIGN KEY(groupId)  REFERENCES eventGroup (groupId)
-        ON UPDATE cascade ON DELETE SET NULL
+        ON UPDATE cascade ON DELETE cascade,
+    FOREIGN KEY(groupId) REFERENCES eventGroup (groupId)
+        ON UPDATE cascade ON DELETE cascade
 );
 
-CREATE TABLE booked (
-    bookedId    INT             NOT NULL    AUTO_INCREMENT,
-    eventId     INT             NOT NULL,
-    roomNr      VARCHAR(10)     NOT NULL,
 
-    PRIMARY KEY (bookedId),
-    FOREIGN KEY (eventId) REFERENCES  calendarEvent(eventId)
-        ON UPDATE cascade ON DELETE cascade,
-    FOREIGN KEY (roomNr)  REFERENCES room(roomNr)
+CREATE TABLE attending (
+      eventId     INT             NOT NULL,
+      username    VARCHAR(45)     NULL,
+
+    PRIMARY KEY (eventId),
+    FOREIGN KEY(username) REFERENCES person (username)
         ON UPDATE cascade ON DELETE cascade
+);
+
+
+
+CREATE TABLE booked (
+      bookedId    INT             NOT NULL    AUTO_INCREMENT,
+      eventId     INT             NOT NULL,
+      roomNr      VARCHAR(10)     NOT NULL,
+
+      PRIMARY KEY (bookedId),
+      FOREIGN KEY (eventId) REFERENCES  calendarEvent(eventId)
+          ON UPDATE cascade ON DELETE cascade,
+      FOREIGN KEY (roomNr)  REFERENCES room(roomNr)
+          ON UPDATE cascade ON DELETE cascade
 );
