@@ -29,9 +29,9 @@ public class EventRepository {
 
     public List<Event> findAll(final String username) {
         List<Event> result = jt.query(
-                "SELECT e.* FROM calendarEvent e, participants p " +
-                        "WHERE p.username = ? " +
-                        "AND p.eventId = e.eventId",
+                "SELECT e.* FROM calendarEvent e, invited i " +
+                        "WHERE i.username = ? " +
+                        "AND i.eventId = e.eventId",
                 new Object[]{username},
                 new RowMapper<Event>() {
                     @Override
@@ -75,17 +75,35 @@ public class EventRepository {
         }
     }
 
-    public void addParticipant(Long eventId, Participant participant) {
+    public void addInvited(Long eventId, Participant participant) {
         if (participant instanceof User) {
             User u = (User)participant;
             jt.update(
-                    "INSERT INTO participants (eventId, username) VALUES (?, ?)",
+                    "INSERT INTO invited (eventId, username) VALUES (?, ?)",
                     eventId, u.getUsername()
             );
         } else {
             Group g = (Group)participant;
             jt.update(
-                    "INSERT INTO participants (eventId, groupId) VALUES (?, ?)",
+                    "INSERT INTO invited (eventId, groupId) VALUES (?, ?)",
+                    eventId, g.getId()
+            );
+        }
+    }
+
+
+
+    public void addAttending(Long eventId, Participant participant) {
+        if (participant instanceof User) {
+            User u = (User)participant;
+            jt.update(
+                    "INSERT INTO attending (eventId, username) VALUES (?, ?)",
+                    eventId, u.getUsername()
+            );
+        } else {
+            Group g = (Group)participant;
+            jt.update(
+                    "INSERT INTO attending (eventId, groupId) VALUES (?, ?)",
                     eventId, g.getId()
             );
         }
@@ -113,9 +131,9 @@ public class EventRepository {
 
     public Set<Participant> findParticipantsByEventId(long eventId) {
         List<Participant> result = jt.query(
-                "SELECT p.* FROM person p, participants pc " +
-                        "WHERE pc.eventId = ? " +
-                        "AND p.username = pc.username",
+                "SELECT DISTINCT p.* FROM person p, (SELECT * FROM invited UNION SELECT * FROM attending) a " +
+                        "WHERE a.eventId = ? " +
+                        "AND p.username = a.username",
                 new Object[]{eventId},
                 new RowMapper<Participant>() {
                     @Override
@@ -130,9 +148,9 @@ public class EventRepository {
                 }
         );
         result.addAll(jt.query(
-                "SELECT eg.* FROM participants pc, eventGroup eg " +
-                        "WHERE pc.eventId = ? " +
-                        "AND pc.groupId = eg.groupId",
+                "SELECT DISTINCT e.*  eventGroup e, (SELECT * FROM invited UNION SELECT * FROM attending) a  " +
+                        "WHERE a.eventId = ? " +
+                        "AND a.groupId = e.groupId",
                 new Object[]{eventId},
                 new RowMapper<Participant>() {
                     @Override
