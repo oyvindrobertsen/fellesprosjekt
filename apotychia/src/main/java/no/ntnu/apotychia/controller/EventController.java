@@ -6,14 +6,14 @@ import no.ntnu.apotychia.model.User;
 import no.ntnu.apotychia.service.EventService;
 import no.ntnu.apotychia.service.UserService;
 import no.ntnu.apotychia.service.security.ApotychiaUserDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
@@ -29,6 +29,8 @@ public class EventController {
     EventService eventService;
     @Autowired
     UserService userService;
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Event>> getAllEventsForLoggedInUser() {
@@ -56,31 +58,14 @@ public class EventController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody Event addEvent(@ModelAttribute Event event, ModelMap model) {
+    public @ResponseBody Event addEvent(@RequestBody Event event, ModelMap model) {
+        logger.info(event.toString());
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         event.setEventAdmin(currentUser.getUsername());
         long eventId = eventService.addEvent(event);
         return eventService.findEventById(eventId);
-
-//        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        if (user.getUsername().equals(event.getEventAdmin())) {
-//            long eventId = eventService.addEvent(event);
-//            return eventService.findEventById(eventId);
-//        } else {
-//            throw new IllegalArgumentException("EventAdmin not same as logged in user");
-//        }
-    }
-
-    @InitBinder
-    private void dateBinder(WebDataBinder binder) {
-        //The date format to parse or output your dates
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm");
-        //Create a new CustomDateEditor
-        CustomDateEditor editor = new CustomDateEditor(dateFormat, true);
-        //Register it as custom editor for the Date type
-        binder.registerCustomEditor(Date.class, editor);
     }
 
     /*

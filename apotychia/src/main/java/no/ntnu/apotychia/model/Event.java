@@ -1,9 +1,12 @@
 package no.ntnu.apotychia.model;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 import java.sql.Date;
 import java.util.Set;
 import javax.persistence.*;
 
+@JsonRootName(value = "event")
 public class Event {
     private long eventId;
     private String eventName;
@@ -76,5 +79,10 @@ public class Event {
 
     public void setParticipants(Set<Participant> participants) {
         this.participants = participants;
+    }
+
+    @Override
+    public String toString() {
+        return getEventName();
     }
 }

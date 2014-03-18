@@ -68,7 +68,7 @@
     <form>
         <!-- Title -->
         <div class="form-group">
-            {{input type="text" value=newEvent.eventName class="form-control" placeholder="Tittel"}}
+            {{input type="text" value=eventName class="form-control" placeholder="Tittel"}}
         </div>
 
         <!-- Description -->
@@ -94,8 +94,8 @@
                 
         <!-- Radio button place -->
         <div class="form-group input-group btn-group btn-group-justified" data-toggle="buttons" style="padding-top: 15px;">
-            <label class="btn btn-primary">
-                <input type="radio" name="place" id="placeoption" checked> Skriv sted
+            <label class="btn btn-primary active">
+                <input type="radio" name="place" id="placeoption"> Skriv sted
             </label>
             <label class="btn btn-primary">
                 <input type="radio" name="room" id="roomoption"> Velg rom
@@ -132,10 +132,10 @@
 
                             <div class="form-group">
                                 <div class="col-md-6">
-                                    <button class="form-control btn btn-success btn-primary"> Legg til </button>
+                                    <a class="form-control btn btn-success btn-primary">Legg til</a>
                                 </div>
                                 <div class="col-md-6">
-                                    <button class="form-control btn btn-danger btn-primary"> Avbryt </button>
+                                    <a class="form-control btn btn-danger btn-primary">Avbryt</a>
                                 </div>
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                         {{#each model.members}}
                             <tr>
                                 <td>{{name}}</td>
-                                <td><a href="#" class="btn btn-danger btn-xs">Fjern</a></td>
+                                <td><a class="btn btn-danger btn-xs">Fjern</a></td>
                             </tr>
                         {{/each}}
                     </tbody>
@@ -183,7 +183,6 @@
 
 <!-- Application code -->
 <script src="js/app.js"></script>
-<script src="js/models/fixtures.js"></script>
 
 </body>
 </html>
