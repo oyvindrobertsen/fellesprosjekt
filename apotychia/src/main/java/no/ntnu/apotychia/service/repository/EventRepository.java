@@ -39,8 +39,8 @@ public class EventRepository {
                         Event event = new Event();
                         event.setEventId(rs.getLong("eventId"));
                         event.setEventName(rs.getString("eventName"));
-                        event.setStartTime(rs.getDate("startTime"));
-                        event.setEndTime(rs.getDate("endTime"));
+                        event.setStartTime(rs.getTimestamp("startTime"));
+                        event.setEndTime(rs.getTimestamp("endTime"));
                         event.setActive(rs.getBoolean("isActive"));
                         event.setDescription(rs.getString("description"));
                         event.setEventAdmin(rs.getString("eventAdmin"));
@@ -63,8 +63,8 @@ public class EventRepository {
                         Event event = new Event();
                         event.setEventId(rs.getLong("eventId"));
                         event.setEventName(rs.getString("eventName"));
-                        event.setStartTime(rs.getDate("startTime"));
-                        event.setEndTime(rs.getDate("endTime"));
+                        event.setStartTime(rs.getTimestamp("startTime"));
+                        event.setEndTime(rs.getTimestamp("endTime"));
                         event.setActive(rs.getBoolean("isActive"));
                         event.setDescription(rs.getString("description"));
                         event.setEventAdmin(rs.getString("eventAdmin"));
@@ -84,8 +84,8 @@ public class EventRepository {
                       public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                           PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                           ps.setString(1, event.getEventName());
-                          ps.setDate(2, event.getStartTime());
-                          ps.setDate(3, event.getEndTime());
+                          ps.setTimestamp(2, event.getStartTime());
+                          ps.setTimestamp(3, event.getEndTime());
                           ps.setBoolean(4, event.isActive());
                           ps.setString(5, event.getDescription());
                           ps.setString(6, event.getEventAdmin());
@@ -142,8 +142,8 @@ public class EventRepository {
                         Event event = new Event();
                         event.setEventId(rs.getLong("eventId"));
                         event.setEventName(rs.getString("eventName"));
-                        event.setStartTime(rs.getDate("startTime"));
-                        event.setEndTime(rs.getDate("endTime"));
+                        event.setStartTime(rs.getTimestamp("startTime"));
+                        event.setEndTime(rs.getTimestamp("endTime"));
                         event.setActive(rs.getBoolean("isActive"));
                         event.setDescription(rs.getString("description"));
                         event.setEventAdmin(rs.getString("eventAdmin"));

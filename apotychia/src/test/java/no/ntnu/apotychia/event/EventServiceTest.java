@@ -14,7 +14,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import static org.junit.Assert.*;
 
@@ -40,8 +40,8 @@ public class EventServiceTest {
         userService.addNewUser(testUser);
         testEvent = new Event();
         testEvent.setEventName("TestEvent");
-        testEvent.setStartTime(new Date(1394873100000L));
-        testEvent.setEndTime(new Date(1394876700000L));
+        testEvent.setStartTime(new Timestamp(1394873100000L));
+        testEvent.setEndTime(new Timestamp(1394876700000L));
         testEvent.setActive(true);
         testEvent.setEventAdmin(testUser.getUsername());
         testEvent.setDescription("This is a test event");

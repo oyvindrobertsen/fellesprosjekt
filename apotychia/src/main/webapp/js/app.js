@@ -20,22 +20,22 @@ App.EventRoute = Ember.Route.extend({
 });
 
 App.NewRoute = Ember.Route.extend({
-    model: {}
+    model: function() {
+        return {};
+    }
 });
 
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
         return {
-        editEvent: this.store.find('event', params.id),
+
         }
     }
 });
 
 App.ViewRoute = Ember.Route.extend({
     model: function(params) {
-        return {
-            viewEvent: Ember.$.getJSON('/api/events/' + params.id)
-        }
+        return Ember.$.getJSON('/api/events/' + params.id)
     }
 });
 
@@ -60,8 +60,8 @@ App.NewController = Ember.ObjectController.extend({
                 contentType: 'application/json',
                 data: JSON.stringify({
                     eventName: this.get('eventName'),
-                    startTime: '18-03-2014 09:00',
-                    endTime: '18-03-2014 10:00',
+                    startTime: this.get('date') + " " + this.get('startTime'),
+                    endTime: this.get('date') + " " + this.get('endTime'),
                     eventAdmin: '',
                     description: this.get('description'),
                     active: true

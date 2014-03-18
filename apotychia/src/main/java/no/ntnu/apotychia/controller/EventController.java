@@ -16,8 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -32,23 +30,24 @@ public class EventController {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUser() {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
-        return new ResponseEntity<List<Event>>(eventService.findAttendingEventsForUserByUsername(currentUser.getUsername()),
-                HttpStatus.OK);
+        List<Event> ret = eventService.findAttendingEventsForUserByUsername(currentUser.getUsername());
+        return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/{username}")
+    @RequestMapping(method = RequestMethod.GET, value="/user/{username}")
     public ResponseEntity<List<Event>> getAllEventsForUserByUserName(@PathVariable String username) {
         return new ResponseEntity<List<Event>>(eventService.findAttendingEventsForUserByUsername(username), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}")
-    public ResponseEntity<Event> getEvent(@PathVariable long eventId) {
-        return new ResponseEntity<Event>(eventService.findEventById(eventId), HttpStatus.OK);
+    public ResponseEntity<Event> getEvent(@PathVariable long id) {
+        return new ResponseEntity<Event>(eventService.findEventById(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}/participants")

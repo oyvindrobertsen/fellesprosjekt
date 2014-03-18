@@ -3,19 +3,29 @@ package no.ntnu.apotychia.model;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Set;
 import javax.persistence.*;
 
 public class Event {
     private long eventId;
     private String eventName;
-    private Date startTime;
-    private Date endTime;
+    private Timestamp startTime;
+    private Timestamp endTime;
     private boolean isActive;
     private String description;
     private String eventAdmin;
     private Set<Participant> invited;
     private Set<Participant> attending;
+    private boolean isAdmin;
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
 
     public long getEventID() {
         return eventId;
@@ -33,19 +43,19 @@ public class Event {
         this.eventName = eventName;
     }
 
-    public Date getStartTime() {
+    public Timestamp getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(Timestamp startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public Timestamp getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(Timestamp endTime) {
         this.endTime = endTime;
     }
 
@@ -83,6 +93,6 @@ public class Event {
 
     @Override
     public String toString() {
-        return getEventName();
+        return getEventName() + ", " + getStartTime() + ", " + getEndTime();
     }
 }

@@ -12,7 +12,7 @@ public class CustomJacksonObjectMapper extends ObjectMapper {
 
     public CustomJacksonObjectMapper() {
         super();
-        DateFormat df = new SimpleDateFormat("dd-MM-yyyy hh:mm");
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         this.setDateFormat(df);
     }
 }

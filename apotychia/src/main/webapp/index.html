@@ -49,9 +49,6 @@
                 <tr>
                     <td> {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}</td>
                 </tr>
-                <tr>
-                    <td> {{description}} </td>
-                </tr>
             {{/each}}
         </table>
     </div>
@@ -74,17 +71,17 @@
 
         <!-- Date -->
         <div class="form-group">
-            {{input type="text" class="form-control" placeholder="Dato"}}
+            {{input type="text" value=date class="form-control" placeholder="Dato: DD-MM-YYYY"}}
         </div>
 
 
         <!-- Time -->
         <div class="form-group">
             <div class="col-md-6 split-form-left">
-                {{input type="text" value=newEvent.startTime class="form-control" placeholder="Start tid"}}
+                {{input type="text" value=startTime class="form-control" placeholder="Start: HH:MM"}}
             </div>
             <div class="col-md-6 split-form-right">
-                {{input type="text" value=newEvent.endTime class="form-control" placeholder="Slutt tid"}}
+                {{input type="text" value=endTime class="form-control" placeholder="Slutt: HH:MM"}}
             </div>
         </div>
 
@@ -280,68 +277,28 @@
 </script>
 
 <script type="text/x-handlebars" id="view">
-    <form>
-        <!-- Title -->
-        <div class="form-group">
-            <p class="form-control-static"><b>{{model.viewEvent.eventName}} </b></p>
-        </div>
+    <h1>{{model.eventName}}</h1>
 
-        <!-- Description -->
-        <div class="form-group">
-            <p class="form-control-static"> {{model.viewEvent.description}} </p>
-        </div>
+    <strong>Start:</strong> {{model.startTime}}<br/>
 
-        <!-- Date -->
-        <div class="form-group">
-            <p class="form-control-static">  todo: DATE</p>
-        </div>
+    <strong>Slutt:</strong> {{model.endTime}}<br/>
 
-        <!-- Time -->
-        <div class="form-group">
-            <div class="col-md-6 split-form-left">
-                <p class="form-control-static">  todo: start tid</p>
-            </div>
-            <div class="col-md-6 split-form-right">
-                <p class="form-control-static">  todo: slutt tid</p>
-            </div>
-        </div>
+    <div class="well">{{model.description}}</div>
 
-        <div style="clear:both;"></div>
-        <!-- Place -->
-        <div class="form-group" style="padding-top: 15px;">
-            <p class="form-control-static">  todo: sted</p>
-        </div>
+    <strong>Deltakere:</strong><br/>
+    {{#each model.attending}}
+        {{username}}
+    {{/each}}
 
-        <div class="form-group">
-            <table class="table">
-                <thead>
-                    <th>Deltakere</th>
-
-                </thead>
-            </table>
-            <div style="overflow: auto; max-height: 30%;">
-                <table class="table">
-                    <tbody>
-                        {{#each model.members}}
-                            <tr>
-                                <td>{{name}}</td>
-                            </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            </div>
+    <!-- attend -->
+    <div class="form-group buttons">
+        <div class="col-md-6 split-form-left">
+            <button class="form-control btn btn-success btn-primary"> Delta </button>
         </div>
-
-        <!-- Save/delete buttons -->
-        <div class="form-group buttons">
-            <div class="col-md-6 split-form-left">
-                <button class="form-control btn btn-success btn-primary"> Delta </button>
-            </div>
-            <div class="col-md-6 split-form-right">
-                <button class="form-control btn btn-danger btn-primary"> Avsl&aring; </button>
-            </div>
+        <div class="col-md-6 split-form-right">
+            <button class="form-control btn btn-danger btn-primary"> Avsl&aring; </button>
         </div>
-    </form>
+    </div>
 </script>
 
 <!-- Testing-->
