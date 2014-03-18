@@ -64,7 +64,6 @@ CREATE TABLE invited (
 CREATE TABLE attending (
     eventId     INT             NOT NULL,
     username    VARCHAR(45)     NULL,
-    groupId     INT             NULL,
 
     PRIMARY KEY (eventId),
     FOREIGN KEY(username) REFERENCES person (username)

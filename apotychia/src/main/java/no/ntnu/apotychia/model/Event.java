@@ -15,7 +15,8 @@ public class Event {
     private boolean isActive;
     private String description;
     private String eventAdmin;
-    private Set<Participant> participants;
+    private Set<Participant> invited;
+    private Set<Participant> attending;
 
     public long getEventID() {
         return eventId;
@@ -73,12 +74,12 @@ public class Event {
         this.description = description;
     }
 
-    public Set<Participant> getParticipants() {
-        return participants;
+    public Set<Participant> getAttending() {
+        return attending;
     }
 
-    public void setParticipants(Set<Participant> participants) {
-        this.participants = participants;
+    public void setAttending(Set<Participant> attending) {
+        this.attending = attending;
     }
 
     @Override

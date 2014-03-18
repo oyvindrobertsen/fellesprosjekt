@@ -22,8 +22,8 @@ public class EventService {
 
     public Event findEventById(long eventId) {
         Event event = eventRepository.findById(eventId);
-        event.setParticipants(eventRepository.findParticipantsByEventId(eventId));
-        for (Participant p : event.getParticipants()) {
+        event.setAttending(eventRepository.findParticipantsByEventId(eventId));
+        for (Participant p : event.getAttending()) {
             if (p instanceof Group) {
                 ((Group) p).addAllMembers(groupRepository.findMembers(((Group) p).getId()));
             }
@@ -48,7 +48,7 @@ public class EventService {
     public Long addEvent(Event event) {
         try {
             Long eventId = eventRepository.insert(event);
-            for (Participant participant : event.getParticipants()) {
+            for (Participant participant : event.getInvited()) {
                 eventRepository.addInvited(eventId, participant);
             }
             return eventId;
