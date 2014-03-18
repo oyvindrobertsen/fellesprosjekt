@@ -2,29 +2,29 @@ window.App = Ember.Application.create({
     LOG_TRANSITIONS: true
 });
 
-App.ApplicationAdapter = DS.RESTAdapter.extend({
-    namespace: 'api'
-});
+//App.ApplicationAdapter = DS.RESTAdapter.extend({
+//    namespace: 'api'
+//});
+//
+//
+//App.Store = DS.Store.extend({
+//    adapter: App.ApplicationAdapter
+//});
+//
+//App.ApplicationAdapter.map('App.Event', {
+//    primaryKey: 'eventId'
+//});
 
-
-App.Store = DS.Store.extend({
-    adapter: App.ApplicationAdapter
-});
-
-App.ApplicationAdapter.map('App.Event', {
-    primaryKey: 'eventId'
-});
-
-// models
-
-App.Event = DS.Model.extend({
-    eventName: DS.attr('string'),
-    startTime: DS.attr('string'),
-    endTime: DS.attr('string'),
-    active: DS.attr('boolean'),
-    description: DS.attr('string'),
-    eventAdmin: DS.attr('string')
-});
+//// models
+//
+//App.Event = DS.Model.extend({
+//    eventName: DS.attr('string'),
+//    startTime: DS.attr('string'),
+//    endTime: DS.attr('string'),
+//    active: DS.attr('boolean'),
+//    description: DS.attr('string'),
+//    eventAdmin: DS.attr('string')
+//});
 
 // routes
 
@@ -39,14 +39,14 @@ App.Router.map(function() {
 
 App.EventRoute = Ember.Route.extend({
   model: function() {
-    return this.store.find('event');
+    return Ember.$.getJSON('/api/events');
   }
 });
 
 App.NewRoute = Ember.Route.extend({
   model: function() {
     return {
-      newEvent: App.Event.createRecord({isActive: true}),
+      newEvent: {},
     }
   }
 });
@@ -83,14 +83,24 @@ App.NewController = Ember.ObjectController.extend({
     isRoom: true,
     actions: {
         save: function() {
-            App.Event.createRecord({
-                eventName: this.get('eventName'),
-                startTime: '18-03-2014 09:00',
-                endTime: '18-03-2014 10:00',
-                eventAdmin: '',
-                description: '',
-                isActive: true
-            }).save();
+            var self = this;
+            Ember.$.ajax({
+                url: '/api/events',
+                type: 'POST',
+                dataType: 'xml/html/script/json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    eventName: this.get('eventName'),
+                    startTime: '18-03-2014 09:00',
+                    endTime: '18-03-2014 10:00',
+                    eventAdmin: '',
+                    description: this.get('description'),
+                    active: true
+                }),
+                complete: function(data) {
+                    window.location.replace('/#/event');
+                }
+            })
         },
 
         disablePlaceInput : function() {

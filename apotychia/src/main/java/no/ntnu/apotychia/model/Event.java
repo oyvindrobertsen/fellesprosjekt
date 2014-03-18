@@ -6,7 +6,6 @@ import java.sql.Date;
 import java.util.Set;
 import javax.persistence.*;
 
-@JsonRootName(value = "event")
 public class Event {
     private long eventId;
     private String eventName;

@@ -3,6 +3,7 @@ package no.ntnu.apotychia.service;
 import no.ntnu.apotychia.model.Event;
 import no.ntnu.apotychia.model.Group;
 import no.ntnu.apotychia.model.Participant;
+import no.ntnu.apotychia.model.User;
 import no.ntnu.apotychia.service.repository.EventRepository;
 import no.ntnu.apotychia.service.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +23,17 @@ public class EventService {
 
     public Event findEventById(long eventId) {
         Event event = eventRepository.findById(eventId);
-        event.setAttending(eventRepository.findParticipantsByEventId(eventId));
-        for (Participant p : event.getAttending()) {
-            if (p instanceof Group) {
-                ((Group) p).addAllMembers(groupRepository.findMembers(((Group) p).getId()));
-            }
-        }
+        event.setAttending(eventRepository.findAttendingByEventId(eventId));
+//        for (Participant p : event.getAttending()) {
+//            if (p instanceof Group) {
+//                ((Group) p).addAllMembers(groupRepository.findMembers(((Group) p).getId()));
+//            }
+//        }
         return event;
     }
 
-    public Set<Participant> findParticipantsForEventByEventId(long eventId) {
-        Set<Participant> participants =  eventRepository.findParticipantsByEventId(eventId);
+    public Set<Participant> findAttendingForEventByEventId(long eventId) {
+        Set<Participant> participants =  eventRepository.findAttendingByEventId(eventId);
         for (Participant p : participants) {
             if (p instanceof Group) {
                 ((Group) p).addAllMembers(groupRepository.findMembers(((Group) p).getId()));
@@ -41,20 +42,20 @@ public class EventService {
         return participants;
     }
 
-    public List<Event> findAllEventsForUserByUsername(String username) {
-        return eventRepository.findAll(username);
+    public List<Event> findAttendingEventsForUserByUsername(String username) {
+        return eventRepository.findEventsForUser(username);
     }
 
     public Long addEvent(Event event) {
         try {
-            Long eventId = eventRepository.insert(event);
-            for (Participant participant : event.getInvited()) {
-                eventRepository.addInvited(eventId, participant);
-            }
-            return eventId;
+            return eventRepository.insert(event);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void addAttending(Long eventId, Participant participant) {
+        eventRepository.addAttending(eventId, participant);
     }
 }

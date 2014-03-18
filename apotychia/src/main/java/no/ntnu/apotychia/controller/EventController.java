@@ -33,17 +33,17 @@ public class EventController {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Event>> getAllEventsForLoggedInUser() {
+    public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUser() {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
-        return new ResponseEntity<List<Event>>(eventService.findAllEventsForUserByUsername(currentUser.getUsername()),
+        return new ResponseEntity<List<Event>>(eventService.findAttendingEventsForUserByUsername(currentUser.getUsername()),
                 HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{username}")
     public ResponseEntity<List<Event>> getAllEventsForUserByUserName(@PathVariable String username) {
-        return new ResponseEntity<List<Event>>(eventService.findAllEventsForUserByUsername(username), HttpStatus.OK);
+        return new ResponseEntity<List<Event>>(eventService.findAttendingEventsForUserByUsername(username), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}")
@@ -53,7 +53,7 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}/participants")
     public ResponseEntity<Set<Participant>> getParticipantsForEvent(@PathVariable long eventId) {
-        return new ResponseEntity<Set<Participant>>(eventService.findParticipantsForEventByEventId(eventId),
+        return new ResponseEntity<Set<Participant>>(eventService.findAttendingForEventByEventId(eventId),
                 HttpStatus.OK);
     }
 
@@ -65,6 +65,8 @@ public class EventController {
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         event.setEventAdmin(currentUser.getUsername());
         long eventId = eventService.addEvent(event);
+        eventService.addAttending(eventId, currentUser);
+        // Add code to invite people
         return eventService.findEventById(eventId);
     }
 

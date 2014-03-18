@@ -45,20 +45,19 @@ public class EventServiceTest {
         testEvent.setActive(true);
         testEvent.setEventAdmin(testUser.getUsername());
         testEvent.setDescription("This is a test event");
-        HashSet<Participant> participants = new HashSet<Participant>();
-        participants.add(testUser);
-        testEvent.setParticipants(participants);
     }
 
     @Test
     public void thatEventsAreAdded() {
-        eventService.addEvent(testEvent);
-        assertEquals(1, eventService.findAllEventsForUserByUsername(testUser.getUsername()).size());
+        Long eventId = eventService.addEvent(testEvent);
+        eventService.addAttending(eventId, testUser);
+        assertEquals(1, eventService.findAttendingEventsForUserByUsername(testUser.getUsername()).size());
     }
 
     @Test
     public void thatParticipantsAreAddedAndCanBeRetrieved() {
         long eventId = eventService.addEvent(testEvent);
-        assertEquals(1, eventService.findParticipantsForEventByEventId(eventId).size());
+        eventService.addAttending(eventId, testUser);
+        assertEquals(1, eventService.findAttendingForEventByEventId(eventId).size());
     }
 }

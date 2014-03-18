@@ -27,11 +27,35 @@ public class EventRepository {
     @Autowired
     JdbcTemplate jt;
 
-    public List<Event> findAll(final String username) {
+    public List<Event> findInvitedTo(final String username) {
         List<Event> result = jt.query(
                 "SELECT e.* FROM calendarEvent e, invited i " +
                         "WHERE i.username = ? " +
                         "AND i.eventId = e.eventId",
+                new Object[]{username},
+                new RowMapper<Event>() {
+                    @Override
+                    public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Event event = new Event();
+                        event.setEventId(rs.getLong("eventId"));
+                        event.setEventName(rs.getString("eventName"));
+                        event.setStartTime(rs.getDate("startTime"));
+                        event.setEndTime(rs.getDate("endTime"));
+                        event.setActive(rs.getBoolean("isActive"));
+                        event.setDescription(rs.getString("description"));
+                        event.setEventAdmin(rs.getString("eventAdmin"));
+                        return event;
+                    }
+                }
+        );
+        return result;
+    }
+
+    public List<Event> findEventsForUser(String username) {
+        List<Event> result = jt.query(
+                "SELECT e.* FROM calendarEvent e, attending a " +
+                        "WHERE a.username = ? " +
+                        "AND a.eventId = e.eventId",
                 new Object[]{username},
                 new RowMapper<Event>() {
                     @Override
@@ -129,9 +153,9 @@ public class EventRepository {
         return result;
     }
 
-    public Set<Participant> findParticipantsByEventId(long eventId) {
+    public Set<Participant> findAttendingByEventId(long eventId) {
         List<Participant> result = jt.query(
-                "SELECT DISTINCT p.* FROM person p, (SELECT * FROM invited UNION SELECT * FROM attending) a " +
+                "SELECT p.* FROM person p, attending a " +
                         "WHERE a.eventId = ? " +
                         "AND p.username = a.username",
                 new Object[]{eventId},
@@ -147,21 +171,6 @@ public class EventRepository {
                     }
                 }
         );
-        result.addAll(jt.query(
-                "SELECT DISTINCT e.*  eventGroup e, (SELECT * FROM invited UNION SELECT * FROM attending) a  " +
-                        "WHERE a.eventId = ? " +
-                        "AND a.groupId = e.groupId",
-                new Object[]{eventId},
-                new RowMapper<Participant>() {
-                    @Override
-                    public Participant mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        Group group = new Group();
-                        group.setId(rs.getLong("groupId"));
-                        group.setName(rs.getString("groupName"));
-                        return group;
-                    }
-                }
-        ));
         return new HashSet<Participant>(result);
     }
 }
