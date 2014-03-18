@@ -14,36 +14,29 @@ App.Router.map(function() {
 });
 
 App.EventRoute = Ember.Route.extend({
-  model: function() {
-    return Ember.$.getJSON('/api/events');
-  }
+    model: function() {
+        return Ember.$.getJSON('/api/events');
+    }
 });
 
 App.NewRoute = Ember.Route.extend({
-  model: function() {
-    return {
-      newEvent: {},
-    }
-  }
+    model: {}
 });
 
 App.EditRoute = Ember.Route.extend({
-  model: function(params) {
-    return {
-      editEvent: this.store.find('event', params.id),
-      members: this.store.find('member'),
-      persons: this.store.find('person')
+    model: function(params) {
+        return {
+        editEvent: this.store.find('event', params.id),
+        }
     }
-  }
 });
 
 App.ViewRoute = Ember.Route.extend({
-  model: function(params) {
-    return {
-      viewEvent: this.store.find('event', params.id),
-      members: this.store.find('member')
+    model: function(params) {
+        return {
+            viewEvent: Ember.$.getJSON('/api/events/' + params.id)
+        }
     }
-  }
 });
 
 App.MeRoute = Ember.Route.extend({
@@ -74,7 +67,7 @@ App.NewController = Ember.ObjectController.extend({
                     active: true
                 }),
                 complete: function(data) {
-                    window.location.replace('/#/event');
+                    self.get('models.event')
                 }
             })
         },
