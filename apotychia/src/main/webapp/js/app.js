@@ -6,6 +6,7 @@ App.ApplicationAdapter = DS.RESTAdapter.extend({
     namespace: 'api'
 });
 
+
 App.Store = DS.Store.extend({
     adapter: App.ApplicationAdapter
 });
@@ -28,19 +29,46 @@ App.Event = DS.Model.extend({
 // routes
 
 App.Router.map(function() {
-    this.resource('event', { path: "/event"}, function() {  // event
-        this.resource("new"); //event/new
-        this.resource('edit', { path: 'edit/:event_id'}); // event/edit/1
-    });
-    this.resource('me');
+  this.resource('event', { path: "/event"}, function() {  // calender
+    this.resource("view", {path: ":id"});
+    this.resource("new"); //calender/new
+    this.resource('edit', { path: 'edit/:id'}); // calender/edit/1
+  });
+  this.resource('me');
 });
 
 App.EventRoute = Ember.Route.extend({
-    model: function() {
-        return this.store.find('event');
-    }
+  model: function() {
+    return this.store.find('event');
+  }
 });
 
+App.NewRoute = Ember.Route.extend({
+  model: function() {
+    return {
+      newEvent: App.Event.createRecord({isActive: true}),
+    }
+  }
+});
+
+App.EditRoute = Ember.Route.extend({
+  model: function(params) {
+    return {
+      editEvent: this.store.find('event', params.id),
+      members: this.store.find('member'),
+      persons: this.store.find('person')
+    }
+  }
+});
+
+App.ViewRoute = Ember.Route.extend({
+  model: function(params) {
+    return {
+      viewEvent: this.store.find('event', params.id),
+      members: this.store.find('member')
+    }
+  }
+});
 
 App.MeRoute = Ember.Route.extend({
     model: function() {
@@ -52,6 +80,7 @@ App.MeRoute = Ember.Route.extend({
 
 App.NewController = Ember.ObjectController.extend({
     content: {},
+    isRoom: true,
     actions: {
         save: function() {
             App.Event.createRecord({
@@ -62,25 +91,71 @@ App.NewController = Ember.ObjectController.extend({
                 description: '',
                 isActive: true
             }).save();
+        },
+
+        disablePlaceInput : function() {
+            this.set('isRoom', false);
+            console.log(isRoom);
+        },
+
+        enablePlaceInput : function() {
+            this.set('isRoom', true);
+            console.log(isRoom);
         }
     }
+});
+
+App.ViewController = Ember.ObjectController.extend({
+  actions: {
+    attend: function() {
+        // todo
+    },
+    notAttend: function() {
+        //todo
+    }
+  }
+});
+
+App.EditController = Ember.ObjectController.extend({
+  actions: {
+    saveEdit: function() {
+      // todo
+    }
+  }
 });
 
 // views
 
 App.NewView = Ember.View.extend({
-    didInsertElement: function() {
-        // Enable popovers
-        $("a[rel=popover]").popover({
-            placement: 'left',
-            html: true,
-            content: function() {
-                return $('#popover-content-wrapper').html();
-        }
-        }).click(function(e) {
-            e.preventDefault();
-        });
-    }
+  didInsertElement: function() {
+    // Enable popovers
+    $("label[rel=popover]").popover({
+      placement: 'left',
+      html: true,
+      container: 'body',
+      content: function() {
+        return $('#popover-content-wrapper').html();
+      }
+    }).click(function(e) {
+      e.preventDefault();
+    });
+  }
+});
+
+App.EditView = Ember.View.extend({
+  didInsertElement: function() {
+    // Enable popovers
+    $("label[rel=popover]").popover({
+      placement: 'left',
+      html: true,
+      container: 'body',
+      content: function() {
+        return $('#popover-content-wrapper').html();
+      }
+    }).click(function(e) {
+      e.preventDefault();
+    });
+  }
 });
 
 // index route
