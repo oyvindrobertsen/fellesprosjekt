@@ -2,7 +2,9 @@ package no.ntnu.apotychia.service;
 
 import no.ntnu.apotychia.model.User;
 import no.ntnu.apotychia.service.repository.UserRepository;
+import no.ntnu.apotychia.service.security.ApotychiaUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service

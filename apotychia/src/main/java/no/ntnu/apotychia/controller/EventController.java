@@ -4,6 +4,10 @@ import no.ntnu.apotychia.model.Event;
 import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
 import no.ntnu.apotychia.service.EventService;
+import no.ntnu.apotychia.service.UserService;
+import no.ntnu.apotychia.service.security.ApotychiaUserDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -21,9 +27,22 @@ public class EventController {
 
     @Autowired
     EventService eventService;
+    @Autowired
+    UserService userService;
+
+    Logger logger = LoggerFactory.getLogger(getClass());
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<Event>> getAllEventsForLoggedInUser() {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        return new ResponseEntity<List<Event>>(eventService.findAllEventsForUserByUsername(currentUser.getUsername()),
+                HttpStatus.OK);
+    }
 
     @RequestMapping(method = RequestMethod.GET, value="/{username}")
-    public ResponseEntity<List<Event>> getAllEventsForUser(@PathVariable String username) {
+    public ResponseEntity<List<Event>> getAllEventsForUserByUserName(@PathVariable String username) {
         return new ResponseEntity<List<Event>>(eventService.findAllEventsForUserByUsername(username), HttpStatus.OK);
     }
 
@@ -39,14 +58,14 @@ public class EventController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody Event addEvent(@ModelAttribute Event event, ModelMap model) {
-        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (user.getUsername().equals(event.getEventAdmin())) {
-            long eventId = eventService.addEvent(event);
-            return eventService.findEventById(eventId);
-        } else {
-            throw new IllegalArgumentException("EventAdmin not same as logged in user");
-        }
+    public @ResponseBody Event addEvent(@RequestBody Event event, ModelMap model) {
+        logger.info(event.toString());
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        event.setEventAdmin(currentUser.getUsername());
+        long eventId = eventService.addEvent(event);
+        return eventService.findEventById(eventId);
     }
 
     /*
