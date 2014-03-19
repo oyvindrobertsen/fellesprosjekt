@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -32,17 +34,25 @@ public class EventController {
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUser() {
+    public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUserForCurrentWeek() {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         List<Event> ret = eventService.findAttendingEventsForUserByUsername(currentUser.getUsername());
+        List<Event> out = new ArrayList<Event>();
+        int week = new GregorianCalendar().getWeekYear();
         for (Event event : ret) {
             if (event.getEventAdmin().equals(currentUser.getUsername())) {
                 event.setAdmin(true);
             }
+            GregorianCalendar c = new GregorianCalendar();
+            c.setTime(event.getStartTime());
+            if (c.getWeekYear() == week) {
+                logger.info("weee");
+                out.add(event);
+            }
         }
-        return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
+        return new ResponseEntity<List<Event>>(out, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/user/{username}")
