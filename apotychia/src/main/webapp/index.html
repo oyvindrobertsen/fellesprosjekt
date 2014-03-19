@@ -102,10 +102,24 @@
             <label class="btn btn-primary active" {{action "enablePlaceInput"}}>
                 <input type="radio" name="place" id="placeoption"> Skriv sted
             </label>
-            <label class="btn btn-primary" rel="popover" {{action "disablePlaceInput"}}>
+            <label class="btn btn-primary" rel="popover2" {{action "disablePlaceInput"}}>
                 <input type="radio" name="place" id="roomoption"> Velg rom
-                <div id="room-popover" class="hide">
-                    weeee
+                <div id="rooms-popover" class="hide">
+                weee
+
+                    <ul style="overflow: auto; height: 200px; max-height: 300px">
+
+                    <!-- antar at det er ulike 'room' i en liste 'roms' der en kan hente ut 'room.roomNumber' og 'room.capacity'-->
+
+                        {{#each room in rooms}}
+                            <li class="list-unstyled">
+                                <label style="margin-left:-15px;">
+                                    Rom: {{room.roomNumber}},  plass til: {{room.capacity}} <a class="btn btn-success btn-xs" {{action 'addRoomToEvent' user}}>Velg</a>
+                                </label>
+                            </li>
+                        {{/each}}
+
+                    </ul>
                 </div>
             </label>
         </div>

@@ -15,7 +15,7 @@ App.Router.map(function() {
 
 App.EventRoute = Ember.Route.extend({
     model: function() {
-        return Ember.$.getJSON('/api/events');
+        // return Ember.$.getJSON('/api/events');
     }
 });
 
@@ -23,7 +23,9 @@ App.NewRoute = Ember.Route.extend({
     model: function() {
         return Ember.RSVP.hash({
             users: Ember.$.getJSON('/api/auth/users'),
-            participants: []
+            rooms: null, //Ember.$.getJSON('/api/auth/rooms'),
+            participants: [],
+            room: null
         });
     }
 });
@@ -90,6 +92,9 @@ App.NewController = Ember.ObjectController.extend({
         },
         removeFromParticipants: function(object) {
             this.get('model.participants').removeObject(object);
+        },
+        addRoomToEvent: function(object) {
+            this.get('model.room').pushObject(object);
         }
     }
 });
@@ -161,6 +166,16 @@ App.NewView = Ember.View.extend({
             container: 'body',
             content: function() {
                 return $('#users-popover').html();
+            }
+        }).click(function(e) {
+            e.preventDefault();
+        });
+        $("label[rel=popover2]").popover({
+            placement: 'left',
+            html: true,
+            container: 'body',
+            content: function() {
+                return $('#rooms-popover').html();
             }
         }).click(function(e) {
             e.preventDefault();
