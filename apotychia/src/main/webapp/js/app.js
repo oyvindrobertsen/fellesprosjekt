@@ -101,6 +101,15 @@ App.NewController = Ember.ObjectController.extend({
         enablePlaceInput : function() {
             this.set('isRoom', true);
             console.log(isRoom);
+        },
+
+        getEventHeightPos : function(params) {
+            return params.time * 35; //35px er lengden på en time
+        },
+
+        getEventHeight : function(params) {
+            var length: params.endTime - params.startTime;
+            return length * 35; //35px er lengden på en time
         }
     }
 });
