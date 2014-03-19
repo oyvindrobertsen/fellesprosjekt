@@ -30,6 +30,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-test'
     compile 'com.fasterxml.jackson.core:jackson-databind'
     compile 'javax.inject:javax.inject:1'
+    compile 'javax.mail:mail:1.4.1'
     compile 'mysql:mysql-connector-java:5.1.18'
     runtime 'javax.servlet:jstl'
     runtime 'net.sourceforge.jtds:jtds:1.3.1'

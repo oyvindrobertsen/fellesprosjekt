@@ -5,6 +5,7 @@ import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
 import no.ntnu.apotychia.service.EventService;
 import no.ntnu.apotychia.service.UserService;
+import no.ntnu.apotychia.service.MailService;
 import no.ntnu.apotychia.service.security.ApotychiaUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 @Controller
 @RequestMapping("/api/events")
@@ -78,6 +80,9 @@ public class EventController {
         long eventId = eventService.addEvent(event);
         eventService.addAttending(eventId, currentUser);
         // Add code to invite people
+        MailService mail = new MailService();
+        mail.push(eventService.findAttendingForEventByEventId(eventId), 
+            "You have been invited to a new Event <br> <a href='http://localhost:8080/#/event/edit/" + eventId + "'>New Event</a>");
         return eventService.findEventById(eventId);
     }
 

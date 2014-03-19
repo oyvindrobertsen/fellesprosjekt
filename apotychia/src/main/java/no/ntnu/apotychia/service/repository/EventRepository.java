@@ -173,4 +173,26 @@ public class EventRepository {
         );
         return new HashSet<Participant>(result);
     }
+
+
+    public Set<Participant> findInvitedByEventId(long eventId) {
+        List<Participant> result = jt.query(
+                "SELECT p.* FROM person p, invited i " +
+                        "WHERE i.eventId = ? " +
+                        "AND p.username = i.username",
+                new Object[]{eventId},
+                new RowMapper<Participant>() {
+                    @Override
+                    public Participant mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        User user = new User();
+                        user.setUsername(rs.getString("username"));
+                        user.setFirstName(rs.getString("firstName"));
+                        user.setLastName(rs.getString("lastName"));
+                        user.setEmail(rs.getString("mail"));
+                        return user;
+                    }
+                }
+        );
+        return new HashSet<Participant>(result);
+    }
 }
