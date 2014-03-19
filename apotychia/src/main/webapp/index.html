@@ -29,8 +29,8 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li>{{#link-to 'me'}}Me{{/link-to}}</li>
-                <li><a href="/logout">Logout</a></li>
+                <li>{{#link-to 'me'}}Meg{{/link-to}}</li>
+                <li><a href="/logout">Logg ut</a></li>
             </ul>
         </div>
     </div>
@@ -46,19 +46,25 @@
 <script type="text/x-handlebars" id="event">
     <!-- Calender view -->
     <div class="col-md-9 calender-panel">
-        <table>
-            {{#each model}}
-                {{#if admin}}
-                    <tr>
-                        <td> {{#link-to 'edit' eventID}}<b>{{eventName}} </b> {{/link-to}}</td>
-                    </tr>
-                {{else}}
-                    <tr>
-                        <td> {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}</td>
-                    </tr>
-                {{/if}}
-            {{/each}}
-        </table>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                {{#each model}}
+                    {{#if admin}}
+                        <div class="well text-center admin-well">
+                            {{#link-to 'edit' eventID}}<b style="color:white;">{{eventName}} </b> {{/link-to}}<br/>
+                            <strong>Starter:</strong> {{startTime}}<br/>
+                            <strong>Slutter:</strong> {{endTime}}
+                        </div>
+                        {{else}}
+                            <div class="well text-center">
+                                {{#link-to 'view' eventID}}<b">{{eventName}} </b> {{/link-to}}<br/>
+                                <strong>Starter:</strong> {{startTime}}<br/>
+                                <strong>Slutter:</strong> {{endTime}}
+                            </div>
+                        {{/if}}
+                {{/each}}
+            </div>
+        </div>
     </div>
     <div class="col-md-3 calender-panel">
         {{outlet}}
@@ -95,12 +101,12 @@
 
         <!-- Radio buttons -->
         <div class="form-group input-group btn-group btn-group-justified" data-toggle="buttons" style="padding-top: 15px;">
-            <label class="btn btn-primary">
-                <input type="radio" name="place" id="placeoption" checked {{action 'disablePlaceInput'}}> Skriv sted
+            <label class="btn btn-primary active" {{action "enablePlaceInput"}}>
+                <input type="radio" name="place" id="placeoption"> Skriv sted
             </label>
-            <label class="btn btn-primary" rel="popover">
-                <input type="radio" name="place" id="placeoption" {{action 'enablePlaceInput'}}> Skriv rom
-                <div id="popover-content-wrapper" class="hide">
+            <label class="btn btn-primary" rel="popover" {{action "disablePlaceInput"}}>
+                <input type="radio" name="place" id="roomoption"> Velg rom
+                <div id="room-popover" class="hide">
                     weeee
                 </div>
             </label>
@@ -108,11 +114,7 @@
         <div style="clear:both;"></div>
         <!-- Place -->
         <div class="form-group">
-            {{#if isRoom}}
-            <input class="form-control" disable='true' type="text" placeholder="Sted">
-            {{else}}
-            <input class="form-control" disable='false' type="text" placeholder="Sted">
-            {{/if}}
+            <input class="form-control" type="text" id="placeinput" placeholder="Sted">
         </div>
 
         <div class="form-group">
@@ -120,32 +122,17 @@
                 <thead>
                     <th>Deltakere</th>
                     <th>
-                        <a href="#" rel="popover" data-content="" class="btn btn-primary btn-sm btn-block">Legg til deltaker</a>
-                        <div id="popover-content-wrapper" class="hide">
-                            <div class="form-group">
-                                <div class="col-md-12">
-                                    {{input type="text" placeholder="S&oslash;k etter person" class="form-control" value=searchTerm}}
-                                </div>
-                            </div>
-
+                        <a rel="popover" data-content="" class="btn btn-primary btn-sm btn-block">Legg til deltaker</a>
+                        <div id="users-popover" class="hide">
                             <ul style="overflow: auto; max-height: 300px">
-                                {{#each model.persons}}
-                                <li class="list-unstyled">
-                                    <label style="margin-left:-15px;">
-                                        <input type="checkbox" name="add"> {{name}}
-                                    </label>
-                                </li>
+                                {{#each user in users}}
+                                    <li class="list-unstyled">
+                                        <label style="margin-left:-15px;">
+                                            {{user.firstName}} {{user.lastName}} <a class="btn btn-success btn-xs" {{action 'addToParticipants' user}}>Legg til</a>
+                                        </label>
+                                    </li>
                                 {{/each}}
                             </ul>
-
-                            <div class="form-group">
-                                <div class="col-md-6">
-                                    <button class="form-control btn btn-success btn-primary"> Legg til </button>
-                                </div>
-                                <div class="col-md-6">
-                                    <button class="form-control btn btn-danger btn-primary"> Avbryt </button>
-                                </div>
-                            </div>
                         </div>
                     </th>
                 </thead>
@@ -153,10 +140,10 @@
             <div style="overflow: auto; max-height: 30%;">
                 <table class="table">
                     <tbody>
-                        {{#each model.members}}
+                        {{#each participant in participants}}
                             <tr>
-                                <td>{{name}}</td>
-                                <td><a href="#" class="btn btn-danger btn-xs">Fjern</a></td>
+                                <td>{{participant.firstName}} {{participant.lastName}}</td>
+                                <td><a class="btn btn-danger btn-xs" {{action 'removeFromParticipants' participant}}>Fjern</a></td>
                             </tr>
                         {{/each}}
                     </tbody>
@@ -165,13 +152,8 @@
         </div>
 
         <!-- Save/delete buttons -->
-        <div class="form-group buttons">
-            <div class="col-md-6 split-form-left">
-                <button class="form-control btn btn-success btn-primary" {{action "save"}}> Lagre avtale </button>
-            </div>
-            <div class="col-md-6 split-form-right">
-                <button class="form-control btn btn-danger btn-primary"> Slett avtale </button>
-            </div>
+        <div class="form-group">
+            <button class="form-control btn btn-success btn-primary" {{action "save"}}> Lagre avtale </button>
         </div>
     </form>
 </script>
@@ -180,12 +162,12 @@
     <form>
         <!-- Title -->
         <div class="form-group">
-            {{input type="text" value=model.eventName class="form-control" placeholder="Tittel"}}
+            {{input type="text" value=model.event.eventName class="form-control" placeholder="Tittel"}}
         </div>
 
         <!-- Description -->
         <div class="form-group">
-            {{textarea value=model.description class="form-control" placeholder="Skriv en beskrivelse" rows="2"}}
+            {{textarea value=model.event.description class="form-control" placeholder="Skriv en beskrivelse" rows="2"}}
         </div>
 
         <!-- Date -->
@@ -228,7 +210,7 @@
                 <thead>
                     <th>Deltakere</th>
                     <th>
-                        <a href="#" rel="popover" data-content="" class="btn btn-primary btn-sm btn-block">Legg til deltaker</a>
+                        <a rel="popover" data-content="" class="btn btn-primary btn-sm btn-block">Legg til deltaker</a>
                         <div id="popover-content-wrapper" class="hide">
                             <div class="form-group">
                                 <div class="col-md-12">
@@ -261,9 +243,15 @@
             <div style="overflow: auto; max-height: 30%;">
                 <table class="table">
                     <tbody>
-                        {{#each model.members}}
+                        {{#each model.attending}}
+                            <tr class="success">
+                                <td>{{firstName}} {{lastName}}</td>
+                                <td><a class="btn btn-danger btn-xs">Fjern</a></td>
+                            </tr>
+                        {{/each}}
+                        {{#each model.invited}}
                             <tr>
-                                <td>{{name}}</td>
+                                <td>{{firstName}} {{lastName}}</td>
                                 <td><a class="btn btn-danger btn-xs">Fjern</a></td>
                             </tr>
                         {{/each}}
@@ -275,36 +263,53 @@
         <!-- Save/delete buttons -->
         <div class="form-group buttons">
             <div class="col-md-6 split-form-left">
-                <button class="form-control btn btn-success btn-primary" {{action "save"}}> Lagre avtale </button>
+                <button class="form-control btn btn-success btn-primary" {{action "slett"}}> Lagre avtale </button>
             </div>
             <div class="col-md-6 split-form-right">
-                <button class="form-control btn btn-danger btn-primary"> Slett avtale </button>
+                <button class="form-control btn btn-danger btn-primary" {{action "delete"}}> Slett avtale </button>
             </div>
         </div>
     </form>
 </script>
 
 <script type="text/x-handlebars" id="view">
-    <h1>{{model.eventName}}</h1>
+    <h1>{{model.event.eventName}}</h1>
 
-    <strong>Start:</strong> {{model.startTime}}<br/>
+    <strong>Start:</strong> {{model.event.startTime}}<br/>
 
-    <strong>Slutt:</strong> {{model.endTime}}<br/>
+    <strong>Slutt:</strong> {{model.event.endTime}}<br/>
 
-    <div class="well">{{model.description}}</div>
+    <div class="well">{{model.event.description}}</div>
 
-    <strong>Deltakere:</strong><br/>
-    {{#each model.attending}}
-        {{username}}
-    {{/each}}
+    <table class="table">
+                <thead>
+                    <th>Deltakere</th>
+                </thead>
+            </table>
+            <div style="overflow: auto; max-height: 30%;">
+                <table class="table">
+                    <tbody>
+                        {{#each model.attending}}
+                            <tr class="success">
+                                <td>{{firstName}} {{lastName}}</td>
+                            </tr>
+                        {{/each}}
+                        {{#each model.invited}}
+                            <tr>
+                                <td>{{firstName}} {{lastName}}</td>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
 
     <!-- attend -->
     <div class="form-group buttons">
         <div class="col-md-6 split-form-left">
-            <button class="form-control btn btn-success btn-primary"> Delta </button>
+            <a class="form-control btn btn-success btn-primary" {{action 'attend'}}> Delta </a>
         </div>
         <div class="col-md-6 split-form-right">
-            <button class="form-control btn btn-danger btn-primary"> Avsl&aring; </button>
+            <a class="form-control btn btn-danger btn-primary" {{action 'decline'}}> Avsl&aring; </a>
         </div>
     </div>
 </script>
@@ -333,7 +338,10 @@
 
 <!-- Testing-->
 <script type="text/x-handlebars" id="me">
-    {{firstName}}
+    <div class="col-md-9">
+        <h1>{{firstName}} {{lastName}}</h1>
+        <p class="lead">{{email}}</p>
+    </div>
 </script>
 
 <!-- End main container -->

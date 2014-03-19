@@ -9,7 +9,9 @@ import java.util.Set;
 
 import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
+import org.springframework.stereotype.Service;
 
+@Service
 public class MailService {
 
 	

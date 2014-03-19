@@ -22,7 +22,10 @@ App.EventRoute = Ember.Route.extend({
 
 App.NewRoute = Ember.Route.extend({
     model: function() {
-        return {};
+        return Ember.RSVP.hash({
+            users: Ember.$.getJSON('/api/auth/users'),
+            participants: []
+        });
     }
 });
 
@@ -40,13 +43,21 @@ App.InvitesRoute = Ember.Route.extend({
 
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
-        return Ember.$.getJSON('/api/events/' + params.id)
+        return Ember.RSVP.hash({
+            event: Ember.$.getJSON('/api/events/' + params.id),
+            attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
+            invited: Ember.$.getJSON('/api/events/' + params.id + '/invited')
+        });
     }
 });
 
 App.ViewRoute = Ember.Route.extend({
     model: function(params) {
-        return Ember.$.getJSON('/api/events/' + params.id)
+        return Ember.RSVP.hash({
+            event: Ember.$.getJSON('/api/events/' + params.id),
+            attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
+            invited: Ember.$.getJSON('/api/events/' + params.id + '/invited')
+        });
     }
 });
 
@@ -60,7 +71,6 @@ App.MeRoute = Ember.Route.extend({
 
 App.NewController = Ember.ObjectController.extend({
     content: {},
-    isRoom: true,
     actions: {
         save: function() {
             var self = this;
@@ -75,7 +85,8 @@ App.NewController = Ember.ObjectController.extend({
                     endTime: this.get('date') + " " + this.get('endTime'),
                     eventAdmin: '',
                     description: this.get('description'),
-                    active: true
+                    active: true,
+                    invited: this.get('model.participants')
                 }),
                 complete: function(data) {
                     self.transitionToRoute('/');
@@ -84,13 +95,22 @@ App.NewController = Ember.ObjectController.extend({
         },
 
         disablePlaceInput : function() {
-            this.set('isRoom', false);
-            console.log(isRoom);
+            Ember.$('#placeinput').prop('disabled', true);
         },
 
         enablePlaceInput : function() {
-            this.set('isRoom', true);
-            console.log(isRoom);
+            Ember.$('#placeinput').prop('disabled', false);
+        },
+        addToParticipants: function(object) {
+            if (object.username) {
+                object.type = ".User";
+            } else {
+                object.type = ".Group";
+            }
+            this.get('model.participants').pushObject(object);
+        },
+        removeFromParticipants: function(object) {
+            this.get('model.participants').removeObject(object);
         }
     }
 });
@@ -98,9 +118,18 @@ App.NewController = Ember.ObjectController.extend({
 App.ViewController = Ember.ObjectController.extend({
   actions: {
     attend: function() {
-        // todo
+        var self = this;
+        Ember.$.ajax({
+            url: '/api/events/' + this.get('model.event.eventId') + '/attend',
+            type: 'POST',
+            dataType: 'xml/html/script/json',
+            contentType: 'application/JSON',
+            complete: function() {
+                self.transitionToRoute('/');
+            }
+        });
     },
-    notAttend: function() {
+    decline: function() {
         //todo
     }
   }
@@ -111,17 +140,45 @@ App.ViewController = Ember.ObjectController.extend({
 
 App.EditController = Ember.ObjectController.extend({
     date: function() {
-        return Ember.String.w(this.get('model.startTime'))[0];
+        return Ember.String.w(this.get('model.event.startTime'))[0];
     }.property('model.duration'),
     startTime: function() {
-        return Ember.String.w(this.get('model.startTime'))[1];
+        return Ember.String.w(this.get('model.event.startTime'))[1];
     }.property('model.startTime'),
     endTime: function() {
-        return Ember.String.w(this.get('model.endTime'))[1];
+        return Ember.String.w(this.get('model.event.endTime'))[1];
     }.property('model.endTime'),
     actions: {
         saveEdit: function() {
-        // todo
+            var self = this;
+            Ember.$.ajax({
+                url: '/api/events/' + this.get('model.eventID'),
+                type: 'PUT',
+                dataType: 'xml/html/script/json',
+                contentType: 'application/JSON',
+                data: JSON.stringify({
+                    eventID: this.get('model.eventID'),
+                    eventName: this.get('model.eventName'),
+                    startTime: this.get('date') + " " + this.get('startTime'),
+                    endTime: this.get('date') + " " + this.get('endTime'),
+                    eventAdmin: this.get('model.eventAdmin'),
+                    description: this.get('model.description'),
+                    active: this.get('model.active')
+                }),
+                complete: function() {
+                    self.transitionToRoute('/');
+                }
+            });
+        },
+        delete: function() {
+            var self = this;
+            Ember.$.ajax({
+                url: '/api/events/' + this.get('model.eventID'),
+                type: 'DELETE',
+                complete: function() {
+                    self.transitionToRoute('/');
+                }
+            });
         }
     }
 });
@@ -131,12 +188,12 @@ App.EditController = Ember.ObjectController.extend({
 App.NewView = Ember.View.extend({
     didInsertElement: function() {
         // Enable popovers
-        $("label[rel=popover]").popover({
+        $("a[rel=popover]").popover({
             placement: 'left',
             html: true,
             container: 'body',
             content: function() {
-                return $('#popover-content-wrapper').html();
+                return $('#users-popover').html();
             }
         }).click(function(e) {
             e.preventDefault();
@@ -148,12 +205,12 @@ App.NewView = Ember.View.extend({
 App.EditView = Ember.View.extend({
   didInsertElement: function() {
     // Enable popovers
-    $("label[rel=popover]").popover({
+    $("a[rel=popover]").popover({
       placement: 'left',
       html: true,
       container: 'body',
       content: function() {
-        return $('#popover-content-wrapper').html();
+        return $('#users-content-wrapper').html();
       }
     }).click(function(e) {
       e.preventDefault();

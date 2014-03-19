@@ -14,5 +14,6 @@ public class CustomJacksonObjectMapper extends ObjectMapper {
         super();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         this.setDateFormat(df);
+        this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 }

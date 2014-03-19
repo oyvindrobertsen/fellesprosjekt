@@ -180,8 +180,11 @@ public class EventRepository {
         return new HashSet<Participant>(result);
     }
 
+    public void delete(Long id) {
+        jt.update("DELETE FROM calendarEvent WHERE eventId = ?", id);
+    }
 
-    public Set<Participant> findInvitedByEventId(long eventId) {
+    public Set<Participant> findInvitedUsersByEventId(Long eventId) {
         List<Participant> result = jt.query(
                 "SELECT p.* FROM person p, invited i " +
                         "WHERE i.eventId = ? " +
@@ -196,6 +199,26 @@ public class EventRepository {
                         user.setLastName(rs.getString("lastName"));
                         user.setEmail(rs.getString("mail"));
                         return user;
+                    }
+                }
+        );
+        return new HashSet<Participant>(result);
+    }
+
+
+    public Set<Participant> findInvitedGroupsByEventId(Long id) {
+        List<Participant> result = jt.query(
+                "SELECT eg.* FROM eventGroup eg, invited i " +
+                        "WHERE i.eventId = ? " +
+                        "AND eg.groupId = i.groupId",
+                new Object[]{id},
+                new RowMapper<Participant>() {
+                    @Override
+                    public Participant mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Group group = new Group();
+                        group.setId(rs.getLong("groupId"));
+                        group.setName(rs.getString("groupName"));
+                        return group;
                     }
                 }
         );

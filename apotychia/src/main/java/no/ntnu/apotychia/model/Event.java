@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.Set;
 import javax.persistence.*;
 
-public class Event {
+public class Event implements Comparable<Event> {
     private long eventId;
     private String eventName;
     private Timestamp startTime;
@@ -15,6 +15,8 @@ public class Event {
     private boolean isActive;
     private String description;
     private String eventAdmin;
+    private String location;
+    private Long roomId;
     private Set<Participant> invited;
     private Set<Participant> attending;
     private boolean isAdmin;
@@ -91,8 +93,21 @@ public class Event {
         this.attending = attending;
     }
 
+    public Set<Participant> getInvited() {
+        return invited;
+    }
+
+    public void setInvited(Set<Participant> invited) {
+        this.invited = invited;
+    }
+
     @Override
     public String toString() {
         return getEventName() + ", " + getStartTime() + ", " + getEndTime();
+    }
+
+    @Override
+    public int compareTo(Event o) {
+        return getStartTime().compareTo(o.getStartTime());
     }
 }

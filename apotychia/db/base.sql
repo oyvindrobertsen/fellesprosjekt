@@ -15,16 +15,6 @@ CREATE TABLE room (
     PRIMARY KEY (roomNr)
 );
 
-CREATE TABLE location (
-    locationId      INT             NOT NULl        AUTO_INCREMENT,
-    locationName    VARCHAR(45)     NOT NULL,
-    roomNr          INT             NULL,
-
-    PRIMARY KEY (locationId),
-    FOREIGN KEY (roomNr) REFERENCES room(roomNr)
-        ON UPDATE cascade ON DELETE cascade
-);
-
 CREATE TABLE eventGroup (
     groupId         INT             NOT NULL    AUTO_INCREMENT,
     groupName       VARCHAR(45)     NULL,
@@ -49,13 +39,11 @@ CREATE TABLE calendarEvent (
     endTime         DATETIME        NOT NULL,
     isActive        VARCHAR(45)     NOT NULL,
     description     TINYTEXT        NULL,
-    locationId      INT             NULL,
+    location        VARCHAR(45)     NULL,
     eventAdmin      VARCHAR(45)     NOT NULL,
 
     PRIMARY KEY (eventId),
     FOREIGN KEY (eventAdmin) REFERENCES person (username)
-        ON UPDATE cascade ON DELETE cascade,
-    FOREIGN KEY (locationId) REFERENCES location (locationId)
         ON UPDATE cascade ON DELETE cascade
 );
 
@@ -82,7 +70,14 @@ CREATE TABLE attending (
         ON UPDATE cascade ON DELETE cascade
 );
 
+CREATE TABLE declined (
+    eventId     INT     NOT NUll,
+    username    VARCHAR(45)     NULL,
 
+    PRIMARY KEY (eventId),
+    FOREIGN KEY(username) REFERENCES person (username)
+        ON UPDATE cascade ON DELETE cascade
+);
 
 CREATE TABLE booked (
       bookedId    INT   NOT NULL    AUTO_INCREMENT,

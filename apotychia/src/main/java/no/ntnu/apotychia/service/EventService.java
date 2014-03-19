@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class EventService {
 
     public Event findEventById(long eventId) {
         Event event = eventRepository.findById(eventId);
-        event.setAttending(eventRepository.findAttendingByEventId(eventId));
+//        event.setAttending(eventRepository.findAttendingByEventId(eventId));
 //        for (Participant p : event.getAttending()) {
 //            if (p instanceof Group) {
 //                ((Group) p).addAllMembers(groupRepository.findMembers(((Group) p).getId()));
@@ -59,7 +60,29 @@ public class EventService {
         eventRepository.addAttending(eventId, participant);
     }
 
-    public List<Event> findEventsInvitedToByUsername(String username) {
+    public void deleteEventById(Long id) {
+        eventRepository.delete(id);
+    }
+
+    public void addInvited(long eventId, Participant participant) {
+        eventRepository.addInvited(eventId, participant);
+    }
+
+    public Set<Participant> findInvitedByEventId(Long id) {
+        Set<Participant> invitedUsers = eventRepository.findInvitedUsersByEventId(id);
+        Set<Participant> invitedGroups = eventRepository.findInvitedGroupsByEventId(id);
+        for (Participant participant : invitedGroups) {
+            for (User user : groupRepository.findMembers(((Group)participant).getId())) {
+                if (!invitedUsers.contains(user)) {
+                    invitedUsers.add(user);
+                }
+            }
+        }
+        return invitedUsers;
+    }
+
+
+    public List<Event> findInvitedEventsForUserByUsername(String username) {
         return eventRepository.findInvitedTo(username);
     }
 }
