@@ -250,4 +250,25 @@ public class EventRepository {
                 "AND eventId = ?",
                 new Object[]{username, eventId});
     }
+
+    public Set<User> findDeclinedByEventId(Long id) {
+        List<User> result = jt.query(
+                "SELECT p.* FROM person p, declined d " +
+                        "WHERE d.eventId = ? " +
+                        "AND p.username = d.username",
+                new Object[]{id},
+                new RowMapper<User>() {
+                    @Override
+                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        User user = new User();
+                        user.setUsername(rs.getString("username"));
+                        user.setFirstName(rs.getString("firstName"));
+                        user.setLastName(rs.getString("lastName"));
+                        user.setEmail(rs.getString("mail"));
+                        return user;
+                    }
+                }
+        );
+        return new HashSet<User>(result);
+    }
 }
