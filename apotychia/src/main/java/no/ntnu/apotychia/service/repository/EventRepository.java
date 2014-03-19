@@ -48,7 +48,13 @@ public class EventRepository {
                     }
                 }
         );
-        return result;
+        if(result != null){
+
+            return result;
+        }
+        else {
+            return result;
+        }
     }
 
     public List<Event> findEventsForUser(String username) {

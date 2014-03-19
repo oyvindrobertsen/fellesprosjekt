@@ -10,6 +10,7 @@ App.Router.map(function() {
     this.resource("new"); //calender/new
     this.resource('edit', { path: 'edit/:id'}); // calender/edit/1
   });
+  this.resource('invites', { path: "/event/invites"});
   this.resource('me');
 });
 
@@ -24,6 +25,18 @@ App.NewRoute = Ember.Route.extend({
         return {};
     }
 });
+
+// Torgrim Edit
+App.InvitesRoute = Ember.Route.extend({
+    model: function() {
+        return Ember.RSVP.hash({
+            invites: Ember.$.getJSON('/api/events/invites')
+        });   
+    }
+     
+});
+
+// End Torgrim edit
 
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
@@ -93,6 +106,9 @@ App.ViewController = Ember.ObjectController.extend({
   }
 });
 
+
+
+
 App.EditController = Ember.ObjectController.extend({
     date: function() {
         return Ember.String.w(this.get('model.startTime'))[0];
@@ -127,6 +143,7 @@ App.NewView = Ember.View.extend({
         });
     }
 });
+
 
 App.EditView = Ember.View.extend({
   didInsertElement: function() {

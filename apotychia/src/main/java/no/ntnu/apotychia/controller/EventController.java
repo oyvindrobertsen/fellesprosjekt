@@ -86,6 +86,19 @@ public class EventController {
         return eventService.findEventById(eventId);
     }
 
+    // Torgim Edit
+
+     @RequestMapping(method = RequestMethod.GET, value="/invites")
+    public ResponseEntity<List<Event>> getInvitedToEventsForLoggedInUser() {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        List<Event> ret = eventService.findEventsInvitedToByUsername(currentUser.getUsername());
+        return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
+    }
+
+    // Torgrim end edit
+
     /*
     TODO: Add code for endpoints returning events for current/any week, for adding participants to events and notifications.
      */

@@ -58,4 +58,8 @@ public class EventService {
     public void addAttending(Long eventId, Participant participant) {
         eventRepository.addAttending(eventId, participant);
     }
+
+    public List<Event> findEventsInvitedToByUsername(String username) {
+        return eventRepository.findInvitedTo(username);
+    }
 }

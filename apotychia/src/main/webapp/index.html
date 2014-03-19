@@ -25,7 +25,9 @@
         <div class="collapse navbar-collapse" id="ap-nav-collapse">
             <ul class="nav navbar-nav">
                 <li>{{#link-to 'new'}}Legg til avtale{{/link-to}}</li>
+                <li><a href="/#/event/invites">Invites <span class="badge">23</span></a></li>
             </ul>
+
             <ul class="nav navbar-nav navbar-right">
                 <li>{{#link-to 'me'}}Me{{/link-to}}</li>
                 <li><a href="/logout">Logout</a></li>
@@ -306,6 +308,28 @@
         </div>
     </div>
 </script>
+
+<!-- Torgrim -->
+
+
+
+<script type="text/x-handlebars" id="invites">
+    <!-- Calender view -->
+    <div class="col-md-9 calender-panel">
+        <table>
+            {{#each model.invites}}   
+                <tr>
+                    <td> {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}</td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+    <div class="col-md-3 calender-panel">
+        {{outlet}}
+    </div>
+</script>
+
+<!-- End Torgrim edit -->
 
 <!-- Testing-->
 <script type="text/x-handlebars" id="me">
