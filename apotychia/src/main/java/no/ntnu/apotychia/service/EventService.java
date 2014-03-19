@@ -70,8 +70,8 @@ public class EventService {
         return invitedUsers;
     }
 
-    public Set<Participant> findDeclinedByEventId(Long id) {
-        return null;
+    public Set<User> findDeclinedByEventId(Long id) {
+        return eventRepository.findDeclinedByEventId(id);
     }
 
 

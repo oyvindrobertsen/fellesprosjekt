@@ -37,7 +37,7 @@ public class EventController {
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUserForCurrentWeek() {
+    public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUser() {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
@@ -95,8 +95,8 @@ public class EventController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/declined")
-    public ResponseEntity<Set<Participant>> getDeclinedForEvent(@PathVariable Long id) {
-        return new ResponseEntity<Set<Participant>>(eventService.findDeclinedByEventId(id), HttpStatus.OK);
+    public ResponseEntity<Set<User>> getDeclinedForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<User>>(eventService.findDeclinedByEventId(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
