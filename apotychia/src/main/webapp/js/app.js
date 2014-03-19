@@ -21,7 +21,9 @@ App.EventRoute = Ember.Route.extend({
 
 App.NewRoute = Ember.Route.extend({
     model: function() {
-        return {};
+        return {
+            users: Ember.$.getJSON('/api/auth/users')
+        };
     }
 });
 

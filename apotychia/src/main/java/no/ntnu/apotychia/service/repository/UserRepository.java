@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class UserRepository {
@@ -41,5 +42,22 @@ public class UserRepository {
                 "INSERT INTO person VALUES (?, ?, ?, ?, ?)",
                 user.getUsername(), user.getEncodedPassword(), user.getFirstName(),
                 user.getLastName(), user.getEmail());
+    }
+
+    public List<User> findAll() {
+        return jt.query(
+                "SELECT * FROM person",
+                new RowMapper<User>() {
+                    @Override
+                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        User user = new User(rs.getString("username"));
+                        user.setEmail(rs.getString("mail"));
+                        user.setFirstName(rs.getString("firstName"));
+                        user.setLastName(rs.getString("lastName"));
+                        user.setPassword(null);
+                        return user;
+                    }
+                }
+        );
     }
 }
