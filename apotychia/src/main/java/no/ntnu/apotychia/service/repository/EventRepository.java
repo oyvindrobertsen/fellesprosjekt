@@ -123,20 +123,18 @@ public class EventRepository {
 
 
 
-    public void addAttending(Long eventId, Participant participant) {
-        if (participant instanceof User) {
-            User u = (User)participant;
-            jt.update(
-                    "INSERT INTO attending (eventId, username) VALUES (?, ?)",
-                    eventId, u.getUsername()
-            );
-        } else {
-            Group g = (Group)participant;
-            jt.update(
-                    "INSERT INTO attending (eventId, groupId) VALUES (?, ?)",
-                    eventId, g.getId()
-            );
-        }
+    public void addAttending(Long eventId, User user) {
+        jt.update(
+                "INSERT INTO attending (eventId, username) VALUES (?, ?)",
+                eventId, user.getUsername()
+        );
+    }
+
+    public void addDeclined(Long id, User currentUser) {
+        jt.update(
+                "INSERT INTO declined (eventId, username) VALUES (?, ?)",
+                id, currentUser.getUsername()
+        );
     }
 
     public Event findById(long eventId) {
@@ -159,15 +157,15 @@ public class EventRepository {
         return result;
     }
 
-    public Set<Participant> findAttendingByEventId(long eventId) {
-        List<Participant> result = jt.query(
+    public Set<User> findAttendingByEventId(long eventId) {
+        List<User> result = jt.query(
                 "SELECT p.* FROM person p, attending a " +
                         "WHERE a.eventId = ? " +
                         "AND p.username = a.username",
                 new Object[]{eventId},
-                new RowMapper<Participant>() {
+                new RowMapper<User>() {
                     @Override
-                    public Participant mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
                         User user = new User();
                         user.setUsername(rs.getString("username"));
                         user.setFirstName(rs.getString("firstName"));
@@ -177,7 +175,7 @@ public class EventRepository {
                     }
                 }
         );
-        return new HashSet<Participant>(result);
+        return new HashSet<User>(result);
     }
 
     public void delete(Long id) {
@@ -223,5 +221,12 @@ public class EventRepository {
                 }
         );
         return new HashSet<Participant>(result);
+    }
+
+    public void removeInvited(Long eventId, String username) {
+        jt.update("DELETE FROM invited " +
+                "WHERE username = ? " +
+                "AND eventId = ?",
+                new Object[]{username, eventId});
     }
 }

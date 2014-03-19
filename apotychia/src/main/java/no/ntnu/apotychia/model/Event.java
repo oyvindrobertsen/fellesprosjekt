@@ -18,7 +18,7 @@ public class Event implements Comparable<Event> {
     private String location;
     private Long roomId;
     private Set<Participant> invited;
-    private Set<Participant> attending;
+    private Set<User> attending;
     private boolean isAdmin;
 
     public boolean isAdmin() {
@@ -85,11 +85,11 @@ public class Event implements Comparable<Event> {
         this.description = description;
     }
 
-    public Set<Participant> getAttending() {
+    public Set<User> getAttending() {
         return attending;
     }
 
-    public void setAttending(Set<Participant> attending) {
+    public void setAttending(Set<User> attending) {
         this.attending = attending;
     }
 

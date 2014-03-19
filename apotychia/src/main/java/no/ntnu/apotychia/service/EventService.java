@@ -24,23 +24,12 @@ public class EventService {
 
     public Event findEventById(long eventId) {
         Event event = eventRepository.findById(eventId);
-//        event.setAttending(eventRepository.findAttendingByEventId(eventId));
-//        for (Participant p : event.getAttending()) {
-//            if (p instanceof Group) {
-//                ((Group) p).addAllMembers(groupRepository.findMembers(((Group) p).getId()));
-//            }
-//        }
         return event;
     }
 
-    public Set<Participant> findAttendingForEventByEventId(long eventId) {
-        Set<Participant> participants =  eventRepository.findAttendingByEventId(eventId);
-        for (Participant p : participants) {
-            if (p instanceof Group) {
-                ((Group) p).addAllMembers(groupRepository.findMembers(((Group) p).getId()));
-            }
-        }
-        return participants;
+    public Set<User> findAttendingForEventByEventId(long eventId) {
+        Set<User> users = eventRepository.findAttendingByEventId(eventId);
+        return users;
     }
 
     public List<Event> findAttendingEventsForUserByUsername(String username) {
@@ -56,8 +45,8 @@ public class EventService {
         return null;
     }
 
-    public void addAttending(Long eventId, Participant participant) {
-        eventRepository.addAttending(eventId, participant);
+    public void addAttending(Long eventId, User user) {
+        eventRepository.addAttending(eventId, user);
     }
 
     public void deleteEventById(Long id) {
@@ -81,8 +70,20 @@ public class EventService {
         return invitedUsers;
     }
 
+    public Set<Participant> findDeclinedByEventId(Long id) {
+        return null;
+    }
+
 
     public List<Event> findInvitedEventsForUserByUsername(String username) {
         return eventRepository.findInvitedTo(username);
+    }
+
+    public void removeInvitedByUsername(Long eventId, String username) {
+        eventRepository.removeInvited(eventId, username);
+    }
+
+    public void addDeclined(Long id, User currentUser) {
+        eventRepository.addDeclined(id, currentUser);
     }
 }

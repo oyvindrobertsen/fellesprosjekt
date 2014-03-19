@@ -84,14 +84,19 @@ public class EventController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}/attending")
-    public ResponseEntity<Set<Participant>> getAttendingForEvent(@PathVariable Long id) {
-        return new ResponseEntity<Set<Participant>>(eventService.findAttendingForEventByEventId(id),
+    public ResponseEntity<Set<User>> getAttendingForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<User>>(eventService.findAttendingForEventByEventId(id),
                 HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/invited")
     public ResponseEntity<Set<Participant>> getInvitedForEvent(@PathVariable Long id) {
         return new ResponseEntity<Set<Participant>>(eventService.findInvitedByEventId(id), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/declined")
+    public ResponseEntity<Set<Participant>> getDeclinedForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<Participant>>(eventService.findDeclinedByEventId(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -103,16 +108,36 @@ public class EventController {
         long eventId = eventService.addEvent(event);
         eventService.addAttending(eventId, currentUser);
         for (Participant participant : event.getInvited()) {
-            eventService.addInvited(eventId, participant);
+            if (!((User)participant).getUsername().equals(currentUser.getUsername())) {
+                eventService.addInvited(eventId, participant);
+            }
         }
         mailService.push(event.getInvited(),
                 "You have been invited to a new Event <br> <a href='http://localhost:8080/#/event/edit/" + eventId + "'>New Event</a>");
         return eventService.findEventById(eventId);
     }
 
-    // Torgim Edit
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/attend")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void attendEvent(@PathVariable Long id) {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        eventService.removeInvitedByUsername(id, currentUser.getUsername());
+        eventService.addAttending(id, currentUser);
+    }
 
-     @RequestMapping(method = RequestMethod.GET, value="/invites")
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/decline")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void declineEvent(@PathVariable Long id) {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        eventService.removeInvitedByUsername(id, currentUser.getUsername());
+        eventService.addDeclined(id, currentUser);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/invites")
     public ResponseEntity<List<Event>> getInvitedToEventsForLoggedInUser() {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -121,7 +146,6 @@ public class EventController {
         return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
     }
 
-    // Torgrim end edit
 
     /*
     TODO: Add code for endpoints returning events for current/any week, for adding participants to events and notifications.

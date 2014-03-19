@@ -49,11 +49,14 @@ CREATE TABLE calendarEvent (
 
 
 CREATE TABLE invited (
+    invitedId   INT             NOT NULL    AUTO_INCREMENT,
     eventId     INT             NOT NULL,
     username    VARCHAR(45)     NULL,
     groupId     INT             NULL,
 
-    PRIMARY KEY (eventId),
+    PRIMARY KEY (invitedId),
+    FOREIGN KEY(eventId) REFERENCES calendarEvent(eventId)
+        ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY(username) REFERENCES person (username)
         ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY(groupId) REFERENCES eventGroup (groupId)
@@ -62,19 +65,25 @@ CREATE TABLE invited (
 
 
 CREATE TABLE attending (
-      eventId     INT             NOT NULL,
-      username    VARCHAR(45)     NULL,
+    attendingId INT             NOT NULL    AUTO_INCREMENT,
+    eventId     INT             NOT NULL,
+    username    VARCHAR(45)     NOT NULL,
 
-    PRIMARY KEY (eventId),
+    PRIMARY KEY (attendingId),
+    FOREIGN KEY(eventId) REFERENCES calendarEvent(eventId)
+        ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY(username) REFERENCES person (username)
         ON UPDATE cascade ON DELETE cascade
 );
 
 CREATE TABLE declined (
+    declinedId  INT     NOT NULL    AUTO_INCREMENT,
     eventId     INT     NOT NUll,
     username    VARCHAR(45)     NULL,
 
-    PRIMARY KEY (eventId),
+    PRIMARY KEY (declinedId),
+    FOREIGN KEY(eventId) REFERENCES calendarEvent(eventId)
+        ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY(username) REFERENCES person (username)
         ON UPDATE cascade ON DELETE cascade
 );

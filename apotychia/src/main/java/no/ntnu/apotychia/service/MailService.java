@@ -7,12 +7,18 @@ import javax.mail.internet.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import no.ntnu.apotychia.model.Group;
 import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
+import no.ntnu.apotychia.service.repository.GroupRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MailService {
+
+    @Autowired
+    GroupRepository groupRepository;
 
 	
 	private static String USER_NAME = "apotychia.ntnu";
@@ -46,25 +52,30 @@ public class MailService {
 		try {
 			
 			message.setFrom(new InternetAddress(from));
-			InternetAddress[] toAdress = new InternetAddress[to.size()];
-			int count = 0;
+			List<InternetAddress> toAdress = new ArrayList<InternetAddress>();
 			for(Participant p : to) {
-				toAdress[count] = new InternetAddress(((User)p).getEmail());
-				count++;
+                if (p instanceof User) {
+                    toAdress.add(new InternetAddress(((User) p).getEmail()));
+                } else {
+                    Set<User> groupMembers = groupRepository.findMembers(((Group)p).getId());
+                    for (User user : groupMembers) {
+                        toAdress.add(new InternetAddress(user.getEmail()));
+                    }
+                }
 			}
 			
-			
-			for(int i = 0; i < toAdress.length; i++) {
-				message.addRecipient(Message.RecipientType.TO, toAdress[i]);
-			}
-			
+			for (InternetAddress internetAddress : toAdress) {
+                message.addRecipient(Message.RecipientType.TO, internetAddress);
+            }
 			message.setSubject(subject);
 			message.setText(body, "UTF-8", "html");
 			Transport transport = session.getTransport("smtp");
 			transport.connect(host, from, pass);
-			transport.sendMessage(message, message.getAllRecipients());
+            if (message.getAllRecipients().length > 0)
+			    transport.sendMessage(message, message.getAllRecipients());
 			transport.close();
-			
+
+
 		}
 		
 		catch (AddressException ae) {
