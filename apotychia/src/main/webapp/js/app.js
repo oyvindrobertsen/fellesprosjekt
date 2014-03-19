@@ -47,7 +47,6 @@ App.MeRoute = Ember.Route.extend({
 
 App.NewController = Ember.ObjectController.extend({
     content: {},
-    isRoom: true,
     actions: {
         save: function() {
             var self = this;
@@ -71,13 +70,11 @@ App.NewController = Ember.ObjectController.extend({
         },
 
         disablePlaceInput : function() {
-            this.set('isRoom', false);
-            console.log(isRoom);
+            Ember.$('#placeinput').prop('disabled', true);
         },
 
         enablePlaceInput : function() {
-            this.set('isRoom', true);
-            console.log(isRoom);
+            Ember.$('#placeinput').prop('disabled', false);
         }
     }
 });

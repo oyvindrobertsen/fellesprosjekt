@@ -93,11 +93,11 @@
 
         <!-- Radio buttons -->
         <div class="form-group input-group btn-group btn-group-justified" data-toggle="buttons" style="padding-top: 15px;">
-            <label class="btn btn-primary">
-                <input type="radio" name="place" id="placeoption" checked {{action 'disablePlaceInput'}}> Skriv sted
+            <label class="btn btn-primary active" {{action "enablePlaceInput"}}>
+                <input type="radio" name="place" id="placeoption"> Skriv sted
             </label>
-            <label class="btn btn-primary" rel="popover">
-                <input type="radio" name="place" id="placeoption" {{action 'enablePlaceInput'}}> Skriv rom
+            <label class="btn btn-primary" rel="popover" {{action "disablePlaceInput"}}>
+                <input type="radio" name="place" id="roomoption"> Velg rom
                 <div id="popover-content-wrapper" class="hide">
                     weeee
                 </div>
@@ -106,11 +106,7 @@
         <div style="clear:both;"></div>
         <!-- Place -->
         <div class="form-group">
-            {{#if isRoom}}
-            <input class="form-control" disable='true' type="text" placeholder="Sted">
-            {{else}}
-            <input class="form-control" disable='false' type="text" placeholder="Sted">
-            {{/if}}
+            <input class="form-control" type="text" id="placeinput" placeholder="Sted">
         </div>
 
         <div class="form-group">
@@ -163,13 +159,8 @@
         </div>
 
         <!-- Save/delete buttons -->
-        <div class="form-group buttons">
-            <div class="col-md-6 split-form-left">
-                <button class="form-control btn btn-success btn-primary" {{action "save"}}> Lagre avtale </button>
-            </div>
-            <div class="col-md-6 split-form-right">
-                <button class="form-control btn btn-danger btn-primary"> Slett avtale </button>
-            </div>
+        <div class="form-group">
+            <button class="form-control btn btn-success btn-primary" {{action "save"}}> Lagre avtale </button>
         </div>
     </form>
 </script>
