@@ -65,7 +65,6 @@ public class EventService {
     }
 
     public void addInvited(long eventId, Participant participant) {
-        // Send email here
         eventRepository.addInvited(eventId, participant);
     }
 
@@ -81,6 +80,7 @@ public class EventService {
         }
         return invitedUsers;
     }
+
 
     public List<Event> findInvitedEventsForUserByUsername(String username) {
         return eventRepository.findInvitedTo(username);

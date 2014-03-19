@@ -10,6 +10,7 @@ App.Router.map(function() {
     this.resource("new"); //calender/new
     this.resource('edit', { path: 'edit/:id'}); // calender/edit/1
   });
+  this.resource('invites', { path: "/event/invites"});
   this.resource('me');
 });
 
@@ -28,6 +29,18 @@ App.NewRoute = Ember.Route.extend({
     }
 });
 
+// Torgrim Edit
+App.InvitesRoute = Ember.Route.extend({
+    model: function() {
+        return Ember.RSVP.hash({
+            invites: Ember.$.getJSON('/api/events/invites')
+        });   
+    }
+     
+});
+
+// End Torgrim edit
+
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
         return Ember.RSVP.hash({
@@ -40,7 +53,11 @@ App.EditRoute = Ember.Route.extend({
 
 App.ViewRoute = Ember.Route.extend({
     model: function(params) {
-        return Ember.$.getJSON('/api/events/' + params.id)
+        return Ember.RSVP.hash({
+            event: Ember.$.getJSON('/api/events/' + params.id),
+            attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
+            invited: Ember.$.getJSON('/api/events/' + params.id + '/invited')
+        });
     }
 });
 
@@ -101,13 +118,25 @@ App.NewController = Ember.ObjectController.extend({
 App.ViewController = Ember.ObjectController.extend({
   actions: {
     attend: function() {
-        // todo
+        var self = this;
+        Ember.$.ajax({
+            url: '/api/events/' + this.get('model.event.eventId') + '/attend',
+            type: 'POST',
+            dataType: 'xml/html/script/json',
+            contentType: 'application/JSON',
+            complete: function() {
+                self.transitionToRoute('/');
+            }
+        });
     },
-    notAttend: function() {
+    decline: function() {
         //todo
     }
   }
 });
+
+
+
 
 App.EditController = Ember.ObjectController.extend({
     date: function() {
@@ -171,6 +200,7 @@ App.NewView = Ember.View.extend({
         });
     }
 });
+
 
 App.EditView = Ember.View.extend({
   didInsertElement: function() {

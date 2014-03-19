@@ -5,6 +5,7 @@ import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
 import no.ntnu.apotychia.service.EventService;
 import no.ntnu.apotychia.service.UserService;
+import no.ntnu.apotychia.service.MailService;
 import no.ntnu.apotychia.service.security.ApotychiaUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 @Controller
 @RequestMapping("/api/events")
@@ -26,6 +30,8 @@ public class EventController {
     EventService eventService;
     @Autowired
     UserService userService;
+    @Autowired
+    MailService mailService;
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -99,8 +105,23 @@ public class EventController {
         for (Participant participant : event.getInvited()) {
             eventService.addInvited(eventId, participant);
         }
+        mailService.push(event.getInvited(),
+                "You have been invited to a new Event <br> <a href='http://localhost:8080/#/event/edit/" + eventId + "'>New Event</a>");
         return eventService.findEventById(eventId);
     }
+
+    // Torgim Edit
+
+     @RequestMapping(method = RequestMethod.GET, value="/invites")
+    public ResponseEntity<List<Event>> getInvitedToEventsForLoggedInUser() {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        List<Event> ret = eventService.findInvitedEventsForUserByUsername(currentUser.getUsername());
+        return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
+    }
+
+    // Torgrim end edit
 
     /*
     TODO: Add code for endpoints returning events for current/any week, for adding participants to events and notifications.

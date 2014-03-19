@@ -48,7 +48,13 @@ public class EventRepository {
                     }
                 }
         );
-        return result;
+        if(result != null){
+
+            return result;
+        }
+        else {
+            return result;
+        }
     }
 
     public List<Event> findEventsForUser(String username) {
@@ -198,6 +204,7 @@ public class EventRepository {
         );
         return new HashSet<Participant>(result);
     }
+
 
     public Set<Participant> findInvitedGroupsByEventId(Long id) {
         List<Participant> result = jt.query(
