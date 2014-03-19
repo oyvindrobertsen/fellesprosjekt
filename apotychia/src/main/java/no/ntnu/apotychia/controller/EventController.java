@@ -95,8 +95,8 @@ public class EventController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/declined")
-    public ResponseEntity<Set<Participant>> getDeclinedForEvent(@PathVariable Long id) {
-        return new ResponseEntity<Set<Participant>>(eventService.findDeclinedByEventId(id), HttpStatus.OK);
+    public ResponseEntity<Set<User>> getDeclinedForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<User>>(eventService.findDeclinedByEventId(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
