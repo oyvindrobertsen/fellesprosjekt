@@ -49,6 +49,7 @@ public class EventController {
 //                out.add(event);
 //            }
         }
+        ret.addAll(eventService.findInvitedEventsForUserByUsername(currentUser.getUsername()));
         Collections.sort(ret);
         return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
     }
@@ -76,10 +77,15 @@ public class EventController {
         eventService.deleteEventById(id);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/{id}/participants")
-    public ResponseEntity<Set<Participant>> getAttendingForEvent(@PathVariable long eventId) {
-        return new ResponseEntity<Set<Participant>>(eventService.findAttendingForEventByEventId(eventId),
+    @RequestMapping(method = RequestMethod.GET, value="/{id}/attending")
+    public ResponseEntity<Set<Participant>> getAttendingForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<Participant>>(eventService.findAttendingForEventByEventId(id),
                 HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/invited")
+    public ResponseEntity<Set<Participant>> getInvitedForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<Participant>>(eventService.findInvitedByEventId(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)

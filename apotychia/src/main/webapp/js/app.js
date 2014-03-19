@@ -30,7 +30,11 @@ App.NewRoute = Ember.Route.extend({
 
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
-        return Ember.$.getJSON('/api/events/' + params.id);
+        return Ember.RSVP.hash({
+            event: Ember.$.getJSON('/api/events/' + params.id),
+            attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
+            invited: Ember.$.getJSON('/api/events/' + params.id + '/invited')
+        });
     }
 });
 
@@ -107,13 +111,13 @@ App.ViewController = Ember.ObjectController.extend({
 
 App.EditController = Ember.ObjectController.extend({
     date: function() {
-        return Ember.String.w(this.get('model.startTime'))[0];
+        return Ember.String.w(this.get('model.event.startTime'))[0];
     }.property('model.duration'),
     startTime: function() {
-        return Ember.String.w(this.get('model.startTime'))[1];
+        return Ember.String.w(this.get('model.event.startTime'))[1];
     }.property('model.startTime'),
     endTime: function() {
-        return Ember.String.w(this.get('model.endTime'))[1];
+        return Ember.String.w(this.get('model.event.endTime'))[1];
     }.property('model.endTime'),
     actions: {
         saveEdit: function() {

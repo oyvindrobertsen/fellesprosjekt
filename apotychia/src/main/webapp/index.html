@@ -55,7 +55,7 @@
                         </div>
                         {{else}}
                             <div class="well text-center">
-                                {{#link-to 'view' eventID}}<b style="color: white;">{{eventName}} </b> {{/link-to}}<br/>
+                                {{#link-to 'view' eventID}}<b">{{eventName}} </b> {{/link-to}}<br/>
                                 <strong>Starter:</strong> {{startTime}}<br/>
                                 <strong>Slutter:</strong> {{endTime}}
                             </div>
@@ -160,12 +160,12 @@
     <form>
         <!-- Title -->
         <div class="form-group">
-            {{input type="text" value=model.eventName class="form-control" placeholder="Tittel"}}
+            {{input type="text" value=model.event.eventName class="form-control" placeholder="Tittel"}}
         </div>
 
         <!-- Description -->
         <div class="form-group">
-            {{textarea value=model.description class="form-control" placeholder="Skriv en beskrivelse" rows="2"}}
+            {{textarea value=model.event.description class="form-control" placeholder="Skriv en beskrivelse" rows="2"}}
         </div>
 
         <!-- Date -->
@@ -241,9 +241,15 @@
             <div style="overflow: auto; max-height: 30%;">
                 <table class="table">
                     <tbody>
-                        {{#each model.members}}
+                        {{#each model.attending}}
+                            <tr class="success">
+                                <td>{{firstName}} {{lastName}}</td>
+                                <td><a class="btn btn-danger btn-xs">Fjern</a></td>
+                            </tr>
+                        {{/each}}
+                        {{#each model.invited}}
                             <tr>
-                                <td>{{name}}</td>
+                                <td>{{firstName}} {{lastName}}</td>
                                 <td><a class="btn btn-danger btn-xs">Fjern</a></td>
                             </tr>
                         {{/each}}
