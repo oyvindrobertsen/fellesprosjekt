@@ -21,15 +21,16 @@ App.EventRoute = Ember.Route.extend({
 
 App.NewRoute = Ember.Route.extend({
     model: function() {
-        return {
-            users: Ember.$.getJSON('/api/auth/users')
-        };
+        return Ember.RSVP.hash({
+            users: Ember.$.getJSON('/api/auth/users'),
+            participants: []
+        });
     }
 });
 
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
-        return Ember.$.getJSON('/api/events/' + params.id)
+        return Ember.$.getJSON('/api/events/' + params.id);
     }
 });
 
@@ -63,7 +64,8 @@ App.NewController = Ember.ObjectController.extend({
                     endTime: this.get('date') + " " + this.get('endTime'),
                     eventAdmin: '',
                     description: this.get('description'),
-                    active: true
+                    active: true,
+                    invited: this.get('model.participants')
                 }),
                 complete: function(data) {
                     self.transitionToRoute('/');
@@ -77,6 +79,17 @@ App.NewController = Ember.ObjectController.extend({
 
         enablePlaceInput : function() {
             Ember.$('#placeinput').prop('disabled', false);
+        },
+        addToParticipants: function(object) {
+            if (object.username) {
+                object.type = ".User";
+            } else {
+                object.type = ".Group";
+            }
+            this.get('model.participants').pushObject(object);
+        },
+        removeFromParticipants: function(object) {
+            this.get('model.participants').removeObject(object);
         }
     }
 });
@@ -142,12 +155,12 @@ App.EditController = Ember.ObjectController.extend({
 App.NewView = Ember.View.extend({
     didInsertElement: function() {
         // Enable popovers
-        $("label[rel=popover]").popover({
+        $("a[rel=popover]").popover({
             placement: 'left',
             html: true,
             container: 'body',
             content: function() {
-                return $('#popover-content-wrapper').html();
+                return $('#users-popover').html();
             }
         }).click(function(e) {
             e.preventDefault();
@@ -158,12 +171,12 @@ App.NewView = Ember.View.extend({
 App.EditView = Ember.View.extend({
   didInsertElement: function() {
     // Enable popovers
-    $("label[rel=popover]").popover({
+    $("a[rel=popover]").popover({
       placement: 'left',
       html: true,
       container: 'body',
       content: function() {
-        return $('#popover-content-wrapper').html();
+        return $('#users-content-wrapper').html();
       }
     }).click(function(e) {
       e.preventDefault();

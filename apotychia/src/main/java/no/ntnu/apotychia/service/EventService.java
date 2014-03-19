@@ -62,4 +62,10 @@ public class EventService {
     public void deleteEventById(Long id) {
         eventRepository.delete(id);
     }
+
+    public void addInvited(long eventId, Participant participant) {
+        if (participant instanceof Group) {
+
+        }
+    }
 }

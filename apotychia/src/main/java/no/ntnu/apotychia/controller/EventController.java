@@ -16,10 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping("/api/events")
@@ -39,20 +36,21 @@ public class EventController {
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         List<Event> ret = eventService.findAttendingEventsForUserByUsername(currentUser.getUsername());
-        List<Event> out = new ArrayList<Event>();
-        int week = new GregorianCalendar().getWeekYear();
+//        List<Event> out = new ArrayList<Event>();
+//        int week = new GregorianCalendar().getWeekYear();
         for (Event event : ret) {
             if (event.getEventAdmin().equals(currentUser.getUsername())) {
                 event.setAdmin(true);
             }
-            GregorianCalendar c = new GregorianCalendar();
-            c.setTime(event.getStartTime());
-            if (c.getWeekYear() == week) {
-                logger.info("weee");
-                out.add(event);
-            }
+//            GregorianCalendar c = new GregorianCalendar();
+//            c.setTime(event.getStartTime());
+//            if (c.getWeekYear() == week) {
+//                logger.info("weee");
+//                out.add(event);
+//            }
         }
-        return new ResponseEntity<List<Event>>(out, HttpStatus.OK);
+        Collections.sort(ret);
+        return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/user/{username}")
@@ -79,7 +77,7 @@ public class EventController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}/participants")
-    public ResponseEntity<Set<Participant>> getParticipantsForEvent(@PathVariable long eventId) {
+    public ResponseEntity<Set<Participant>> getAttendingForEvent(@PathVariable long eventId) {
         return new ResponseEntity<Set<Participant>>(eventService.findAttendingForEventByEventId(eventId),
                 HttpStatus.OK);
     }
@@ -92,7 +90,9 @@ public class EventController {
         event.setEventAdmin(currentUser.getUsername());
         long eventId = eventService.addEvent(event);
         eventService.addAttending(eventId, currentUser);
-        // Add code to invite people
+        for (Participant participant : event.getInvited()) {
+            eventService.addInvited(eventId, participant);
+        }
         return eventService.findEventById(eventId);
     }
 
