@@ -48,10 +48,9 @@ public class AuthenticationController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/users")
-    public ResponseEntity<List<Participant>> getAllUsersAndGroups() {
+    public ResponseEntity<List<Participant>> getAllUsers() {
         List<Participant> ret = new ArrayList<Participant>();
         ret.addAll(userService.findAllUsers());
-        ret.addAll(groupService.getAllGroups());
         return new ResponseEntity<List<Participant>>(ret, HttpStatus.OK);
     }
 }

@@ -49,7 +49,6 @@ public class EventRepository {
                 }
         );
         if(result != null){
-
             return result;
         }
         else {
@@ -201,6 +200,30 @@ public class EventRepository {
                 }
         );
         return new HashSet<User>(result);
+    }
+
+    public List<Event> findInvitationsForGroupByGroupId(Long groupId) {
+        List<Event> result = jt.query(
+                "SELECT ce.* FROM calendarEvent ce, invited i " +
+                        "WHERE i.groupId = ? " +
+                        "AND ce.eventId = i.eventId",
+                new Object[]{groupId},
+                new RowMapper<Event>() {
+                    @Override
+                    public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Event event = new Event();
+                        event.setEventId(rs.getLong("eventId"));
+                        event.setEventName(rs.getString("eventName"));
+                        event.setStartTime(rs.getTimestamp("startTime"));
+                        event.setEndTime(rs.getTimestamp("endTime"));
+                        event.setActive(rs.getBoolean("isActive"));
+                        event.setDescription(rs.getString("description"));
+                        event.setEventAdmin(rs.getString("eventAdmin"));
+                        return event;
+                    }
+                }
+        );
+        return result;
     }
 
 

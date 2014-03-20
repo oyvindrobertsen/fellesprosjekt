@@ -63,6 +63,25 @@ public class GroupRepository {
         return new HashSet<User>(result);
     }
 
+    public List<Group> findGroupsForUser(String username) {
+        List<Group> result = jt.query(
+                "SELECT eg.* from eventGroup eg, memberOf mo " +
+                        "WHERE mo.username = ? " +
+                        "AND mo.groupId = eg.groupId",
+                new Object[]{username},
+                new RowMapper<Group>() {
+                    @Override
+                    public Group mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Group group = new Group();
+                        group.setId(rs.getLong("groupId"));
+                        group.setName(rs.getString("groupName"));
+                        return group;
+                    }
+                }
+        );
+        return result;
+    }
+
     public Long insert(final Group group) throws SQLException {
         final String sql = "INSERT INTO eventGroup (groupName) VALUES (?)";
         KeyHolder holder = new GeneratedKeyHolder();
@@ -83,7 +102,7 @@ public class GroupRepository {
 
     public void addUser(User user, Long groupId) {
         jt.update(
-                "INSERT INTO memberOf VALUES (?, ?)",
+                "INSERT INTO memberOf (groupId, username) VALUES (?, ?)",
                 new Object[]{groupId, user.getUsername()}
         );
     }

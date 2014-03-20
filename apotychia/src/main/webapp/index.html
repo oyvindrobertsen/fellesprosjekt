@@ -46,9 +46,15 @@
 <script type="text/x-handlebars" id="event">
     <!-- Calender view -->
     <div class="col-md-9 calender-panel">
+        {{view Ember.Select
+        content=model.users
+        optionValuePath="content.username"
+        optionLabelPath="content.firstName"
+        value=calendarToView
+        prompt="Velg en kalender"}} <a class="btn btn-primary btn-xs" {{action 'viewCalendar'}}>Vis</a>
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                {{#each model}}
+                {{#each model.events}}
                     {{#if admin}}
                         <div class="well text-center admin-well">
                             {{#link-to 'edit' eventID}}<b style="color:white;">{{eventName}} </b> {{/link-to}}<br/>
@@ -124,15 +130,20 @@
                     <th>
                         <a rel="popover" data-content="" class="btn btn-primary btn-sm btn-block">Legg til deltaker</a>
                         <div id="users-popover" class="hide">
-                            <ul style="overflow: auto; max-height: 300px">
-                                {{#each user in users}}
-                                    <li class="list-unstyled">
-                                        <label style="margin-left:-15px;">
-                                            {{user.firstName}} {{user.lastName}} <a class="btn btn-success btn-xs" {{action 'addToParticipants' user}}>Legg til</a>
-                                        </label>
-                                    </li>
-                                {{/each}}
-                            </ul>
+                            <div style="overflow: auto; max-height: 300px">
+                                <table>
+                                    {{#each user in users}}
+                                        <tr>
+                                            <td>{{user.firstName}} {{user.lastName}}</td><td><a class="btn btn-success btn-xs" {{action 'addToParticipants' user}}>Legg til</a></td>
+                                        </tr>
+                                    {{/each}}
+                                    {{#each group in groups}}
+                                        <tr>
+                                            <td>{{group.name}}</td><td><a class="btn btn-success btn-xs" {{action 'addToParticipants' group}}>Legg til</a></td>
+                                        </tr>
+                                    {{/each}}
+                                </table>
+                            </div>
                         </div>
                     </th>
                 </thead>
@@ -141,10 +152,17 @@
                 <table class="table">
                     <tbody>
                         {{#each participant in participants}}
-                            <tr>
-                                <td>{{participant.firstName}} {{participant.lastName}}</td>
-                                <td><a class="btn btn-danger btn-xs" {{action 'removeFromParticipants' participant}}>Fjern</a></td>
-                            </tr>
+                            {{#if participant.username}}
+                                <tr>
+                                    <td>{{participant.firstName}} {{participant.lastName}}</td>
+                                    <td><a class="btn btn-danger btn-xs" {{action 'removeFromParticipants' participant}}>Fjern</a></td>
+                                </tr>
+                            {{else}}
+                                <tr>
+                                    <td>{{participant.name}}</td>
+                                    <td><a class="btn btn-danger btn-xs" {{action 'removeFromParticipants' participant}}>Fjern</a></td>
+                                </tr>
+                            {{/if}}
                         {{/each}}
                     </tbody>
                 </table>
@@ -250,6 +268,12 @@
                                 </td>
                             </tr>
                         {{/each}}
+                        {{#each model.declined}}
+                            <tr>
+                                <td>{{firstName}} {{lastName}}</td>
+                                <td><a class="btn btn-danger btn-xs">Fjern</a></td>
+                            </tr>
+                        {{/each}}
                     </tbody>
                 </table>
             </div>
@@ -309,7 +333,7 @@
     </div>
 </script>
 
-<!-- Torgrim -->
+
 
 
 
@@ -329,9 +353,40 @@
     </div>
 </script>
 
-<!-- End Torgrim edit -->
+<script type="text/x-handlebars" id="user">
+    <!-- Calender view -->
+    <div class="col-md-9 calender-panel">
+        {{view Ember.Select
+        content=model.users
+        optionValuePath="content.username"
+        optionLabelPath="content.firstName"
+        value=calendarToView
+        prompt="Velg en kalender"}} <a class="btn btn-primary btn-xs" {{action 'viewCalendar'}}>Vis</a>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                {{#each model.events}}
+                    {{#if admin}}
+                        <div class="well text-center admin-well">
+                            {{#link-to 'edit' eventID}}<b style="color:white;">{{eventName}} </b> {{/link-to}}<br/>
+                            <strong>Starter:</strong> {{startTime}}<br/>
+                            <strong>Slutter:</strong> {{endTime}}
+                        </div>
+                        {{else}}
+                            <div class="well text-center">
+                                {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}<br/>
+                                <strong>Starter:</strong> {{startTime}}<br/>
+                                <strong>Slutter:</strong> {{endTime}}
+                            </div>
+                        {{/if}}
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 calender-panel">
+        {{outlet}}
+    </div>
+</script>
 
-<!-- Testing-->
 <script type="text/x-handlebars" id="me">
     <div class="col-md-9">
         <h1>{{firstName}} {{lastName}}</h1>

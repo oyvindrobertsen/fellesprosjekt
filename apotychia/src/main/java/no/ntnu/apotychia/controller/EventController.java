@@ -18,10 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 @Controller
 @RequestMapping("/api/events")
@@ -38,7 +35,7 @@ public class EventController {
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUserForCurrentWeek() {
+    public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUser() {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
@@ -57,8 +54,11 @@ public class EventController {
 //            }
         }
         ret.addAll(eventService.findInvitedEventsForUserByUsername(currentUser.getUsername()));
+        ret.addAll(eventService.findGroupInvitesForUser(currentUser.getUsername()));
         Collections.sort(ret);
-        return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
+        Set<Event> retSet = new LinkedHashSet<Event>(ret);
+        List<Event> retList = new ArrayList<Event>(retSet);
+        return new ResponseEntity<List<Event>>(retList, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/user/{username}")
@@ -88,14 +88,14 @@ public class EventController {
 
         Set<Participant> participants = event.getInvited();
         Set<User> dbInvited = eventService.findInvitedByEventId(event.getEventID());
-        Set<User> users = new HashSet<>();
+        Set<User> users = new HashSet<User>();
 
         if(participants != null){
 
             // find all users in updated event
             for(Participant p : participants) {
                 if(p instanceof Group){
-                    for(User u : ((Group)p).getAllMembers()){
+                    for(User u : ((Group)p).getMembers()){
                         users.add(u);
                     }
                 }else{
@@ -164,9 +164,7 @@ public class EventController {
         long eventId = eventService.addEvent(event);
         eventService.addAttending(eventId, currentUser);
         for (Participant participant : event.getInvited()) {
-            if (!((User)participant).getUsername().equals(currentUser.getUsername())) {
-                eventService.addInvited(eventId, participant);
-            }
+            eventService.addInvited(eventId, participant);
         }
         mailService.push(event.getInvited(),
                 "You have been invited to a new Event <br> <a href='http://localhost:8080/#/event/edit/" + eventId + "'>New Event</a>");
