@@ -10,12 +10,33 @@ App.Router.map(function() {
     this.resource("new"); //calender/new
     this.resource('edit', { path: 'edit/:id'}); // calender/edit/1
   });
+  this.resource('user', { path: 'event/user/:username'}, function() {
+    this.resource('view', {path: ':id'});
+  });
+
+  this.resource('invites', { path: "/event/invites"});
   this.resource('me');
 });
 
+App.IndexRoute = Ember.Route.extend({
+    model: function() {
+        return Ember.RSVP.hash({
+            users: Ember.$.getJSON('/api/auth/users')
+        })
+    }
+});
+
+
 App.EventRoute = Ember.Route.extend({
     model: function() {
+<<<<<<< HEAD
         // return Ember.$.getJSON('/api/events');
+=======
+        return Ember.RSVP.hash({
+            events: Ember.$.getJSON('/api/events'),
+            users: Ember.$.getJSON('/api/auth/users')
+        });
+>>>>>>> master
     }
 });
 
@@ -30,15 +51,44 @@ App.NewRoute = Ember.Route.extend({
     }
 });
 
+App.InvitesRoute = Ember.Route.extend({
+    model: function() {
+        return Ember.RSVP.hash({
+            invites: Ember.$.getJSON('/api/events/invites')
+        });   
+    }
+     
+});
+
+
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
-        return Ember.$.getJSON('/api/events/' + params.id);
+        return Ember.RSVP.hash({
+            event: Ember.$.getJSON('/api/events/' + params.id),
+            attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
+            invited: Ember.$.getJSON('/api/events/' + params.id + '/invited'),
+            declined: Ember.$.getJSON('/api/events/' + params.id + '/declined')
+        });
     }
 });
 
 App.ViewRoute = Ember.Route.extend({
     model: function(params) {
-        return Ember.$.getJSON('/api/events/' + params.id)
+        return Ember.RSVP.hash({
+            event: Ember.$.getJSON('/api/events/' + params.id),
+            attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
+            invited: Ember.$.getJSON('/api/events/' + params.id + '/invited'),
+            declined: Ember.$.getJSON('/api/events/' + params.id + '/declined')
+        });
+    }
+});
+
+App.UserRoute = Ember.Route.extend({
+    model: function(params) {
+        return Ember.RSVP.hash({
+            events: Ember.$.getJSON('/api/events/user/' + params.username),
+            users: Ember.$.getJSON('/api/auth/users')
+        });
     }
 });
 
@@ -49,6 +99,30 @@ App.MeRoute = Ember.Route.extend({
 });
 
 // controller
+
+App.EventController = Ember.ObjectController.extend({
+    calendarToView: null,
+    actions: {
+        viewCalendar: function() {
+            if (this.get('calendarToView')) {
+                this.transitionToRoute('/event/user/' + this.get('calendarToView'));
+            }
+            return;
+        }
+    }
+});
+
+App.UserController = Ember.ObjectController.extend({
+    calendarToView: null,
+    actions: {
+        viewCalendar: function() {
+            if (this.get('calendarToView')) {
+                this.transitionToRoute('/event/user/' + this.get('calendarToView'));
+            }
+            return;
+        }
+    }
+});
 
 App.NewController = Ember.ObjectController.extend({
     content: {},
@@ -100,25 +174,46 @@ App.NewController = Ember.ObjectController.extend({
 });
 
 App.ViewController = Ember.ObjectController.extend({
-  actions: {
-    attend: function() {
-        // todo
-    },
-    notAttend: function() {
-        //todo
+    actions: {
+        attend: function() {
+            var self = this;
+            Ember.$.ajax({
+                url: '/api/events/' + this.get('model.event.eventID') + '/attend',
+                type: 'POST',
+                dataType: 'xml/html/script/json',
+                contentType: 'application/JSON',
+                complete: function() {
+                    self.transitionToRoute('/');
+                }
+            });
+        },
+        decline: function() {
+            var self = this;
+            Ember.$.ajax({
+                url: 'api/events/' + this.get('model.event.eventID') + '/decline',
+                type: 'POST',
+                dataType: 'xml/html/script/json',
+                contentType: 'application/JSON',
+                complete: function() {
+                    self.transitionToRoute('/');
+                }
+            })
+        }
     }
-  }
 });
+
+
+
 
 App.EditController = Ember.ObjectController.extend({
     date: function() {
-        return Ember.String.w(this.get('model.startTime'))[0];
+        return Ember.String.w(this.get('model.event.startTime'))[0];
     }.property('model.duration'),
     startTime: function() {
-        return Ember.String.w(this.get('model.startTime'))[1];
+        return Ember.String.w(this.get('model.event.startTime'))[1];
     }.property('model.startTime'),
     endTime: function() {
-        return Ember.String.w(this.get('model.endTime'))[1];
+        return Ember.String.w(this.get('model.event.endTime'))[1];
     }.property('model.endTime'),
     actions: {
         saveEdit: function() {
@@ -145,7 +240,7 @@ App.EditController = Ember.ObjectController.extend({
         delete: function() {
             var self = this;
             Ember.$.ajax({
-                url: '/api/events/' + this.get('model.eventID'),
+                url: '/api/events/' + this.get('model.event.eventID'),
                 type: 'DELETE',
                 complete: function() {
                     self.transitionToRoute('/');
@@ -182,6 +277,7 @@ App.NewView = Ember.View.extend({
         });
     }
 });
+
 
 App.EditView = Ember.View.extend({
   didInsertElement: function() {

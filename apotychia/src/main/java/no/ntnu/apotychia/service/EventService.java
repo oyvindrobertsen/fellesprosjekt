@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -25,23 +26,12 @@ public class EventService {
 
     public Event findEventById(long eventId) {
         Event event = eventRepository.findById(eventId);
-        event.setAttending(eventRepository.findAttendingByEventId(eventId));
-//        for (Participant p : event.getAttending()) {
-//            if (p instanceof Group) {
-//                ((Group) p).addAllMembers(groupRepository.findMembers(((Group) p).getId()));
-//            }
-//        }
         return event;
     }
 
-    public Set<Participant> findAttendingForEventByEventId(long eventId) {
-        Set<Participant> participants =  eventRepository.findAttendingByEventId(eventId);
-        for (Participant p : participants) {
-            if (p instanceof Group) {
-                ((Group) p).addAllMembers(groupRepository.findMembers(((Group) p).getId()));
-            }
-        }
-        return participants;
+    public Set<User> findAttendingForEventByEventId(long eventId) {
+        Set<User> users = eventRepository.findAttendingByEventId(eventId);
+        return users;
     }
 
     public List<Event> findAttendingEventsForUserByUsername(String username) {
@@ -57,8 +47,8 @@ public class EventService {
         return null;
     }
 
-    public void addAttending(Long eventId, Participant participant) {
-        eventRepository.addAttending(eventId, participant);
+    public void addAttending(Long eventId, User user) {
+        eventRepository.addAttending(eventId, user);
     }
 
     public void deleteEventById(Long id) {
@@ -66,9 +56,37 @@ public class EventService {
     }
 
     public void addInvited(long eventId, Participant participant) {
-        if (participant instanceof Group) {
+        eventRepository.addInvited(eventId, participant);
+    }
 
+    public Set<Participant> findInvitedByEventId(Long id) {
+        Set<Participant> invitedUsers = eventRepository.findInvitedUsersByEventId(id);
+        Set<Participant> invitedGroups = eventRepository.findInvitedGroupsByEventId(id);
+        for (Participant participant : invitedGroups) {
+            for (User user : groupRepository.findMembers(((Group)participant).getId())) {
+                if (!invitedUsers.contains(user)) {
+                    invitedUsers.add(user);
+                }
+            }
         }
+        return invitedUsers;
+    }
+
+    public Set<User> findDeclinedByEventId(Long id) {
+        return eventRepository.findDeclinedByEventId(id);
+    }
+
+
+    public List<Event> findInvitedEventsForUserByUsername(String username) {
+        return eventRepository.findInvitedTo(username);
+    }
+
+    public void removeInvitedByUsername(Long eventId, String username) {
+        eventRepository.removeInvited(eventId, username);
+    }
+
+    public void addDeclined(Long id, User currentUser) {
+        eventRepository.addDeclined(id, currentUser);
     }
 
     public void addRoom(Long eventId, Room room){

@@ -7,6 +7,7 @@ import no.ntnu.apotychia.model.Room;
 import no.ntnu.apotychia.service.EventService;
 import no.ntnu.apotychia.service.UserService;
 import no.ntnu.apotychia.service.RoomService;
+import no.ntnu.apotychia.service.MailService;
 import no.ntnu.apotychia.service.security.ApotychiaUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 @Controller
 @RequestMapping("/api/events")
@@ -28,9 +32,11 @@ public class EventController {
     EventService eventService;
     @Autowired
     UserService userService;
+    @Autowired
+    MailService mailService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUserForCurrentWeek() {
+    public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUser() {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
@@ -48,6 +54,7 @@ public class EventController {
 //                out.add(event);
 //            }
         }
+        ret.addAll(eventService.findInvitedEventsForUserByUsername(currentUser.getUsername()));
         Collections.sort(ret);
         return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
     }
@@ -75,10 +82,20 @@ public class EventController {
         eventService.deleteEventById(id);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/{id}/participants")
-    public ResponseEntity<Set<Participant>> getAttendingForEvent(@PathVariable long eventId) {
-        return new ResponseEntity<Set<Participant>>(eventService.findAttendingForEventByEventId(eventId),
+    @RequestMapping(method = RequestMethod.GET, value="/{id}/attending")
+    public ResponseEntity<Set<User>> getAttendingForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<User>>(eventService.findAttendingForEventByEventId(id),
                 HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/invited")
+    public ResponseEntity<Set<Participant>> getInvitedForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<Participant>>(eventService.findInvitedByEventId(id), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/declined")
+    public ResponseEntity<Set<User>> getDeclinedForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<User>>(eventService.findDeclinedByEventId(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -90,11 +107,45 @@ public class EventController {
         long eventId = eventService.addEvent(event);
         eventService.addAttending(eventId, currentUser);
         for (Participant participant : event.getInvited()) {
-            eventService.addInvited(eventId, participant);
+            if (!((User)participant).getUsername().equals(currentUser.getUsername())) {
+                eventService.addInvited(eventId, participant);
+            }
         }
         eventService.addRoom(eventId, event.getRoom());
+        mailService.push(event.getInvited(),
+                "You have been invited to a new Event <br> <a href='http://localhost:8080/#/event/edit/" + eventId + "'>New Event</a>");
         return eventService.findEventById(eventId);
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/attend")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void attendEvent(@PathVariable Long id) {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        eventService.removeInvitedByUsername(id, currentUser.getUsername());
+        eventService.addAttending(id, currentUser);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/decline")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void declineEvent(@PathVariable Long id) {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        eventService.removeInvitedByUsername(id, currentUser.getUsername());
+        eventService.addDeclined(id, currentUser);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/invites")
+    public ResponseEntity<List<Event>> getInvitedToEventsForLoggedInUser() {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        List<Event> ret = eventService.findInvitedEventsForUserByUsername(currentUser.getUsername());
+        return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
+    }
+
 
     /*
     TODO: Add code for endpoints returning events for current/any week, for adding participants to events and notifications.

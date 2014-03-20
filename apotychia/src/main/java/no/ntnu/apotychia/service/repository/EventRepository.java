@@ -49,7 +49,13 @@ public class EventRepository {
                     }
                 }
         );
-        return result;
+        if(result != null){
+
+            return result;
+        }
+        else {
+            return result;
+        }
     }
 
     public List<Event> findEventsForUser(String username) {
@@ -118,20 +124,18 @@ public class EventRepository {
 
 
 
-    public void addAttending(Long eventId, Participant participant) {
-        if (participant instanceof User) {
-            User u = (User)participant;
-            jt.update(
-                    "INSERT INTO attending (eventId, username) VALUES (?, ?)",
-                    eventId, u.getUsername()
-            );
-        } else {
-            Group g = (Group)participant;
-            jt.update(
-                    "INSERT INTO attending (eventId, groupId) VALUES (?, ?)",
-                    eventId, g.getId()
-            );
-        }
+    public void addAttending(Long eventId, User user) {
+        jt.update(
+                "INSERT INTO attending (eventId, username) VALUES (?, ?)",
+                eventId, user.getUsername()
+        );
+    }
+
+    public void addDeclined(Long id, User currentUser) {
+        jt.update(
+                "INSERT INTO declined (eventId, username) VALUES (?, ?)",
+                id, currentUser.getUsername()
+        );
     }
 
     public Event findById(long eventId) {
@@ -154,11 +158,36 @@ public class EventRepository {
         return result;
     }
 
-    public Set<Participant> findAttendingByEventId(long eventId) {
-        List<Participant> result = jt.query(
+    public Set<User> findAttendingByEventId(long eventId) {
+        List<User> result = jt.query(
                 "SELECT p.* FROM person p, attending a " +
                         "WHERE a.eventId = ? " +
                         "AND p.username = a.username",
+                new Object[]{eventId},
+                new RowMapper<User>() {
+                    @Override
+                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        User user = new User();
+                        user.setUsername(rs.getString("username"));
+                        user.setFirstName(rs.getString("firstName"));
+                        user.setLastName(rs.getString("lastName"));
+                        user.setEmail(rs.getString("mail"));
+                        return user;
+                    }
+                }
+        );
+        return new HashSet<User>(result);
+    }
+
+    public void delete(Long id) {
+        jt.update("DELETE FROM calendarEvent WHERE eventId = ?", id);
+    }
+
+    public Set<Participant> findInvitedUsersByEventId(Long eventId) {
+        List<Participant> result = jt.query(
+                "SELECT p.* FROM person p, invited i " +
+                        "WHERE i.eventId = ? " +
+                        "AND p.username = i.username",
                 new Object[]{eventId},
                 new RowMapper<Participant>() {
                     @Override
@@ -175,8 +204,52 @@ public class EventRepository {
         return new HashSet<Participant>(result);
     }
 
-    public void delete(Long id) {
-        jt.update("DELETE FROM calendarEvent WHERE eventId = ?", id);
+
+    public Set<Participant> findInvitedGroupsByEventId(Long id) {
+        List<Participant> result = jt.query(
+                "SELECT eg.* FROM eventGroup eg, invited i " +
+                        "WHERE i.eventId = ? " +
+                        "AND eg.groupId = i.groupId",
+                new Object[]{id},
+                new RowMapper<Participant>() {
+                    @Override
+                    public Participant mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Group group = new Group();
+                        group.setId(rs.getLong("groupId"));
+                        group.setName(rs.getString("groupName"));
+                        return group;
+                    }
+                }
+        );
+        return new HashSet<Participant>(result);
+    }
+
+    public void removeInvited(Long eventId, String username) {
+        jt.update("DELETE FROM invited " +
+                "WHERE username = ? " +
+                "AND eventId = ?",
+                new Object[]{username, eventId});
+    }
+
+    public Set<User> findDeclinedByEventId(Long id) {
+        List<User> result = jt.query(
+                "SELECT p.* FROM person p, declined d " +
+                        "WHERE d.eventId = ? " +
+                        "AND p.username = d.username",
+                new Object[]{id},
+                new RowMapper<User>() {
+                    @Override
+                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        User user = new User();
+                        user.setUsername(rs.getString("username"));
+                        user.setFirstName(rs.getString("firstName"));
+                        user.setLastName(rs.getString("lastName"));
+                        user.setEmail(rs.getString("mail"));
+                        return user;
+                    }
+                }
+        );
+        return new HashSet<User>(result);
     }
 
     public void addRoom(long eventId, long roomNr) {
