@@ -49,7 +49,6 @@ App.EditRoute = Ember.Route.extend({
             invited: Ember.$.getJSON('/api/events/' + params.id + '/invited'),
             declined: Ember.$.getJSON('/api/events/' + params.id + '/declined'),
             users: Ember.$.getJSON('/api/auth/users'),
-            participants: []
         });
     }
 });
@@ -165,18 +164,20 @@ App.EditController = Ember.ObjectController.extend({
         saveEdit: function() {
             var self = this;
             Ember.$.ajax({
-                url: '/api/events/' + this.get('model.eventID'),
+                url: '/api/events/' + this.get('model.event.eventID'),
                 type: 'PUT',
                 dataType: 'xml/html/script/json',
                 contentType: 'application/JSON',
                 data: JSON.stringify({
-                    eventID: this.get('model.eventID'),
-                    eventName: this.get('model.eventName'),
-                    startTime: this.get('date') + " " + this.get('startTime'),
-                    endTime: this.get('date') + " " + this.get('endTime'),
-                    eventAdmin: this.get('model.eventAdmin'),
-                    description: this.get('model.description'),
-                    active: this.get('model.active')
+                    eventId: this.get('model.event.eventID'),
+                    eventName: this.get('model.event.eventName'),
+                    startTime: this.get('date') + ' ' + this.get('startTime'),
+                    endTime: this.get('date') + ' ' + this.get('endTime'),
+                    eventAdmin: this.get('model.event.eventAdmin'),
+                    description: this.get('model.event.description'),
+                    active: this.get('model.event.active'),
+                    invited: this.get('model.invited'),
+                    attending: this.get('model.attending')
                 }),
                 complete: function() {
                     self.transitionToRoute('/');
@@ -193,22 +194,29 @@ App.EditController = Ember.ObjectController.extend({
                 }
             });
         },
-        addToParticipants: function(object) {
+        addToInvited: function(object) {
             if (object.username) {
                 object.type = ".User";
             } else {
                 object.type = ".Group";
             }
-            this.get('model.participants').pushObject(object);
-        },
-        removeFromParticipants: function(object) {
-            this.get('model.participants').removeObject(object);
+            this.get('model.invited').pushObject(object);
+            var a = this.get('model.attending');
+            var idx;
+            for(idx = 0; idx < a.length; idx++){
+                a[idx].type = ".User";
+            }
         },
         removeFromAttending: function(object) {
             this.get('model.attending').removeObject(object);
         },
         removeFromInvited: function(object) {
             this.get('model.invited').removeObject(object);
+            var a = this.get('model.attending');
+            var idx;
+            for(idx = 0; idx < a.length; idx++){
+                a[idx].type = ".User";
+            }
         }
     }
 });

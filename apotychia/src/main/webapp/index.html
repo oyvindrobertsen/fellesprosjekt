@@ -216,7 +216,7 @@
                                 {{#each user in users}}
                                     <li class="list-unstyled">
                                         <label style="margin-left:-15px;">
-                                            {{user.firstName}} {{user.lastName}} <a class="btn btn-success btn-xs" {{action 'addToParticipants' user}}>Legg til</a>
+                                            {{user.firstName}} {{user.lastName}} <a class="btn btn-success btn-xs" {{action 'addToInvited' user}}>Legg til</a>
                                         </label>
                                     </li>
                                 {{/each}}
@@ -250,15 +250,6 @@
                                 </td>
                             </tr>
                         {{/each}}
-                        <!-- Torgrim -->
-                        {{#each participant in participants}}
-                            <tr>
-                                <td>{{participant.firstName}} {{participant.lastName}}</td>
-                                <td><a class="btn btn-danger btn-xs" {{action 'removeFromParticipants' participant}}>Fjern</a></td>
-                            </tr>
-                        {{/each}}
-
-                        <!-- End Torgrim -->
                     </tbody>
                 </table>
             </div>
@@ -267,7 +258,7 @@
         <!-- Save/delete buttons -->
         <div class="form-group buttons">
             <div class="col-md-6 split-form-left">
-                <button class="form-control btn btn-success btn-primary" {{action "slett"}}> Lagre avtale </button>
+                <button class="form-control btn btn-success btn-primary" {{action "saveEdit"}}> Lagre avtale </button>
             </div>
             <div class="col-md-6 split-form-right">
                 <button class="form-control btn btn-danger btn-primary" {{action "delete"}}> Slett avtale </button>

@@ -4,6 +4,9 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+
 public class User implements Participant, Serializable {
     private String username;
     private String encodedPassword;

@@ -53,14 +53,18 @@ public class EventService {
         eventRepository.delete(id);
     }
 
+    public void updateEventById(Event event){
+        eventRepository.updateEvent(event);
+    }
+
     public void addInvited(long eventId, Participant participant) {
         eventRepository.addInvited(eventId, participant);
     }
 
-    public Set<Participant> findInvitedByEventId(Long id) {
-        Set<Participant> invitedUsers = eventRepository.findInvitedUsersByEventId(id);
-        Set<Participant> invitedGroups = eventRepository.findInvitedGroupsByEventId(id);
-        for (Participant participant : invitedGroups) {
+    public Set<User> findInvitedByEventId(Long id) {
+        Set<User> invitedUsers = eventRepository.findInvitedUsersByEventId(id);
+        Set<Group> invitedGroups = eventRepository.findInvitedGroupsByEventId(id);
+        for (Group participant : invitedGroups) {
             for (User user : groupRepository.findMembers(((Group)participant).getId())) {
                 if (!invitedUsers.contains(user)) {
                     invitedUsers.add(user);
@@ -80,10 +84,20 @@ public class EventService {
     }
 
     public void removeInvitedByUsername(Long eventId, String username) {
-        eventRepository.removeInvited(eventId, username);
+        eventRepository.removeInvitedUser(eventId, username);
+    }
+    public void removeInvitedByGroupID(long eventId, long groupId) {
+        eventRepository.removeInvitedGroup(eventId, groupId);
     }
 
     public void addDeclined(Long id, User currentUser) {
         eventRepository.addDeclined(id, currentUser);
+    }
+    public void deleteAttendingByEventId(Long id){
+        eventRepository.deleteAttendingByEventId(id);
+    }
+
+    public void deleteInvitedByEventId(Long id){
+        eventRepository.deleteInvitedByEventId(id);
     }
 }

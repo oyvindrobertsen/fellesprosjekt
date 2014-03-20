@@ -3,6 +3,7 @@ package no.ntnu.apotychia.controller;
 import no.ntnu.apotychia.model.Event;
 import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
+import no.ntnu.apotychia.model.Group;
 import no.ntnu.apotychia.service.EventService;
 import no.ntnu.apotychia.service.UserService;
 import no.ntnu.apotychia.service.MailService;
@@ -76,6 +77,61 @@ public class EventController {
         }
         return new ResponseEntity<Event>(event, HttpStatus.OK);
     }
+     // Torgrim Edit
+    
+    @RequestMapping(method = RequestMethod.PUT, value="/{id}")
+    public @ResponseBody Event updateEvent(@RequestBody Event event, ModelMap model) {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        event.setEventAdmin(currentUser.getUsername());
+
+        Set<Participant> participants = event.getInvited();
+        Set<User> dbInvited = eventService.findInvitedByEventId(event.getEventID());
+        Set<User> users = new HashSet<>();
+
+        if(participants != null){
+
+            // find all users in updated event
+            for(Participant p : participants) {
+                if(p instanceof Group){
+                    for(User u : ((Group)p).getAllMembers()){
+                        users.add(u);
+                    }
+                }else{
+                    users.add((User)p);
+                }
+            }
+
+            // find user in old DB but not in updated Event
+            for(User u : dbInvited){
+                if(!users.contains(u)) {
+                    eventService.removeInvitedByUsername(event.getEventID(),
+                    u.getUsername());
+                }
+            }
+            for(User u : users){
+                if(!dbInvited.contains(u)){
+                    eventService.addInvited(event.getEventID(), u);
+                }
+            }
+
+
+        }
+        else {
+
+            eventService.deleteInvitedByEventId(event.getEventID());
+        }
+
+
+        eventService.updateEventById(event);
+        
+        
+
+        return event;
+
+    }
+    // Torgrim Edit end
 
     @RequestMapping(method = RequestMethod.DELETE, value="/{id}")
     @ResponseStatus(value = HttpStatus.OK)
@@ -90,8 +146,8 @@ public class EventController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/invited")
-    public ResponseEntity<Set<Participant>> getInvitedForEvent(@PathVariable Long id) {
-        return new ResponseEntity<Set<Participant>>(eventService.findInvitedByEventId(id), HttpStatus.OK);
+    public ResponseEntity<Set<User>> getInvitedForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<User>>(eventService.findInvitedByEventId(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/declined")

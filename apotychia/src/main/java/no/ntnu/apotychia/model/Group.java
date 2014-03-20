@@ -5,6 +5,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+
+
 public class Group implements Participant {
     private long groupId;
     private Set<User> members;

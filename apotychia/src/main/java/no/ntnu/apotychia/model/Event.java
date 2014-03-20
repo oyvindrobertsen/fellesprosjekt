@@ -2,10 +2,13 @@ package no.ntnu.apotychia.model;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
+
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Set;
+import java.util.HashSet;
 import javax.persistence.*;
+
 
 public class Event implements Comparable<Event> {
     private long eventId;
@@ -18,7 +21,7 @@ public class Event implements Comparable<Event> {
     private String location;
     private Long roomId;
     private Set<Participant> invited;
-    private Set<User> attending;
+    private Set<Participant> attending;
     private boolean isAdmin;
 
     public boolean isAdmin() {
@@ -85,11 +88,11 @@ public class Event implements Comparable<Event> {
         this.description = description;
     }
 
-    public Set<User> getAttending() {
+    public Set<Participant> getAttending() {
         return attending;
     }
 
-    public void setAttending(Set<User> attending) {
+    public void setAttending(Set<Participant> attending) {
         this.attending = attending;
     }
 
@@ -110,4 +113,12 @@ public class Event implements Comparable<Event> {
     public int compareTo(Event o) {
         return getStartTime().compareTo(o.getStartTime());
     }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+    public String getLocation() {
+        return this.location;
+    }
 }
+    
