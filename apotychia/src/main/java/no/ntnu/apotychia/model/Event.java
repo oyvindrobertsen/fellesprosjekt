@@ -18,6 +18,7 @@ public class Event implements Comparable<Event> {
     private Set<Participant> invited;
     private Set<Participant> attending;
     private boolean isAdmin;
+    private Room room;
 
     public boolean isAdmin() {
         return isAdmin;
@@ -107,5 +108,13 @@ public class Event implements Comparable<Event> {
     @Override
     public int compareTo(Event o) {
         return getStartTime().compareTo(o.getStartTime());
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public Room getRoom(){
+        return room;
     }
 }

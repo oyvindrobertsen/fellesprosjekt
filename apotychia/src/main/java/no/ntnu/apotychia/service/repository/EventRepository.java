@@ -5,6 +5,7 @@ import no.ntnu.apotychia.model.Event;
 import no.ntnu.apotychia.model.Group;
 import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
+import no.ntnu.apotychia.model.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -176,5 +177,12 @@ public class EventRepository {
 
     public void delete(Long id) {
         jt.update("DELETE FROM calendarEvent WHERE eventId = ?", id);
+    }
+
+    public void addRoom(long eventId, long roomNr) {
+        jt.update(
+            "INSERT INTO booked (eventId, roomNr) VALUES (?, ?)",
+            eventId, roomNr
+        );
     }
 }

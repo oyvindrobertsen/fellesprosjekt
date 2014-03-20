@@ -25,7 +25,7 @@ App.NewRoute = Ember.Route.extend({
             users: Ember.$.getJSON('/api/auth/users'),
             rooms: Ember.$.getJSON('/api/rooms'),
             participants: [],
-            room: null
+            room: {}
         });
     }
 });
@@ -94,7 +94,7 @@ App.NewController = Ember.ObjectController.extend({
             this.get('model.participants').removeObject(object);
         },
         addRoomToEvent: function(object) {
-            this.get('model.room').pushObject(object);
+            this.set('model.room', object);
         }
     }
 });

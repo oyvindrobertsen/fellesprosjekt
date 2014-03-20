@@ -4,8 +4,10 @@ import no.ntnu.apotychia.model.Event;
 import no.ntnu.apotychia.model.Group;
 import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
+import no.ntnu.apotychia.model.Room;
 import no.ntnu.apotychia.service.repository.EventRepository;
 import no.ntnu.apotychia.service.repository.GroupRepository;
+import no.ntnu.apotychia.service.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,5 +69,9 @@ public class EventService {
         if (participant instanceof Group) {
 
         }
+    }
+
+    public void addRoom(Long eventId, Room room){
+        eventRepository.addRoom(eventId, room.getRoomNumber());
     }
 }

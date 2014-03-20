@@ -113,7 +113,7 @@
                         {{#each room in rooms}}
                             <li class="list-unstyled">
                                 <label style="margin-left:-15px;">
-                                    {{room.roomNumber}} ({{room.capacity}}) <a class="btn btn-success btn-xs" {{action 'addRoomToEvent' user}}>Velg</a>
+                                    {{room.roomNumber}} ({{room.capacity}}) <a class="btn btn-success btn-xs" {{action 'addRoomToEvent' room}}>Velg</a>
                                 </label>
                             </li>
                         {{/each}}
@@ -125,7 +125,7 @@
         <div style="clear:both;"></div>
         <!-- Place -->
         <div class="form-group">
-            <input class="form-control" type="text" id="placeinput" placeholder="Sted">
+            {{input class="form-control" type="text" id="placeinput" value=model.room.roomNumber placeholder="Sted"}}
         </div>
 
         <div class="form-group">

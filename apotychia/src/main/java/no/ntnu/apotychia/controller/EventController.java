@@ -3,8 +3,10 @@ package no.ntnu.apotychia.controller;
 import no.ntnu.apotychia.model.Event;
 import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
+import no.ntnu.apotychia.model.Room;
 import no.ntnu.apotychia.service.EventService;
 import no.ntnu.apotychia.service.UserService;
+import no.ntnu.apotychia.service.RoomService;
 import no.ntnu.apotychia.service.security.ApotychiaUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +92,7 @@ public class EventController {
         for (Participant participant : event.getInvited()) {
             eventService.addInvited(eventId, participant);
         }
+        eventService.addRoom(eventId, event.getRoom());
         return eventService.findEventById(eventId);
     }
 
