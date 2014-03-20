@@ -1,24 +1,23 @@
 package no.ntnu.apotychia.model;
 
 public class Room{
-    private final String roomNumber;
-    private final int capacity;
+    private long roomNumber;
+    private long capacity;
 
-    public int getCapacity(){
-        return capacity;
-    }
-
-    public String getRoomNumber(){
-        return roomNumber;
-    }
-
-    public Room(String roomNumber, int capacity){
+    public void setRoomNr(long roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    public void setCapacity(long capacity) {
         this.capacity = capacity;
     }
 
+    public long getCapacity(){
+        return capacity;
+    }
 
-
-
+    public long getRoomNumber(){
+        return roomNumber;
+    }
 
 }

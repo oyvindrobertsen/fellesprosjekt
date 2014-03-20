@@ -23,7 +23,7 @@ App.NewRoute = Ember.Route.extend({
     model: function() {
         return Ember.RSVP.hash({
             users: Ember.$.getJSON('/api/auth/users'),
-            rooms: null, //Ember.$.getJSON('/api/auth/rooms'),
+            rooms: Ember.$.getJSON('/api/rooms'),
             participants: [],
             room: null
         });

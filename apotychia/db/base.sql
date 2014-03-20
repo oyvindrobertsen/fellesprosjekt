@@ -95,3 +95,17 @@ CREATE TABLE booked (
       FOREIGN KEY (roomNr)  REFERENCES room(roomNr)
           ON UPDATE cascade ON DELETE cascade
 );
+
+INSERT INTO room (roomNr, capacity) VALUES (101, 10);
+INSERT INTO room (roomNr, capacity) VALUES (102, 5);
+INSERT INTO room (roomNr, capacity) VALUES (103, 5);
+INSERT INTO room (roomNr, capacity) VALUES (404, 25);
+INSERT INTO room (roomNr, capacity) VALUES (105, 30);
+INSERT INTO room (roomNr, capacity) VALUES (106, 25);
+INSERT INTO room (roomNr, capacity) VALUES (107, 50);
+
+
+
+
+
+

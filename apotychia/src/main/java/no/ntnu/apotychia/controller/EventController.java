@@ -27,9 +27,6 @@ public class EventController {
     @Autowired
     UserService userService;
 
-    Logger logger = LoggerFactory.getLogger(getClass());
-
-
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Event>> getAttendingEventsForLoggedInUserForCurrentWeek() {
         ApotychiaUserDetails apotychiaUserDetails =
