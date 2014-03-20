@@ -262,14 +262,16 @@
                     {{/if}}
                         {{#each i in invited}}
                             <tr>
-                                <td>{{i.firstName}} {{i.lastName}}</td>
-                                <td>
-                                <a class="btn btn-danger btn-xs" {{action 'removeFromInvited' i}}>Fjern</a>
-                                </td>
+                                {{#if i.username}}
+                                    <td>{{i.firstName}} {{i.lastName}}</td>
+                                {{else}}
+                                    <td>{{i.name}}</td>
+                                {{/if}}
+                                <td><a class="btn btn-danger btn-xs" {{action 'removeFromInvited' i}}>Fjern</a></td>
                             </tr>
                         {{/each}}
                         {{#each model.declined}}
-                            <tr class>
+                            <tr class="danger">
                                 <td>{{firstName}} {{lastName}}</td>
                             </tr>
                         {{/each}}
@@ -317,6 +319,11 @@
                                 <td>{{firstName}} {{lastName}}</td>
                             </tr>
                         {{/each}}
+                        {{#each model.declined}}
+                            <tr class="danger">
+                                <td>{{firstName}} {{lastName}}</td>
+                            </tr>
+                        {{/each}}
                     </tbody>
                 </table>
             </div>
@@ -339,13 +346,17 @@
 <script type="text/x-handlebars" id="invites">
     <!-- Calender view -->
     <div class="col-md-9 calender-panel">
-        <table>
-            {{#each model.invites}}   
-                <tr>
-                    <td> {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}</td>
-                </tr>
-            {{/each}}
-        </table>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                {{#each model.invites}}
+                    <div class="well text-center">
+                        {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}<br/>
+                        <strong>Starter:</strong> {{startTime}}<br/>
+                        <strong>Slutter:</strong> {{endTime}}
+                    </div>
+                {{/each}}
+            </div>
+        </div>
     </div>
     <div class="col-md-3 calender-panel">
         {{outlet}}
@@ -372,7 +383,7 @@
                         </div>
                         {{else}}
                             <div class="well text-center">
-                                {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}<br/>
+                                {{#link-to 'userEvent' eventID}}<b>{{eventName}} </b> {{/link-to}}<br/>
                                 <strong>Starter:</strong> {{startTime}}<br/>
                                 <strong>Slutter:</strong> {{endTime}}
                             </div>

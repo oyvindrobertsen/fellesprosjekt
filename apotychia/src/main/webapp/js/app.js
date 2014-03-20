@@ -11,10 +11,12 @@ App.Router.map(function() {
     this.resource('edit', { path: 'edit/:id'}); // calender/edit/1
   });
   this.resource('user', { path: 'event/user/:username'}, function() {
-    this.resource('view', {path: ':id'});
+    this.resource('userEvent', {path: ':id'});
   });
 
-  this.resource('invites', { path: "/event/invites"});
+  this.resource('invites', { path: "/event/invites"}, function() {
+    this.resource('viewInvite', { path: "/:id"})
+  });
   this.resource('me');
 });
 
@@ -194,9 +196,6 @@ App.ViewController = Ember.ObjectController.extend({
         }
     }
 });
-
-
-
 
 App.EditController = Ember.ObjectController.extend({
     date: function() {
