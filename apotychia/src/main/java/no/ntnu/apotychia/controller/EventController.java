@@ -39,26 +39,38 @@ public class EventController {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
-        List<Event> ret = eventService.findAttendingEventsForUserByUsername(currentUser.getUsername());
-//        List<Event> out = new ArrayList<Event>();
-//        int week = new GregorianCalendar().getWeekYear();
-        for (Event event : ret) {
+        List<Event> attending = eventService.findAttendingEventsForUserByUsername(currentUser.getUsername());
+        List<Event> userInvites = eventService.findInvitedEventsForUserByUsername(currentUser.getUsername());
+        List<Event> groupInvites = eventService.findGroupInvitesForUser(currentUser.getUsername());
+        userInvites.addAll(groupInvites);
+        Set<Event> userInvitesSet = new HashSet<Event>(userInvites);
+        List<Event> userInvitesNoAttending = new ArrayList<Event>();
+        for (Event event : userInvitesSet) {
+            if (!attending.contains(event)) {
+                userInvitesNoAttending.add(event);
+            }
+        }
+        attending.addAll(userInvitesNoAttending);
+        Collections.sort(attending);
+        for (Event event : attending) {
             if (event.getEventAdmin().equals(currentUser.getUsername())) {
                 event.setAdmin(true);
             }
-//            GregorianCalendar c = new GregorianCalendar();
-//            c.setTime(event.getStartTime());
-//            if (c.getWeekYear() == week) {
-//                logger.info("weee");
+        }
+        return new ResponseEntity<List<Event>>(attending, HttpStatus.OK);
+//        List<Event> out = new ArrayList<Event>();
+//        for (Event event : ret) {
+//            if (event.getEventAdmin().equals(currentUser.getUsername())) {
+//                event.setAdmin(true);
+//            }
+//            if (!eventService.findAttendingEventsForUserByUsername(currentUser.getUsername()).contains(event)) {
 //                out.add(event);
 //            }
-        }
-        ret.addAll(eventService.findInvitedEventsForUserByUsername(currentUser.getUsername()));
-        ret.addAll(eventService.findGroupInvitesForUser(currentUser.getUsername()));
-        Collections.sort(ret);
-        Set<Event> retSet = new LinkedHashSet<Event>(ret);
-        List<Event> retList = new ArrayList<Event>(retSet);
-        return new ResponseEntity<List<Event>>(retList, HttpStatus.OK);
+//        }
+//        Collections.sort(out);
+//        Set<Event> outSet = new LinkedHashSet<Event>(out);
+//        List<Event> outList = new ArrayList<Event>(outSet);
+//        return new ResponseEntity<List<Event>>(outList, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/user/{username}")

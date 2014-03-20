@@ -100,7 +100,7 @@ public class EventService {
         eventRepository.deleteInvitedByEventId(id);
     }
 
-    public Set<Event> findGroupInvitesForUser(String username) {
+    public List<Event> findGroupInvitesForUser(String username) {
         List<Group> groups = groupRepository.findGroupsForUser(username);
         List<Event> groupInvites = new ArrayList<Event>();
         for (Group group : groups) {
@@ -114,6 +114,6 @@ public class EventService {
                 ret.add(event);
             }
         }
-        return ret;
+        return new ArrayList<Event>(ret);
     }
 }
