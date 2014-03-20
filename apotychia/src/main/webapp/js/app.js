@@ -47,7 +47,9 @@ App.EditRoute = Ember.Route.extend({
             event: Ember.$.getJSON('/api/events/' + params.id),
             attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
             invited: Ember.$.getJSON('/api/events/' + params.id + '/invited'),
-            declined: Ember.$.getJSON('/api/events/' + params.id + '/declined')
+            declined: Ember.$.getJSON('/api/events/' + params.id + '/declined'),
+            users: Ember.$.getJSON('/api/auth/users'),
+            participants: []
         });
     }
 });
@@ -190,6 +192,23 @@ App.EditController = Ember.ObjectController.extend({
                     self.transitionToRoute('/');
                 }
             });
+        },
+        addToParticipants: function(object) {
+            if (object.username) {
+                object.type = ".User";
+            } else {
+                object.type = ".Group";
+            }
+            this.get('model.participants').pushObject(object);
+        },
+        removeFromParticipants: function(object) {
+            this.get('model.participants').removeObject(object);
+        },
+        removeFromAttending: function(object) {
+            this.get('model.attending').removeObject(object);
+        },
+        removeFromInvited: function(object) {
+            this.get('model.invited').removeObject(object);
         }
     }
 });

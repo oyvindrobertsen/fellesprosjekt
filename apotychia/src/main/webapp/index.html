@@ -210,32 +210,17 @@
                 <thead>
                     <th>Deltakere</th>
                     <th>
-                        <a rel="popover" data-content="" class="btn btn-primary btn-sm btn-block">Legg til deltaker</a>
-                        <div id="popover-content-wrapper" class="hide">
-                            <div class="form-group">
-                                <div class="col-md-12">
-                                    {{input type="text" placeholder="S&oslash;k etter person" class="form-control" value=searchTerm}}
-                                </div>
-                            </div>
-
+                         <a rel="popover" data-content="" class="btn btn-primary btn-sm btn-block">Legg til deltaker</a>
+                        <div id="users-content-wrapper" class="hide">
                             <ul style="overflow: auto; max-height: 300px">
-                                {{#each model.persons}}
-                                <li class="list-unstyled">
-                                    <label style="margin-left:-15px;">
-                                        <input type="checkbox" name="add"> {{name}}
-                                    </label>
-                                </li>
+                                {{#each user in users}}
+                                    <li class="list-unstyled">
+                                        <label style="margin-left:-15px;">
+                                            {{user.firstName}} {{user.lastName}} <a class="btn btn-success btn-xs" {{action 'addToParticipants' user}}>Legg til</a>
+                                        </label>
+                                    </li>
                                 {{/each}}
                             </ul>
-
-                            <div class="form-group">
-                                <div class="col-md-6">
-                                    <a class="form-control btn btn-success btn-primary">Legg til</a>
-                                </div>
-                                <div class="col-md-6">
-                                    <a class="form-control btn btn-danger btn-primary">Avbryt</a>
-                                </div>
-                            </div>
                         </div>
                     </th>
                 </thead>
@@ -243,18 +228,37 @@
             <div style="overflow: auto; max-height: 30%;">
                 <table class="table">
                     <tbody>
-                        {{#each model.attending}}
+                    {{#if event.admin}}
+                        {{#each a in attending}}
                             <tr class="success">
-                                <td>{{firstName}} {{lastName}}</td>
-                                <td><a class="btn btn-danger btn-xs">Fjern</a></td>
+                                <td>{{a.firstName}} {{a.lastName}}</td>
                             </tr>
                         {{/each}}
-                        {{#each model.invited}}
+                    {{else}}
+                        {{#each a in attending}}
+                            <tr class="success">
+                                <td>{{a.firstName}} {{a.lastName}}</td>
+                            <td><a class="btn btn-danger btn-xs" {{action 'removeFromAttending' a}}>Fjern</a></td>
+                        {{/each}}
+
+                    {{/if}}
+                        {{#each i in invited}}
                             <tr>
-                                <td>{{firstName}} {{lastName}}</td>
-                                <td><a class="btn btn-danger btn-xs">Fjern</a></td>
+                                <td>{{i.firstName}} {{i.lastName}}</td>
+                                <td>
+                                <a class="btn btn-danger btn-xs" {{action 'removeFromInvited' i}}>Fjern</a>
+                                </td>
                             </tr>
                         {{/each}}
+                        <!-- Torgrim -->
+                        {{#each participant in participants}}
+                            <tr>
+                                <td>{{participant.firstName}} {{participant.lastName}}</td>
+                                <td><a class="btn btn-danger btn-xs" {{action 'removeFromParticipants' participant}}>Fjern</a></td>
+                            </tr>
+                        {{/each}}
+
+                        <!-- End Torgrim -->
                     </tbody>
                 </table>
             </div>
