@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class EventService {
@@ -85,5 +83,22 @@ public class EventService {
 
     public void addDeclined(Long id, User currentUser) {
         eventRepository.addDeclined(id, currentUser);
+    }
+
+    public Set<Event> findGroupInvitesForUser(String username) {
+        List<Group> groups = groupRepository.findGroupsForUser(username);
+        List<Event> groupInvites = new ArrayList<Event>();
+        for (Group group : groups) {
+            groupInvites.addAll(eventRepository.findInvitationsForGroupByGroupId(group.getId()));
+        }
+        Set<Event> groupInvitesSet = new HashSet<Event>(groupInvites);
+        Set<Event> ret = new HashSet<Event>();
+        List<Event> userAttending = eventRepository.findEventsForUser(username);
+        for (Event event : groupInvitesSet) {
+            if (!userAttending.contains(event)) {
+                ret.add(event);
+            }
+        }
+        return ret;
     }
 }

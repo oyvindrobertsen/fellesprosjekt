@@ -1,5 +1,7 @@
 package no.ntnu.apotychia.model;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,7 +44,7 @@ public class Group implements Participant {
         return this.name;
     }
 
-    public Set<User> getAllMembers(){
+    public Set<User> getMembers(){
         return this.members;
     }
 

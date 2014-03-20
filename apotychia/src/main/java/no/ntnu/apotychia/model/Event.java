@@ -16,7 +16,7 @@ public class Event implements Comparable<Event> {
     private String description;
     private String eventAdmin;
     private String location;
-    private Long roomId;
+    private Room roomId;
     private Set<Participant> invited;
     private Set<User> attending;
     private boolean isAdmin;

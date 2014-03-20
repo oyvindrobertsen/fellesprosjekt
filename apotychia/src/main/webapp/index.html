@@ -133,9 +133,14 @@
                             <div style="overflow: auto; max-height: 300px">
                                 <table>
                                     {{#each user in users}}
-                                    <tr>
-                                        <td>{{user.firstName}} {{user.lastName}}</td><td><a class="btn btn-success btn-xs" {{action 'addToParticipants' user}}>Legg til</a></td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{user.firstName}} {{user.lastName}}</td><td><a class="btn btn-success btn-xs" {{action 'addToParticipants' user}}>Legg til</a></td>
+                                        </tr>
+                                    {{/each}}
+                                    {{#each group in groups}}
+                                        <tr>
+                                            <td>{{group.name}}</td><td><a class="btn btn-success btn-xs" {{action 'addToParticipants' group}}>Legg til</a></td>
+                                        </tr>
                                     {{/each}}
                                 </table>
                             </div>
@@ -147,10 +152,17 @@
                 <table class="table">
                     <tbody>
                         {{#each participant in participants}}
-                            <tr>
-                                <td>{{participant.firstName}} {{participant.lastName}}</td>
-                                <td><a class="btn btn-danger btn-xs" {{action 'removeFromParticipants' participant}}>Fjern</a></td>
-                            </tr>
+                            {{#if participant.username}}
+                                <tr>
+                                    <td>{{participant.firstName}} {{participant.lastName}}</td>
+                                    <td><a class="btn btn-danger btn-xs" {{action 'removeFromParticipants' participant}}>Fjern</a></td>
+                                </tr>
+                            {{else}}
+                                <tr>
+                                    <td>{{participant.name}}</td>
+                                    <td><a class="btn btn-danger btn-xs" {{action 'removeFromParticipants' participant}}>Fjern</a></td>
+                                </tr>
+                            {{/if}}
                         {{/each}}
                     </tbody>
                 </table>
@@ -256,6 +268,12 @@
                             </tr>
                         {{/each}}
                         {{#each model.invited}}
+                            <tr>
+                                <td>{{firstName}} {{lastName}}</td>
+                                <td><a class="btn btn-danger btn-xs">Fjern</a></td>
+                            </tr>
+                        {{/each}}
+                        {{#each model.declined}}
                             <tr>
                                 <td>{{firstName}} {{lastName}}</td>
                                 <td><a class="btn btn-danger btn-xs">Fjern</a></td>

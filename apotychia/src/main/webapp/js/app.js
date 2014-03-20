@@ -40,6 +40,7 @@ App.NewRoute = Ember.Route.extend({
     model: function() {
         return Ember.RSVP.hash({
             users: Ember.$.getJSON('/api/auth/users'),
+            groups: Ember.$.getJSON('/api/groups'),
             participants: []
         });
     }
@@ -152,9 +153,9 @@ App.NewController = Ember.ObjectController.extend({
         },
         addToParticipants: function(object) {
             if (object.username) {
-                object.type = ".User";
+                object.type = "user";
             } else {
-                object.type = ".Group";
+                object.type = "group";
             }
             this.get('model.participants').pushObject(object);
         },

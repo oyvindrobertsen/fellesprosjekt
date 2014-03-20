@@ -1,5 +1,7 @@
 package no.ntnu.apotychia.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import java.io.Serializable;
@@ -75,6 +77,7 @@ public class User implements Participant, Serializable {
      * their account.
      * @return boolean
      */
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
