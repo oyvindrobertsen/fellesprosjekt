@@ -10,13 +10,29 @@ App.Router.map(function() {
     this.resource("new"); //calender/new
     this.resource('edit', { path: 'edit/:id'}); // calender/edit/1
   });
+  this.resource('user', { path: 'event/user/:username'}, function() {
+    this.resource('view', {path: ':id'});
+  });
+
   this.resource('invites', { path: "/event/invites"});
   this.resource('me');
 });
 
+App.IndexRoute = Ember.Route.extend({
+    model: function() {
+        return Ember.RSVP.hash({
+            users: Ember.$.getJSON('/api/auth/users')
+        })
+    }
+});
+
+
 App.EventRoute = Ember.Route.extend({
     model: function() {
-        return Ember.$.getJSON('/api/events');
+        return Ember.RSVP.hash({
+            events: Ember.$.getJSON('/api/events'),
+            users: Ember.$.getJSON('/api/auth/users')
+        });
     }
 });
 
@@ -29,7 +45,6 @@ App.NewRoute = Ember.Route.extend({
     }
 });
 
-// Torgrim Edit
 App.InvitesRoute = Ember.Route.extend({
     model: function() {
         return Ember.RSVP.hash({
@@ -39,7 +54,6 @@ App.InvitesRoute = Ember.Route.extend({
      
 });
 
-// End Torgrim edit
 
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
@@ -63,6 +77,15 @@ App.ViewRoute = Ember.Route.extend({
     }
 });
 
+App.UserRoute = Ember.Route.extend({
+    model: function(params) {
+        return Ember.RSVP.hash({
+            events: Ember.$.getJSON('/api/events/user/' + params.username),
+            users: Ember.$.getJSON('/api/auth/users')
+        });
+    }
+});
+
 App.MeRoute = Ember.Route.extend({
     model: function() {
         return Ember.$.getJSON('/api/auth/me');
@@ -70,6 +93,30 @@ App.MeRoute = Ember.Route.extend({
 });
 
 // controller
+
+App.EventController = Ember.ObjectController.extend({
+    calendarToView: null,
+    actions: {
+        viewCalendar: function() {
+            if (this.get('calendarToView')) {
+                this.transitionToRoute('/event/user/' + this.get('calendarToView'));
+            }
+            return;
+        }
+    }
+});
+
+App.UserController = Ember.ObjectController.extend({
+    calendarToView: null,
+    actions: {
+        viewCalendar: function() {
+            if (this.get('calendarToView')) {
+                this.transitionToRoute('/event/user/' + this.get('calendarToView'));
+            }
+            return;
+        }
+    }
+});
 
 App.NewController = Ember.ObjectController.extend({
     content: {},

@@ -178,27 +178,6 @@ public class EventRepository {
         return new HashSet<User>(result);
     }
 
-    public Set<User> findDeclinedByEventId(Long id) {
-        List<User> result = jt.query(
-                "SELECT p.* FROM person p, declined d " +
-                        "WHERE d.eventId = ? " +
-                        "AND d.username = p.username",
-                new Object[]{id},
-                new RowMapper<User>() {
-                    @Override
-                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        User user = new User();
-                        user.setUsername(rs.getString("username"));
-                        user.setFirstName(rs.getString("firstName"));
-                        user.setLastName(rs.getString("lastName"));
-                        user.setEmail(rs.getString("mail"));
-                        return user;
-                    }
-                }
-        );
-        return new HashSet<User>(result);
-    }
-
     public void delete(Long id) {
         jt.update("DELETE FROM calendarEvent WHERE eventId = ?", id);
     }

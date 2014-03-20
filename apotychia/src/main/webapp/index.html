@@ -46,9 +46,15 @@
 <script type="text/x-handlebars" id="event">
     <!-- Calender view -->
     <div class="col-md-9 calender-panel">
+        {{view Ember.Select
+        content=model.users
+        optionValuePath="content.username"
+        optionLabelPath="content.firstName"
+        value=calendarToView
+        prompt="Velg en kalender"}} <a class="btn btn-primary btn-xs" {{action 'viewCalendar'}}>Vis</a>
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                {{#each model}}
+                {{#each model.events}}
                     {{#if admin}}
                         <div class="well text-center admin-well">
                             {{#link-to 'edit' eventID}}<b style="color:white;">{{eventName}} </b> {{/link-to}}<br/>
@@ -314,7 +320,7 @@
     </div>
 </script>
 
-<!-- Torgrim -->
+
 
 
 
@@ -334,9 +340,40 @@
     </div>
 </script>
 
-<!-- End Torgrim edit -->
+<script type="text/x-handlebars" id="user">
+    <!-- Calender view -->
+    <div class="col-md-9 calender-panel">
+        {{view Ember.Select
+        content=model.users
+        optionValuePath="content.username"
+        optionLabelPath="content.firstName"
+        value=calendarToView
+        prompt="Velg en kalender"}} <a class="btn btn-primary btn-xs" {{action 'viewCalendar'}}>Vis</a>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                {{#each model.events}}
+                    {{#if admin}}
+                        <div class="well text-center admin-well">
+                            {{#link-to 'edit' eventID}}<b style="color:white;">{{eventName}} </b> {{/link-to}}<br/>
+                            <strong>Starter:</strong> {{startTime}}<br/>
+                            <strong>Slutter:</strong> {{endTime}}
+                        </div>
+                        {{else}}
+                            <div class="well text-center">
+                                {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}<br/>
+                                <strong>Starter:</strong> {{startTime}}<br/>
+                                <strong>Slutter:</strong> {{endTime}}
+                            </div>
+                        {{/if}}
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 calender-panel">
+        {{outlet}}
+    </div>
+</script>
 
-<!-- Testing-->
 <script type="text/x-handlebars" id="me">
     <div class="col-md-9">
         <h1>{{firstName}} {{lastName}}</h1>
