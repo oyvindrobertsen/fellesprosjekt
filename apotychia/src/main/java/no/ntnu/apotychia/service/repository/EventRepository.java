@@ -258,4 +258,24 @@ public class EventRepository {
             eventId, roomNr
         );
     }
+
+    public List<Room> findRoomByEventId(long eventId) {
+        List<Room> result = jt.query(
+                "SELECT room.* FROM room, booked " +
+                        "WHERE eventId = ? " + 
+                        "and booked.roomnr = room.roomnr",
+
+                new Object[]{eventId},
+                new RowMapper<Room>() {
+                    @Override
+                    public Room mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Room room = new Room();
+                        room.setRoomNr(rs.getLong("roomNr"));
+                        room.setCapacity(rs.getLong("capacity"));
+                        return room;
+                    }
+                }
+            );
+        return result;
+    }
 }

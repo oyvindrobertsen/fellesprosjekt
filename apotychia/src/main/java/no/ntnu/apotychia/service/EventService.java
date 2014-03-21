@@ -26,6 +26,12 @@ public class EventService {
 
     public Event findEventById(long eventId) {
         Event event = eventRepository.findById(eventId);
+        List<Room> room = eventRepository.findRoomByEventId(eventId);
+        if(!room.isEmpty()) {
+            event.setRoom(room.get(0));
+        } else {
+            event.setRoom(null);
+        }
         return event;
     }
 

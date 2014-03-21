@@ -133,7 +133,14 @@
         <div style="clear:both;"></div>
         <!-- Place -->
         <div class="form-group">
-            {{input class="form-control" type="text" id="placeinput" value=model.room.roomNumber placeholder="Sted"}}
+            <!-- ny kode -a -->
+
+            {{input class="form-control" type="text" id="placeinput" value=location placeholder="Sted"}}
+            {{#if model.room}}
+                <strong>Rom valgt:</strong> {{model.room.roomNumber}}<br/>
+            {{/if}}
+
+            <!-- ny kode end -a -->
         </div>
 
         <div class="form-group">
@@ -221,7 +228,15 @@
         <div style="clear:both;"></div>
         <!-- Place -->
         <div class="form-group">
-            <input class="form-control" type="text" placeholder="Sted"
+            <!-- ny kode -->
+
+            {{#if model.event.room}}
+            {{input class="form-control" type="text" id="placeinput" value=model.event.room.roomNumber placeholder="Sted"}}
+            {{else}}
+            {{input class="form-control" type="text" id="placeinput" value=model.event.location placeholder="Sted"}}
+            {{/if}}
+
+            <!-- end -->
         </div>
 
         <div class="form-group">
@@ -299,6 +314,15 @@
     <strong>Slutt:</strong> {{model.event.endTime}}<br/>
 
     <div class="well">{{model.event.description}}</div>
+
+    <!-- ny kode -a -->
+    {{#if model.event.room}}
+    <strong>Rom:</strong> {{model.event.room.roomNumber}}<br/>
+    {{else}}
+    <strong>Sted:</strong> {{model.event.location}}<br/>
+    {{/if}}
+
+    <!-- end -->
 
     <table class="table">
                 <thead>

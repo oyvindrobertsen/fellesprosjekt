@@ -11,7 +11,7 @@ App.Router.map(function() {
     this.resource('edit', { path: 'edit/:id'}); // calender/edit/1
   });
   this.resource('user', { path: 'event/user/:username'}, function() {
-    this.resource('view', {path: ':id'});
+    this.resource('vdiew', {path: ':id'});
   });
 
   this.resource('invites', { path: "/event/invites"});
@@ -29,14 +29,11 @@ App.IndexRoute = Ember.Route.extend({
 
 App.EventRoute = Ember.Route.extend({
     model: function() {
-<<<<<<< HEAD
         // return Ember.$.getJSON('/api/events');
-=======
         return Ember.RSVP.hash({
             events: Ember.$.getJSON('/api/events'),
             users: Ember.$.getJSON('/api/auth/users')
         });
->>>>>>> master
     }
 });
 
@@ -46,7 +43,7 @@ App.NewRoute = Ember.Route.extend({
             users: Ember.$.getJSON('/api/auth/users'),
             rooms: Ember.$.getJSON('/api/rooms'),
             participants: [],
-            room: {}
+            room: null
         });
     }
 });
@@ -141,6 +138,8 @@ App.NewController = Ember.ObjectController.extend({
                     eventAdmin: '',
                     description: this.get('description'),
                     active: true,
+                    location: this.get('location'),
+                    room: this.get('model.room'),
                     invited: this.get('model.participants')
                 }),
                 complete: function(data) {
@@ -151,10 +150,16 @@ App.NewController = Ember.ObjectController.extend({
 
         disablePlaceInput : function() {
             Ember.$('#placeinput').prop('disabled', true);
+            <!-- ny kode -a-->
+            
+            <!-- end -->
         },
 
         enablePlaceInput : function() {
             Ember.$('#placeinput').prop('disabled', false);
+            <!-- ny kode -a-->
+            this.set('model.room', null);
+            <!-- end -->
         },
         addToParticipants: function(object) {
             if (object.username) {
@@ -203,8 +208,6 @@ App.ViewController = Ember.ObjectController.extend({
 });
 
 
-
-
 App.EditController = Ember.ObjectController.extend({
     date: function() {
         return Ember.String.w(this.get('model.event.startTime'))[0];
@@ -230,6 +233,8 @@ App.EditController = Ember.ObjectController.extend({
                     endTime: this.get('date') + " " + this.get('endTime'),
                     eventAdmin: this.get('model.eventAdmin'),
                     description: this.get('model.description'),
+                    room: this.get('model.event.room'),
+                    location: this.get('model.event.location'),
                     active: this.get('model.active')
                 }),
                 complete: function() {
