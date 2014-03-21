@@ -74,7 +74,6 @@
         </div>
     </div>
     <div class="col-md-3 calender-panel">
-        <a class="btn btn-primary"{{action 'count'}}>Press me to update</a>
         {{outlet}}
     </div>
 </script>
@@ -115,7 +114,6 @@
             <label class="btn btn-primary" rel="popover2" {{action "disablePlaceInput"}}>
                 <input type="radio" name="place" id="roomoption"> Velg rom
                 <div id="rooms-popover" class="hide">
-
                     <ul style="overflow: auto; height: 200px; max-height: 300px">
 
                         {{#each room in rooms}}
@@ -229,10 +227,20 @@
             <label class="btn btn-primary active">
                 <input type="radio" name="place" id="placeoption"> Skriv sted
             </label>
-            <label class="btn btn-primary" rel="popover">
+            <label class="btn btn-primary" rel="popover2">
                 <input type="radio" name="place" id="placeoption" checked> Skriv rom
-                <div id="popover-content-wrapper" class="hide">
-                    weeee
+                <div id="rooms-popover" class="hide">
+                    <ul style="overflow: auto; height: 200px; max-height: 300px">
+
+                        {{#each room in rooms}}
+                            <li class="list-unstyled">
+                                <label style="margin-left:-15px;">
+                                    {{room.roomNumber}} ({{room.capacity}}) <a class="btn btn-success btn-xs" rel='hideme' {{action 'addRoomToEvent' room}}>Velg</a>
+                                </label>
+                            </li>
+                        {{/each}}
+
+                    </ul>
                 </div>
 
             </label>
@@ -257,7 +265,7 @@
                     <th>Deltakere</th>
                     <th>
                          <a rel="popover" data-content="" class="btn btn-primary btn-sm btn-block">Legg til deltaker</a>
-                        <div id="users-content-wrapper" class="hide">
+                        <div id="users-popover" class="hide">
                             <table>
                                 {{#each user in users}}
                                     <tr>

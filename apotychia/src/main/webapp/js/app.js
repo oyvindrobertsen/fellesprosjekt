@@ -80,6 +80,7 @@ App.EditRoute = Ember.Route.extend({
             attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
             invited: Ember.$.getJSON('/api/events/' + params.id + '/invited'),
             declined: Ember.$.getJSON('/api/events/' + params.id + '/declined'),
+            rooms: Ember.$.getJSON('/api/rooms'),
             users: Ember.$.getJSON('/api/auth/users'),
         });
     }
@@ -186,7 +187,6 @@ App.NewController = Ember.ObjectController.extend({
             Ember.$('#placeinput').prop('disabled', false);
             <!-- ny kode -a-->
             this.set('model.room', null);
-            console.log(model.room.roomNumber);
             <!-- end -->
         },
         addToParticipants: function(object) {
@@ -315,7 +315,22 @@ App.EditController = Ember.ObjectController.extend({
             for(idx = 0; idx < a.length; idx++){
                 a[idx].type = ".User";
             }
-        }
+        },
+        addRoomToEvent: function(object) {
+            this.set('model.event.room', object);
+        },
+        disablePlaceInput : function() {
+            Ember.$('#placeinput').prop('disabled', true);
+            <!-- ny kode -a-->
+            this.set('model.event.location', null);
+            <!-- end -->
+        },
+        enablePlaceInput : function() {
+            Ember.$('#placeinput').prop('disabled', false);
+            <!-- ny kode -a-->
+            this.set('model.event.room', null);
+            <!-- end -->
+        },
     }
 });
 
@@ -360,28 +375,38 @@ App.NewView = Ember.View.extend({
 
 App.EditView = Ember.View.extend({
   didInsertElement: function() {
-    // Enable popovers
-    $("a[rel=popover]").popover({
-      placement: 'left',
-      html: true,
-      container: 'body',
-      content: function() {
-        return $('#users-content-wrapper').html();
+      // Enable popovers
+      $("a[rel=popover]").popover({
+          placement: 'left',
+          html: true,
+          container: 'body',
+          content: function() {
+              return $('#users-popover').html();
+          }
+      }).click(function(e) {
+          e.preventDefault();
+      });
+      $("label[rel=popover2]").popover({
+          placement: 'left',
+          html: true,
+          container: 'body',
+          content: function() {
+              return $('#rooms-popover').html();
+          }
+      }).click(function(e) {
+          e.preventDefault();
+      });
+      <!-- popover hides on click outside box -->
+      $('body').on('click', function (e) {
+          $('[rel=popover], [rel=popover2]').each(function () {
+              // hide any open popovers when the anywhere else in the body is clicked
+              if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                  $(this).popover('hide');
+              }
+          });
+      });
+      <!-- end -->
       }
-    }).click(function(e) {
-      e.preventDefault();
-    });
-    <!-- popover hides on click outside box -->
-        $('body').on('click', function (e) {
-            $('[rel=popover], [rel=popover2]').each(function () {
-                // hide any open popovers when the anywhere else in the body is clicked
-                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                    $(this).popover('hide');
-                }
-            });
-        });
-        <!-- end -->
-  }
 });
 
 // index route

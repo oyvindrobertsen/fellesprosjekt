@@ -66,6 +66,9 @@ public class EventService {
     }
 
     public void updateEventById(Event event){
+        if (event.getRoom() != null) {
+            eventRepository.updateRoomForEvent(event.getEventID(), event.getRoom());
+        }
         eventRepository.updateEvent(event);
     }
 

@@ -345,4 +345,13 @@ public class EventRepository {
                 "WHERE eventId = ?",
             new Object[]{id});
     }
+
+    public void updateRoomForEvent(long eventID, Room room) {
+        jt.update(
+                "UPDATE booked " +
+                        "SET roomNr = ? " +
+                        "WHERE eventId = ?",
+                new Object[]{room.getRoomNumber(), eventID}
+        );
+    }
 }
