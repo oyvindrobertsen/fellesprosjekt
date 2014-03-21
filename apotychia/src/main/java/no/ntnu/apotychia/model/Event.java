@@ -119,4 +119,12 @@ public class Event implements Comparable<Event> {
     public Room getRoom(){
         return room;
     }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLocation() {
+        return (location!=null) : location ? "";
+    }
 }

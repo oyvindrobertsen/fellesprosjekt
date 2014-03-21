@@ -281,6 +281,16 @@ App.NewView = Ember.View.extend({
         }).click(function(e) {
             e.preventDefault();
         });
+        <!-- popover hides on click outside box -->
+        $('body').on('click', function (e) {
+            $('[rel=popover], [rel=popover2]').each(function () {
+                // hide any open popovers when the anywhere else in the body is clicked
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+        <!-- end -->
     }
 });
 
@@ -298,6 +308,16 @@ App.EditView = Ember.View.extend({
     }).click(function(e) {
       e.preventDefault();
     });
+    <!-- popover hides on click outside box -->
+        $('body').on('click', function (e) {
+            $('[rel=popover], [rel=popover2]').each(function () {
+                // hide any open popovers when the anywhere else in the body is clicked
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+        <!-- end -->
   }
 });
 

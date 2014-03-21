@@ -111,7 +111,9 @@ public class EventController {
                 eventService.addInvited(eventId, participant);
             }
         }
-        eventService.addRoom(eventId, event.getRoom());
+        if(event.getRoom()!=null) {
+            eventService.addRoom(eventId, event.getRoom());
+        } 
         mailService.push(event.getInvited(),
                 "You have been invited to a new Event <br> <a href='http://localhost:8080/#/event/edit/" + eventId + "'>New Event</a>");
         return eventService.findEventById(eventId);

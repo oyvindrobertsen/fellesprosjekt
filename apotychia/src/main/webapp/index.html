@@ -26,6 +26,7 @@
             <ul class="nav navbar-nav">
                 <li>{{#link-to 'new'}}Legg til avtale{{/link-to}}</li>
                 <li><a href="/#/event/invites">Invites <span class="badge">23</span></a></li>
+                <li><a href="http://bit.ly/IPXTur"> win </a> </li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -119,7 +120,7 @@
                         {{#each room in rooms}}
                             <li class="list-unstyled">
                                 <label style="margin-left:-15px;">
-                                    {{room.roomNumber}} ({{room.capacity}}) <a class="btn btn-success btn-xs" {{action 'addRoomToEvent' room}}>Velg</a>
+                                    {{room.roomNumber}} ({{room.capacity}}) <a class="btn btn-success btn-xs" rel='hideme' {{action 'addRoomToEvent' room}}>Velg</a>
                                 </label>
                             </li>
                         {{/each}}
@@ -152,7 +153,7 @@
                                 <table>
                                     {{#each user in users}}
                                     <tr>
-                                        <td>{{user.firstName}} {{user.lastName}}</td><td><a class="btn btn-success btn-xs" {{action 'addToParticipants' user}}>Legg til</a></td>
+                                        <td>{{user.firstName}} {{user.lastName}}</td><td><a class="btn btn-success btn-xs" rel="hideme" {{action 'addToParticipants' user}}>Legg til</a></td>
                                     </tr>
                                     {{/each}}
                                 </table>

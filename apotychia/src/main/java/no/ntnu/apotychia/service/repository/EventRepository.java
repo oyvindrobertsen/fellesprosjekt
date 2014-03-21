@@ -44,6 +44,7 @@ public class EventRepository {
                         event.setEndTime(rs.getTimestamp("endTime"));
                         event.setActive(rs.getBoolean("isActive"));
                         event.setDescription(rs.getString("description"));
+                        event.setLocation(rs.getString("location"));
                         event.setEventAdmin(rs.getString("eventAdmin"));
                         return event;
                     }
@@ -74,6 +75,7 @@ public class EventRepository {
                         event.setEndTime(rs.getTimestamp("endTime"));
                         event.setActive(rs.getBoolean("isActive"));
                         event.setDescription(rs.getString("description"));
+                        event.setLocation(rs.getString("location"));
                         event.setEventAdmin(rs.getString("eventAdmin"));
                         return event;
                     }
@@ -83,8 +85,8 @@ public class EventRepository {
     }
 
     public Long insert(final Event event) throws SQLException {
-        final String sql = "INSERT INTO calendarEvent (eventName, startTime, endTime, isActive, description, eventAdmin) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO calendarEvent (eventName, startTime, endTime, isActive, description, location, eventAdmin) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         KeyHolder holder = new GeneratedKeyHolder();
         jt.update(new PreparedStatementCreator() {
                       @Override
@@ -95,7 +97,8 @@ public class EventRepository {
                           ps.setTimestamp(3, event.getEndTime());
                           ps.setBoolean(4, event.isActive());
                           ps.setString(5, event.getDescription());
-                          ps.setString(6, event.getEventAdmin());
+                          ps.setString(6, event.getLocation());
+                          ps.setString(7, event.getEventAdmin());
                           return ps;
                       }
                   }, holder);
@@ -151,6 +154,7 @@ public class EventRepository {
                         event.setEndTime(rs.getTimestamp("endTime"));
                         event.setActive(rs.getBoolean("isActive"));
                         event.setDescription(rs.getString("description"));
+                        event.setLocation(rs.getString("location"));
                         event.setEventAdmin(rs.getString("eventAdmin"));
                         return event;
                     }
