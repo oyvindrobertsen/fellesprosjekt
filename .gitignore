@@ -12,3 +12,4 @@ build/
 out/
 apotychia/src/main/webapp/libs/
 apotychia/talekey.ppk
+apotychia/.metadata/*
