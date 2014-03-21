@@ -125,6 +125,6 @@ public class Event implements Comparable<Event> {
     }
 
     public String getLocation() {
-        return (location!=null) : location ? "";
+        return (location!=null) ? location : "";
     }
 }
