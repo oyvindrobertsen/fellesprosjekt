@@ -22,10 +22,11 @@ CREATE TABLE eventGroup (
 );
 
 CREATE TABLE memberOf (
+    memberOfId  INT             NOT NULL    AUTO_INCREMENT,
     groupId     INT             NOT NULL,
     username    VARCHAR(45)     NOT NULL,
 
-    PRIMARY KEY (groupId),
+    PRIMARY KEY (memberOfId),
     FOREIGN KEY (groupId)  REFERENCES eventGroup(groupId)
         ON UPDATE cascade ON DELETE cascade,
     FOREIGN KEY (username)  REFERENCES person(username)

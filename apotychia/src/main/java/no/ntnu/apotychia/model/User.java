@@ -1,8 +1,13 @@
 package no.ntnu.apotychia.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 
 public class User implements Participant, Serializable {
     private String username;
@@ -10,6 +15,7 @@ public class User implements Participant, Serializable {
     private String firstName;
     private String lastName;
     private String email;
+    private boolean admin;
 
     public User() {
     }
@@ -75,6 +81,7 @@ public class User implements Participant, Serializable {
      * their account.
      * @return boolean
      */
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
@@ -82,5 +89,13 @@ public class User implements Participant, Serializable {
     @Override
     public String toString() {
         return this.username + ", " + this.firstName + ", " + this.lastName + ", " + this.email;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }

@@ -45,9 +45,12 @@ public class GroupService {
 
     public List<Group> getAllGroups() {
         List<Group> groups = groupRepository.findAllGroups();
-        for (Group g : groups) {
-            g.addAllMembers(getGroupMembersByGroupId(g.getId()));
-        }
+//        for (Group g : groups) {
+//            Set<User> members = getGroupMembersByGroupId(g.getId());
+//            if (!members.isEmpty()) {
+//                g.addAllMembers(members);
+//            }
+//        }
         return groups;
     }
 }

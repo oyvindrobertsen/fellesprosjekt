@@ -11,10 +11,12 @@ App.Router.map(function() {
     this.resource('edit', { path: 'edit/:id'}); // calender/edit/1
   });
   this.resource('user', { path: 'event/user/:username'}, function() {
-    this.resource('vdiew', {path: ':id'});
+    this.resource('userEvent', {path: ':id'});
   });
 
-  this.resource('invites', { path: "/event/invites"});
+  this.resource('invites', { path: "/event/invites"}, function() {
+    this.resource('viewInvite', { path: "/:id"})
+  });
   this.resource('me');
 });
 
@@ -41,6 +43,7 @@ App.NewRoute = Ember.Route.extend({
     model: function() {
         return Ember.RSVP.hash({
             users: Ember.$.getJSON('/api/auth/users'),
+            groups: Ember.$.getJSON('/api/groups'),
             rooms: Ember.$.getJSON('/api/rooms'),
             participants: [],
             room: null
@@ -57,14 +60,27 @@ App.InvitesRoute = Ember.Route.extend({
      
 });
 
-
-App.EditRoute = Ember.Route.extend({
+App.ViewInviteRoute = Ember.Route.extend({
     model: function(params) {
         return Ember.RSVP.hash({
             event: Ember.$.getJSON('/api/events/' + params.id),
             attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
             invited: Ember.$.getJSON('/api/events/' + params.id + '/invited'),
             declined: Ember.$.getJSON('/api/events/' + params.id + '/declined')
+        });
+    }
+});
+
+
+App.EditRoute = Ember.Route.extend({
+    model: function(params) {
+        return Ember.RSVP.hash({
+            event: Ember.$.getJSON('/api/events/' + params.id),
+            groups: Ember.$.getJSON('/api/groups'),
+            attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
+            invited: Ember.$.getJSON('/api/events/' + params.id + '/invited'),
+            declined: Ember.$.getJSON('/api/events/' + params.id + '/declined'),
+            users: Ember.$.getJSON('/api/auth/users'),
         });
     }
 });
@@ -89,6 +105,17 @@ App.UserRoute = Ember.Route.extend({
     }
 });
 
+App.UserEventRoute = Ember.Route.extend({
+    model: function(params) {
+        return Ember.RSVP.hash({
+            event: Ember.$.getJSON('/api/events/' + params.id),
+            attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
+            invited: Ember.$.getJSON('/api/events/' + params.id + '/invited'),
+            declined: Ember.$.getJSON('/api/events/' + params.id + '/declined')
+        });
+    }
+});
+
 App.MeRoute = Ember.Route.extend({
     model: function() {
         return Ember.$.getJSON('/api/auth/me');
@@ -105,7 +132,7 @@ App.EventController = Ember.ObjectController.extend({
                 this.transitionToRoute('/event/user/' + this.get('calendarToView'));
             }
             return;
-        }
+        },
     }
 });
 
@@ -208,7 +235,6 @@ App.ViewController = Ember.ObjectController.extend({
     }
 });
 
-
 App.EditController = Ember.ObjectController.extend({
     date: function() {
         return Ember.String.w(this.get('model.event.startTime'))[0];
@@ -221,22 +247,35 @@ App.EditController = Ember.ObjectController.extend({
     }.property('model.endTime'),
     actions: {
         saveEdit: function() {
+            var a = this.get('model.attending');
+            var idx;
+            for(idx = 0; idx < a.length; idx++){
+                a[idx].type = ".User";
+            }
+            var a = this.get('model.invited');
+            var idx;
+            for(idx = 0; idx < a.length; idx++){
+                a[idx].type = ".User";
+            }
+
             var self = this;
             Ember.$.ajax({
-                url: '/api/events/' + this.get('model.eventID'),
+                url: '/api/events/' + this.get('model.event.eventID'),
                 type: 'PUT',
                 dataType: 'xml/html/script/json',
                 contentType: 'application/JSON',
                 data: JSON.stringify({
-                    eventID: this.get('model.eventID'),
-                    eventName: this.get('model.eventName'),
-                    startTime: this.get('date') + " " + this.get('startTime'),
-                    endTime: this.get('date') + " " + this.get('endTime'),
-                    eventAdmin: this.get('model.eventAdmin'),
-                    description: this.get('model.description'),
+                    eventId: this.get('model.event.eventID'),
+                    eventName: this.get('model.event.eventName'),
+                    startTime: this.get('date') + ' ' + this.get('startTime'),
+                    endTime: this.get('date') + ' ' + this.get('endTime'),
+                    eventAdmin: this.get('model.event.eventAdmin'),
+                    description: this.get('model.event.description'),
+                    active: this.get('model.event.active'),
+                    invited: this.get('model.invited'),
+                    attending: this.get('model.attending'),
                     room: this.get('model.event.room'),
-                    location: this.get('model.event.location'),
-                    active: this.get('model.active')
+                    location: this.get('model.event.location')
                 }),
                 complete: function() {
                     self.transitionToRoute('/');
@@ -252,6 +291,30 @@ App.EditController = Ember.ObjectController.extend({
                     self.transitionToRoute('/');
                 }
             });
+        },
+        addToInvited: function(object) {
+            if (object.username) {
+                object.type = ".User";
+            } else {
+                object.type = ".Group";
+            }
+            this.get('model.invited').pushObject(object);
+            var a = this.get('model.attending');
+            var idx;
+            for(idx = 0; idx < a.length; idx++){
+                a[idx].type = ".User";
+            }
+        },
+        removeFromAttending: function(object) {
+            this.get('model.attending').removeObject(object);
+        },
+        removeFromInvited: function(object) {
+            this.get('model.invited').removeObject(object);
+            var a = this.get('model.attending');
+            var idx;
+            for(idx = 0; idx < a.length; idx++){
+                a[idx].type = ".User";
+            }
         }
     }
 });

@@ -4,6 +4,7 @@ import no.ntnu.apotychia.model.Event;
 import no.ntnu.apotychia.model.Participant;
 import no.ntnu.apotychia.model.User;
 import no.ntnu.apotychia.model.Room;
+import no.ntnu.apotychia.model.Group;
 import no.ntnu.apotychia.service.EventService;
 import no.ntnu.apotychia.service.UserService;
 import no.ntnu.apotychia.service.RoomService;
@@ -19,10 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 @Controller
 @RequestMapping("/api/events")
@@ -40,23 +38,55 @@ public class EventController {
         ApotychiaUserDetails apotychiaUserDetails =
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
-        List<Event> ret = eventService.findAttendingEventsForUserByUsername(currentUser.getUsername());
-//        List<Event> out = new ArrayList<Event>();
-//        int week = new GregorianCalendar().getWeekYear();
-        for (Event event : ret) {
+        List<Event> attending = eventService.findAttendingEventsForUserByUsername(currentUser.getUsername());
+        List<Event> userInvites = eventService.findInvitedEventsForUserByUsername(currentUser.getUsername());
+        List<Event> groupInvites = eventService.findGroupInvitesForUser(currentUser.getUsername());
+        List<Event> allInvitesNoDupes = new ArrayList<Event>();
+        // checks for attending / invite duplicates
+        if (!groupInvites.isEmpty()) {
+            for (Event at : groupInvites) {
+                for (Event in : userInvites) {
+                    if (at.getEventID() != in.getEventID() && !currentUser.getUsername().equals(in.getEventAdmin())) {
+                        allInvitesNoDupes.add(in);
+                    }
+                }
+            }
+        } else {
+            allInvitesNoDupes.addAll(userInvites);
+        }
+        List<Event> allInvitesNoAttending = new ArrayList<Event>();
+        if (!attending.isEmpty()) {
+            for (Event at : attending) {
+                for (Event in : allInvitesNoDupes) {
+                    if (at.getEventID() != in.getEventID() && !currentUser.getUsername().equals(in.getEventAdmin())) {
+                        allInvitesNoAttending.add(in);
+                    }
+                }
+            }
+            attending.addAll(allInvitesNoAttending);
+        } else {
+            attending.addAll(allInvitesNoDupes);
+        }
+        Collections.sort(attending);
+        for (Event event : attending) {
             if (event.getEventAdmin().equals(currentUser.getUsername())) {
                 event.setAdmin(true);
             }
-//            GregorianCalendar c = new GregorianCalendar();
-//            c.setTime(event.getStartTime());
-//            if (c.getWeekYear() == week) {
-//                logger.info("weee");
+        }
+        return new ResponseEntity<List<Event>>(attending, HttpStatus.OK);
+//        List<Event> out = new ArrayList<Event>();
+//        for (Event event : ret) {
+//            if (event.getEventAdmin().equals(currentUser.getUsername())) {
+//                event.setAdmin(true);
+//            }
+//            if (!eventService.findAttendingEventsForUserByUsername(currentUser.getUsername()).contains(event)) {
 //                out.add(event);
 //            }
-        }
-        ret.addAll(eventService.findInvitedEventsForUserByUsername(currentUser.getUsername()));
-        Collections.sort(ret);
-        return new ResponseEntity<List<Event>>(ret, HttpStatus.OK);
+//        }
+//        Collections.sort(out);
+//        Set<Event> outSet = new LinkedHashSet<Event>(out);
+//        List<Event> outList = new ArrayList<Event>(outSet);
+//        return new ResponseEntity<List<Event>>(outList, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/user/{username}")
@@ -75,6 +105,75 @@ public class EventController {
         }
         return new ResponseEntity<Event>(event, HttpStatus.OK);
     }
+     // Torgrim Edit
+    
+    @RequestMapping(method = RequestMethod.PUT, value="/{id}")
+    public @ResponseBody Event updateEvent(@RequestBody Event event, ModelMap model) {
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+        event.setEventAdmin(currentUser.getUsername());
+
+        Set<Participant> newInvited = new HashSet<Participant>(event.getInvited());
+        Set<User> newAttending  = new HashSet<User>(event.getAttending());
+        Set<User> dbInvited = eventService.findInvitedByEventId(event.getEventID());
+        Set<User> dbAttending = eventService.findAttendingForEventByEventId(event.getEventID());
+        Set<User> users = new HashSet<User>();
+
+        if(newInvited != null){
+
+            // find all users in updated event
+            for(Participant p : newInvited) {
+                if(p instanceof Group){
+                    for(User u : ((Group)p).getMembers()){
+                        users.add(u);
+                    }
+                }else{
+                    users.add((User)p);
+                }
+            }
+            // find user in old DB but not in updated Event
+            for(User u : dbInvited){
+                if(!users.contains(u)) {
+                    eventService.removeInvitedByUsername(event.getEventID(), u.getUsername());
+                }
+            }
+            for(User user : users){
+                if(!dbInvited.contains(user)){
+                    eventService.addInvited(event.getEventID(), user);
+                }
+            }
+        }
+        else {
+
+                eventService.deleteInvitedByEventId(event.getEventID());
+        }
+
+
+        if(newAttending != null){
+            // find user in old DB but not in updated Event
+            for(User u : dbAttending){
+                if(!newAttending.contains(u)) {
+                    eventService.removeAttendingByUsername(event.getEventID(), u.getUsername());
+                }
+            }
+            for(User user : newAttending){
+                if(!dbInvited.contains(user)){
+                    eventService.addAttending(event.getEventID(), user);
+                }
+            }
+        }
+        else {
+                eventService.deleteAttendingByEventId(event.getEventID());
+        }
+        eventService.updateEventById(event);
+        
+        
+
+        return event;
+
+    }
+    // Torgrim Edit end
 
     @RequestMapping(method = RequestMethod.DELETE, value="/{id}")
     @ResponseStatus(value = HttpStatus.OK)
@@ -84,13 +183,19 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}/attending")
     public ResponseEntity<Set<User>> getAttendingForEvent(@PathVariable Long id) {
-        return new ResponseEntity<Set<User>>(eventService.findAttendingForEventByEventId(id),
-                HttpStatus.OK);
+        Event event = eventService.findEventById(id);
+        Set<User> users = eventService.findAttendingForEventByEventId(id);
+        for (User user : users) {
+            if (event.getEventAdmin().equals(user.getUsername())) {
+                user.setAdmin(true);
+            }
+        }
+        return new ResponseEntity<Set<User>>(users, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/invited")
-    public ResponseEntity<Set<Participant>> getInvitedForEvent(@PathVariable Long id) {
-        return new ResponseEntity<Set<Participant>>(eventService.findInvitedByEventId(id), HttpStatus.OK);
+    public ResponseEntity<Set<User>> getInvitedForEvent(@PathVariable Long id) {
+        return new ResponseEntity<Set<User>>(eventService.findInvitedByEventId(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/declined")
@@ -107,14 +212,12 @@ public class EventController {
         long eventId = eventService.addEvent(event);
         eventService.addAttending(eventId, currentUser);
         for (Participant participant : event.getInvited()) {
-            if (!((User)participant).getUsername().equals(currentUser.getUsername())) {
-                eventService.addInvited(eventId, participant);
-            }
+            eventService.addInvited(eventId, participant);
         }
         if(event.getRoom()!=null) {
             eventService.addRoom(eventId, event.getRoom());
-        } 
-        mailService.push(event.getInvited(),
+        }
+        mailService.push(eventService.findInvitedByEventId(eventId),
                 "You have been invited to a new Event <br> <a href='http://localhost:8080/#/event/edit/" + eventId + "'>New Event</a>");
         return eventService.findEventById(eventId);
     }
@@ -136,6 +239,7 @@ public class EventController {
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         eventService.removeInvitedByUsername(id, currentUser.getUsername());
+        eventService.removeAttendingByUsername(id, currentUser.getUsername());
         eventService.addDeclined(id, currentUser);
     }
 
