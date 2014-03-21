@@ -95,7 +95,11 @@ public class EventService {
         eventRepository.addDeclined(id, currentUser);
     }
 
-    public void addRoom(Long eventId, Room room){
+    public void addRoom(Long eventId, Room room) {
         eventRepository.addRoom(eventId, room.getRoomNumber());
+    }
+
+    public void addLocation(long eventId, String location) {
+        eventRepository.addLocation(eventId, location);
     }
 }

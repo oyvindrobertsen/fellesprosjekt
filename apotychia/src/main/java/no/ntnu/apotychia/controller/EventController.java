@@ -70,7 +70,6 @@ public class EventController {
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         Event event = eventService.findEventById(id);
-        
         if (event.getEventAdmin().equals(currentUser.getUsername())) {
             event.setAdmin(true);
         }

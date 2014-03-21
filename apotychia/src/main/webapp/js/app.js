@@ -151,7 +151,7 @@ App.NewController = Ember.ObjectController.extend({
         disablePlaceInput : function() {
             Ember.$('#placeinput').prop('disabled', true);
             <!-- ny kode -a-->
-            
+            this.set('location', null);
             <!-- end -->
         },
 
@@ -159,6 +159,7 @@ App.NewController = Ember.ObjectController.extend({
             Ember.$('#placeinput').prop('disabled', false);
             <!-- ny kode -a-->
             this.set('model.room', null);
+            console.log(model.room.roomNumber);
             <!-- end -->
         },
         addToParticipants: function(object) {
