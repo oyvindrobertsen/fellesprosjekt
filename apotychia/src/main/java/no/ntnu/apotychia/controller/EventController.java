@@ -42,12 +42,14 @@ public class EventController {
         List<Event> attending = eventService.findAttendingEventsForUserByUsername(currentUser.getUsername());
         List<Event> userInvites = eventService.findInvitedEventsForUserByUsername(currentUser.getUsername());
         List<Event> groupInvites = eventService.findGroupInvitesForUser(currentUser.getUsername());
-        userInvites.addAll(groupInvites);
-        Set<Event> userInvitesSet = new HashSet<Event>(userInvites);
         List<Event> userInvitesNoAttending = new ArrayList<Event>();
-        for (Event event : userInvitesSet) {
-            if (!attending.contains(event)) {
-                userInvitesNoAttending.add(event);
+
+        // checks for attending / invite duplicates
+        for(Event at : attending) {
+            for(Event in : groupInvites) {
+                if((at.getEventID() != in.getEventID() && !currentUser.getUsername().equals(in.getEventAdmin()))){
+                    userInvitesNoAttending.add(in);
+                }
             }
         }
         attending.addAll(userInvitesNoAttending);
@@ -98,14 +100,15 @@ public class EventController {
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         event.setEventAdmin(currentUser.getUsername());
 
-        Set<Participant> participants = event.getInvited();
+        Set<Participant> newInvited = event.getInvited();
+        Set<User> newAttending  = event.getAttending();
         Set<User> dbInvited = eventService.findInvitedByEventId(event.getEventID());
         Set<User> users = new HashSet<User>();
 
-        if(participants != null){
+        if(newInvited != null){
 
             // find all users in updated event
-            for(Participant p : participants) {
+            for(Participant p : newInvited) {
                 if(p instanceof Group){
                     for(User u : ((Group)p).getMembers()){
                         users.add(u);
@@ -114,28 +117,55 @@ public class EventController {
                     users.add((User)p);
                 }
             }
-
             // find user in old DB but not in updated Event
             for(User u : dbInvited){
                 if(!users.contains(u)) {
-                    eventService.removeInvitedByUsername(event.getEventID(),
-                    u.getUsername());
+                    eventService.removeInvitedByUsername(event.getEventID(), u.getUsername());
                 }
             }
-            for(User u : users){
-                if(!dbInvited.contains(u)){
-                    eventService.addInvited(event.getEventID(), u);
+            for(User user : users){
+                if(!dbInvited.contains(user)){
+                    eventService.addInvited(event.getEventID(), user);
                 }
             }
-
-
         }
         else {
 
-            eventService.deleteInvitedByEventId(event.getEventID());
+                eventService.deleteInvitedByEventId(event.getEventID());
         }
 
 
+        /*
+        if(newAttending != null){
+
+            // find all users in updated event
+            for(Participant p : newAttending) {
+                if(p instanceof Group){
+                    for(User u : ((Group)p).getMembers()){
+                        users.add(u);
+                    }
+                }else{
+                    users.add((User)p);
+                }
+            }
+            // find user in old DB but not in updated Event
+            for(User u : dbInvited){
+                if(!users.contains(u)) {
+                    eventService.removeInvitedByUsername(event.getEventID(), u.getUsername());
+                }
+            }
+            for(User user : users){
+                if(!dbInvited.contains(user)){
+                    eventService.addInvited(event.getEventID(), user);
+                }
+            }
+        }
+        else {
+
+                eventService.deleteInvitedByEventId(event.getEventID());
+        }
+
+        */
         eventService.updateEventById(event);
         
         

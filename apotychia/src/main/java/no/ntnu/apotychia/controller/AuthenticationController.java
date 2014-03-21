@@ -50,7 +50,16 @@ public class AuthenticationController {
     @RequestMapping(method = RequestMethod.GET, value="/users")
     public ResponseEntity<List<Participant>> getAllUsers() {
         List<Participant> ret = new ArrayList<Participant>();
-        ret.addAll(userService.findAllUsers());
+        ApotychiaUserDetails apotychiaUserDetails =
+                (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        // Does Not add current user to add view
+        User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
+
+        for(User user : userService.findAllUsers()){
+            if(!(currentUser.getUsername().equals(user.getUsername()))){
+                ret.add(user);
+            }
+        }
         return new ResponseEntity<List<Participant>>(ret, HttpStatus.OK);
     }
 }

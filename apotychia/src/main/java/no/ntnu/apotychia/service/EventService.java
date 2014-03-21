@@ -64,7 +64,7 @@ public class EventService {
         Set<Group> invitedGroups = eventRepository.findInvitedGroupsByEventId(id);
         for (Group participant : invitedGroups) {
             for (User user : groupRepository.findMembers(((Group)participant).getId())) {
-                if (!invitedUsers.contains(user)) {
+                if (!invitedUsers.contains(user) && !user.getUsername().equals(eventRepository.findById(id).getEventAdmin())) {
                     invitedUsers.add(user);
                 }
             }
