@@ -72,8 +72,8 @@
             </div>
         </div>
     </div>
-    <a class="btn btn-primary"{{action 'count'}}>Press me to update</a>
     <div class="col-md-3 calender-panel">
+        <a class="btn btn-primary"{{action 'count'}}>Press me to update</a>
         {{outlet}}
     </div>
 </script>
@@ -231,15 +231,18 @@
                     <th>
                          <a rel="popover" data-content="" class="btn btn-primary btn-sm btn-block">Legg til deltaker</a>
                         <div id="users-content-wrapper" class="hide">
-                            <ul style="overflow: auto; max-height: 300px">
+                            <table>
                                 {{#each user in users}}
-                                    <li class="list-unstyled">
-                                        <label style="margin-left:-15px;">
-                                            {{user.firstName}} {{user.lastName}} <a class="btn btn-success btn-xs" {{action 'addToInvited' user}}>Legg til</a>
-                                        </label>
-                                    </li>
+                                    <tr>
+                                        <td>{{user.firstName}} {{user.lastName}}</td><td><a class="btn btn-success btn-xs" {{action 'addToInvited' user}}>Legg til</a></td>
+                                    </tr>
                                 {{/each}}
-                            </ul>
+                                {{#each group in groups}}
+                                    <tr>
+                                        <td>{{group.name}}</td><td><a class="btn btn-success btn-xs" {{action 'addToInvited' group}}>Legg til</a></td>
+                                    </tr>
+                                {{/each}}
+                            </table>
                         </div>
                     </th>
                 </thead>
@@ -265,7 +268,7 @@
                         {{/each}}
                         {{#each model.declined}}
                             <tr class="danger">
-                                <td>{{firstName}} {{lastName}}</td>
+                                <td>{{firstName}} {{lastName}}</td><td></td>
                             </tr>
                         {{/each}}
                     </tbody>
@@ -364,31 +367,31 @@
     <div class="well">{{model.event.description}}</div>
 
     <table class="table">
-                <thead>
-                    <th>Deltakere</th>
-                </thead>
-            </table>
-            <div style="overflow: auto; max-height: 30%;">
-                <table class="table">
-                    <tbody>
-                        {{#each model.attending}}
-                            <tr class="success">
-                                <td>{{firstName}} {{lastName}}</td>
-                            </tr>
-                        {{/each}}
-                        {{#each model.invited}}
-                            <tr>
-                                <td>{{firstName}} {{lastName}}</td>
-                            </tr>
-                        {{/each}}
-                        {{#each model.declined}}
-                            <tr class="danger">
-                                <td>{{firstName}} {{lastName}}</td>
-                            </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            </div>
+        <thead>
+            <th>Deltakere</th>
+        </thead>
+    </table>
+    <div style="overflow: auto; max-height: 30%;">
+        <table class="table">
+            <tbody>
+                {{#each model.attending}}
+                    <tr class="success">
+                        <td>{{firstName}} {{lastName}}</td>
+                    </tr>
+                {{/each}}
+                {{#each model.invited}}
+                    <tr>
+                        <td>{{firstName}} {{lastName}}</td>
+                    </tr>
+                {{/each}}
+                {{#each model.declined}}
+                    <tr class="danger">
+                        <td>{{firstName}} {{lastName}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
 
     <!-- attend -->
     <div class="form-group buttons">
@@ -432,6 +435,43 @@
     </div>
     <div class="col-md-3 calender-panel">
         {{outlet}}
+    </div>
+</script>
+
+<script type="text/x-handlebars" id="userEvent">
+    <h1>{{model.event.eventName}}</h1>
+
+    <strong>Start:</strong> {{model.event.startTime}}<br/>
+
+    <strong>Slutt:</strong> {{model.event.endTime}}<br/>
+
+    <div class="well">{{model.event.description}}</div>
+
+    <table class="table">
+        <thead>
+            <th>Deltakere</th>
+        </thead>
+    </table>
+    <div style="overflow: auto; max-height: 30%;">
+        <table class="table">
+            <tbody>
+                {{#each model.attending}}
+                    <tr class="success">
+                        <td>{{firstName}} {{lastName}}</td>
+                    </tr>
+                {{/each}}
+                {{#each model.invited}}
+                    <tr>
+                        <td>{{firstName}} {{lastName}}</td>
+                    </tr>
+                {{/each}}
+                {{#each model.declined}}
+                    <tr class="danger">
+                        <td>{{firstName}} {{lastName}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
     </div>
 </script>
 

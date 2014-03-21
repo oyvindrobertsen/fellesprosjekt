@@ -15,6 +15,7 @@ public class User implements Participant, Serializable {
     private String firstName;
     private String lastName;
     private String email;
+    private boolean admin;
 
     public User() {
     }
@@ -88,5 +89,13 @@ public class User implements Participant, Serializable {
     @Override
     public String toString() {
         return this.username + ", " + this.firstName + ", " + this.lastName + ", " + this.email;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }

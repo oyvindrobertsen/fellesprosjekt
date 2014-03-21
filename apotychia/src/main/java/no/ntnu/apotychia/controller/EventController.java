@@ -42,17 +42,33 @@ public class EventController {
         List<Event> attending = eventService.findAttendingEventsForUserByUsername(currentUser.getUsername());
         List<Event> userInvites = eventService.findInvitedEventsForUserByUsername(currentUser.getUsername());
         List<Event> groupInvites = eventService.findGroupInvitesForUser(currentUser.getUsername());
-        List<Event> userInvitesNoAttending = new ArrayList<Event>();
-
+        List<Event> allInvitesNoDupes = new ArrayList<Event>();
         // checks for attending / invite duplicates
-        for(Event at : attending) {
-            for(Event in : groupInvites) {
-                if((at.getEventID() != in.getEventID() && !currentUser.getUsername().equals(in.getEventAdmin()))){
-                    userInvitesNoAttending.add(in);
+        if (!groupInvites.isEmpty()) {
+            for (Event at : groupInvites) {
+                for (Event in : userInvites) {
+                    logger.warn(in.getEventName());
+                    if (at.getEventID() != in.getEventID() && !currentUser.getUsername().equals(in.getEventAdmin())) {
+                        allInvitesNoDupes.add(in);
+                    }
                 }
             }
+        } else {
+            allInvitesNoDupes.addAll(userInvites);
         }
-        attending.addAll(userInvitesNoAttending);
+        List<Event> allInvitesNoAttending = new ArrayList<Event>();
+        if (!attending.isEmpty()) {
+            for (Event at : attending) {
+                for (Event in : allInvitesNoDupes) {
+                    if (at.getEventID() != in.getEventID() && !currentUser.getUsername().equals(in.getEventAdmin())) {
+                        allInvitesNoAttending.add(in);
+                    }
+                }
+            }
+            attending.addAll(allInvitesNoAttending);
+        } else {
+            attending.addAll(allInvitesNoDupes);
+        }
         Collections.sort(attending);
         for (Event event : attending) {
             if (event.getEventAdmin().equals(currentUser.getUsername())) {
@@ -169,8 +185,14 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.GET, value="/{id}/attending")
     public ResponseEntity<Set<User>> getAttendingForEvent(@PathVariable Long id) {
-        return new ResponseEntity<Set<User>>(eventService.findAttendingForEventByEventId(id),
-                HttpStatus.OK);
+        Event event = eventService.findEventById(id);
+        Set<User> users = eventService.findAttendingForEventByEventId(id);
+        for (User user : users) {
+            if (event.getEventAdmin().equals(user.getUsername())) {
+                user.setAdmin(true);
+            }
+        }
+        return new ResponseEntity<Set<User>>(users, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}/invited")

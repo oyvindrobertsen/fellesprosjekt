@@ -44,6 +44,12 @@ public class EventService {
     }
 
     public void addAttending(Long eventId, User user) {
+        Set<User> attendingUsers = eventRepository.findAttendingByEventId(eventId);
+        for (User atUser : attendingUsers) {
+            if (atUser.getUsername().equals(user.getUsername())) {
+                return;
+            }
+        }
         eventRepository.addAttending(eventId, user);
     }
 
