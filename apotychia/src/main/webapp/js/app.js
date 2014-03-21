@@ -11,10 +11,12 @@ App.Router.map(function() {
     this.resource('edit', { path: 'edit/:id'}); // calender/edit/1
   });
   this.resource('user', { path: 'event/user/:username'}, function() {
-    this.resource('view', {path: ':id'});
+    this.resource('userEvent', {path: ':id'});
   });
 
-  this.resource('invites', { path: "/event/invites"});
+  this.resource('invites', { path: "/event/invites"}, function() {
+    this.resource('viewInvite', { path: "/:id"})
+  });
   this.resource('me');
 });
 
@@ -54,6 +56,18 @@ App.InvitesRoute = Ember.Route.extend({
     }
      
 });
+
+App.ViewInviteRoute = Ember.Route.extend({
+    model: function(params) {
+        return Ember.RSVP.hash({
+            event: Ember.$.getJSON('/api/events/' + params.id),
+            attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
+            invited: Ember.$.getJSON('/api/events/' + params.id + '/invited'),
+            declined: Ember.$.getJSON('/api/events/' + params.id + '/declined')
+        });
+    }
+});
+
 
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
@@ -193,9 +207,6 @@ App.ViewController = Ember.ObjectController.extend({
         }
     }
 });
-
-
-
 
 App.EditController = Ember.ObjectController.extend({
     date: function() {
