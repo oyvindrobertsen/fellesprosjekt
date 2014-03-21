@@ -246,20 +246,12 @@
             <div style="overflow: auto; max-height: 30%;">
                 <table class="table">
                     <tbody>
-                    {{#if event.admin}}
                         {{#each a in attending}}
                             <tr class="success">
                                 <td>{{a.firstName}} {{a.lastName}}</td>
+                                <td><a class="btn btn-danger btn-xs" {{action 'removeFromAttending' a}}>Fjern</a></td>
                             </tr>
                         {{/each}}
-                    {{else}}
-                        {{#each a in attending}}
-                            <tr class="success">
-                                <td>{{a.firstName}} {{a.lastName}}</td>
-                            <td><a class="btn btn-danger btn-xs" {{action 'removeFromAttending' a}}>Fjern</a></td>
-                        {{/each}}
-
-                    {{/if}}
                         {{#each i in invited}}
                             <tr>
                                 <td>{{i.firstName}} {{i.lastName}}</td>

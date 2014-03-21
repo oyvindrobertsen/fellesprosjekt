@@ -81,6 +81,10 @@ public class EventService {
         return eventRepository.findInvitedTo(username);
     }
 
+    public void removeAttendingByUsername(Long eventId, String username){
+        eventRepository.removeAttendingUser(eventId, username);
+    }
+
     public void removeInvitedByUsername(Long eventId, String username) {
         eventRepository.removeInvitedUser(eventId, username);
     }

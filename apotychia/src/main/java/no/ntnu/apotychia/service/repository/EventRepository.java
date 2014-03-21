@@ -253,6 +253,13 @@ public class EventRepository {
                 new Object[]{username, eventId});
     }
 
+    public void removeAttendingUser(Long eventId, String username) {
+        jt.update("DELETE FROM attending " +
+                "WHERE username = ? " +
+                "AND eventId = ?",
+                new Object[]{username, eventId});
+    }
+
 
     public void removeInvitedGroup(Long eventId, Long groupId) {
         jt.update("DELETE FROM invited " +

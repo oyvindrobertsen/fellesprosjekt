@@ -103,6 +103,7 @@ public class EventController {
         Set<Participant> newInvited = event.getInvited();
         Set<User> newAttending  = event.getAttending();
         Set<User> dbInvited = eventService.findInvitedByEventId(event.getEventID());
+        Set<User> dbAttending = eventService.findAttendingForEventByEventId(event.getEventID());
         Set<User> users = new HashSet<User>();
 
         if(newInvited != null){
@@ -135,37 +136,22 @@ public class EventController {
         }
 
 
-        /*
         if(newAttending != null){
-
-            // find all users in updated event
-            for(Participant p : newAttending) {
-                if(p instanceof Group){
-                    for(User u : ((Group)p).getMembers()){
-                        users.add(u);
-                    }
-                }else{
-                    users.add((User)p);
-                }
-            }
             // find user in old DB but not in updated Event
-            for(User u : dbInvited){
-                if(!users.contains(u)) {
-                    eventService.removeInvitedByUsername(event.getEventID(), u.getUsername());
+            for(User u : dbAttending){
+                if(!newAttending.contains(u)) {
+                    eventService.removeAttendingByUsername(event.getEventID(), u.getUsername());
                 }
             }
-            for(User user : users){
+            for(User user : newAttending){
                 if(!dbInvited.contains(user)){
-                    eventService.addInvited(event.getEventID(), user);
+                    eventService.addAttending(event.getEventID(), user);
                 }
             }
         }
         else {
-
-                eventService.deleteInvitedByEventId(event.getEventID());
+                eventService.deleteAttendingByEventId(event.getEventID());
         }
-
-        */
         eventService.updateEventById(event);
         
         
