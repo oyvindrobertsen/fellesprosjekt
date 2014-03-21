@@ -55,7 +55,6 @@ App.InvitesRoute = Ember.Route.extend({
      
 });
 
-
 App.EditRoute = Ember.Route.extend({
     model: function(params) {
         return Ember.RSVP.hash({
@@ -104,7 +103,7 @@ App.EventController = Ember.ObjectController.extend({
                 this.transitionToRoute('/event/user/' + this.get('calendarToView'));
             }
             return;
-        }
+        },
     }
 });
 
