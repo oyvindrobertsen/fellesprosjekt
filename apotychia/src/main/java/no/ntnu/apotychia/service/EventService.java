@@ -62,6 +62,24 @@ public class EventService {
     }
 
     public void addInvited(long eventId, Participant participant) {
+        Set<Group> invitedGroups = eventRepository.findInvitedGroupsByEventId(eventId);
+        Set<User> invitedUser = eventRepository.findInvitedUsersByEventId(eventId);
+        if(participant instanceof Group){
+            for(Group group : invitedGroups){
+                Group par = (Group) participant;
+                if(group.getId() == par.getId()){
+                    return;
+                }
+            }
+        }
+        else {
+            for(User user : invitedUser){
+                User par = (User) participant;
+                if(user.getId() == par.getId()){
+                    return;
+                }
+            }
+        }
         eventRepository.addInvited(eventId, participant);
     }
 

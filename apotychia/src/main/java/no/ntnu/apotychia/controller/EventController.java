@@ -116,8 +116,8 @@ public class EventController {
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         event.setEventAdmin(currentUser.getUsername());
 
-        Set<Participant> newInvited = event.getInvited();
-        Set<User> newAttending  = event.getAttending();
+        Set<Participant> newInvited = new HashSet<Participant>(event.getInvited());
+        Set<User> newAttending  = new HashSet<User>(event.getAttending());
         Set<User> dbInvited = eventService.findInvitedByEventId(event.getEventID());
         Set<User> dbAttending = eventService.findAttendingForEventByEventId(event.getEventID());
         Set<User> users = new HashSet<User>();
@@ -216,7 +216,7 @@ public class EventController {
         for (Participant participant : event.getInvited()) {
             eventService.addInvited(eventId, participant);
         }
-        mailService.push(event.getInvited(),
+        mailService.push(eventService.findInvitedByEventId(eventId),
                 "You have been invited to a new Event <br> <a href='http://localhost:8080/#/event/edit/" + eventId + "'>New Event</a>");
         return eventService.findEventById(eventId);
     }
@@ -238,6 +238,7 @@ public class EventController {
                 (ApotychiaUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.findByUsername(apotychiaUserDetails.getUsername());
         eventService.removeInvitedByUsername(id, currentUser.getUsername());
+        eventService.removeAttendingByUsername(id, currentUser.getUsername());
         eventService.addDeclined(id, currentUser);
     }
 

@@ -23,10 +23,10 @@ public class MailService {
 	
 	private static String USER_NAME = "apotychia.ntnu";
 	private static String PASSWORD = "1337apotychia";
-	public  boolean push(Set<Participant> adress, String content) {
+	public  boolean push(Set<User> adress, String content) {
 		String from = USER_NAME;
 		String pass = PASSWORD;
-		HashSet<Participant> to = (HashSet<Participant>)adress;
+		HashSet<User> to = (HashSet<User>)adress;
 		String subject = "You have been invited to an Event";
 		String body = content;
 		
@@ -36,7 +36,7 @@ public class MailService {
 	}
 	
 	
-	private boolean sendFromGmail(String from, String pass, HashSet<Participant> to, String subject, String body) {
+	private boolean sendFromGmail(String from, String pass, HashSet<User> to, String subject, String body) {
 		Properties properties = System.getProperties();
 		String host = "smtp.gmail.com";
 		properties.put("mail.smtp.starttls.enable", "true");
@@ -53,16 +53,11 @@ public class MailService {
 			
 			message.setFrom(new InternetAddress(from));
 			List<InternetAddress> toAdress = new ArrayList<InternetAddress>();
-			for(Participant p : to) {
-                if (p instanceof User) {
-                    toAdress.add(new InternetAddress(((User) p).getEmail()));
-                } else {
-                    Set<User> groupMembers = groupRepository.findMembers(((Group)p).getId());
-                    for (User user : groupMembers) {
-                        toAdress.add(new InternetAddress(user.getEmail()));
-                    }
-                }
-			}
+			
+       	    for (User user : to) {
+                toAdress.add(new InternetAddress(user.getEmail()));
+            }
+            
 			
 			for (InternetAddress internetAddress : toAdress) {
                 message.addRecipient(Message.RecipientType.TO, internetAddress);
