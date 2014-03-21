@@ -57,6 +57,17 @@ App.InvitesRoute = Ember.Route.extend({
      
 });
 
+App.ViewInviteRoute = Ember.Route.extend({
+    model: function(params) {
+        return Ember.RSVP.hash({
+            event: Ember.$.getJSON('/api/events/' + params.id),
+            attending: Ember.$.getJSON('/api/events/' + params.id + '/attending'),
+            invited: Ember.$.getJSON('/api/events/' + params.id + '/invited'),
+            declined: Ember.$.getJSON('/api/events/' + params.id + '/declined')
+        });
+    }
+});
+
 
 App.EditRoute = Ember.Route.extend({
     model: function(params) {

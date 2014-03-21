@@ -341,8 +341,6 @@
 
 
 
-
-
 <script type="text/x-handlebars" id="invites">
     <!-- Calender view -->
     <div class="col-md-9 calender-panel">
@@ -350,7 +348,7 @@
             <div class="col-md-8 col-md-offset-2">
                 {{#each model.invites}}
                     <div class="well text-center">
-                        {{#link-to 'view' eventID}}<b>{{eventName}} </b> {{/link-to}}<br/>
+                        {{#link-to 'viewInvite' eventID}}<b>{{eventName}} </b> {{/link-to}}<br/>
                         <strong>Starter:</strong> {{startTime}}<br/>
                         <strong>Slutter:</strong> {{endTime}}
                     </div>
@@ -360,6 +358,53 @@
     </div>
     <div class="col-md-3 calender-panel">
         {{outlet}}
+    </div>
+</script>
+
+<script type="text/x-handlebars" id="viewInvite">
+    <h1>{{model.event.eventName}}</h1>
+
+    <strong>Start:</strong> {{model.event.startTime}}<br/>
+
+    <strong>Slutt:</strong> {{model.event.endTime}}<br/>
+
+    <div class="well">{{model.event.description}}</div>
+
+    <table class="table">
+                <thead>
+                    <th>Deltakere</th>
+                </thead>
+            </table>
+            <div style="overflow: auto; max-height: 30%;">
+                <table class="table">
+                    <tbody>
+                        {{#each model.attending}}
+                            <tr class="success">
+                                <td>{{firstName}} {{lastName}}</td>
+                            </tr>
+                        {{/each}}
+                        {{#each model.invited}}
+                            <tr>
+                                <td>{{firstName}} {{lastName}}</td>
+                            </tr>
+                        {{/each}}
+                        {{#each model.declined}}
+                            <tr class="danger">
+                                <td>{{firstName}} {{lastName}}</td>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+
+    <!-- attend -->
+    <div class="form-group buttons">
+        <div class="col-md-6 split-form-left">
+            <a class="form-control btn btn-success btn-primary" {{action 'attend'}}> Delta </a>
+        </div>
+        <div class="col-md-6 split-form-right">
+            <a class="form-control btn btn-danger btn-primary" {{action 'decline'}}> Avsl&aring; </a>
+        </div>
     </div>
 </script>
 
